@@ -122,15 +122,20 @@ The public-history cleanup is now complete on GitHub:
 - local `main` tracks `origin/main`,
 - the working tree is clean before this report is added.
 
-The most important open issue is now downstream compatibility:
+At the moment this report was first written, the most important open issue was
+downstream compatibility:
 
 ```text
-HGraphML currently declares state-collapser @ ...@v0.5.0, but the cleaned
+HGraphML declared state-collapser @ ...@v0.5.0, but the cleaned
 state_collapser remote now exposes v0.6.0 as the public release tag.
 ```
 
-That must be corrected before HGraphML fresh installs or CI can be treated as
-stable against the cleaned public upstream.
+That needed to be corrected before HGraphML fresh installs or CI could be
+treated as stable against the cleaned public upstream.
+
+Release-readiness follow-up: this mismatch was corrected immediately after
+report creation by updating HGraphML to depend on the clean `state_collapser`
+`v0.6.0` tag.
 
 ## Source Reconstruction Note
 
@@ -414,21 +419,22 @@ break is intentional, documented, and paired with a migration path.
 ### Immediate Follow-Up Risk
 
 The public-history rewrite removed old public tags `v0.1.0` through `v0.5.0`
-from the remote. HGraphML currently declares:
+from the remote. HGraphML declared:
 
 ```text
 state-collapser @ git+https://github.com/TYLERSFOSTER/state_collapser.git@v0.5.0
 ```
 
-That tag no longer exists remotely after cleanup. The next HGraphML action
-should update the dependency to the clean public release tag:
+That tag no longer exists remotely after cleanup. HGraphML needed to update the
+dependency to the clean public release tag:
 
 ```text
 v0.6.0
 ```
 
-or to a normal registry dependency once PyPI publication happens later. Until
-that is fixed, HGraphML fresh installs from a clean environment may fail.
+or to a normal registry dependency once PyPI publication happens later.
+
+Release-readiness follow-up: this has now been fixed in HGraphML.
 
 ## Major Movement 5: Public Release And Security Audit
 
@@ -725,28 +731,27 @@ This clarity should help future work avoid two opposite mistakes:
 
 ## Known Open Issues And Next Actions
 
-### P0: HGraphML Dependency Pin Is Now Stale
+### P0: HGraphML Dependency Pin Was Stale
 
-HGraphML still points to:
+HGraphML pointed to:
 
 ```text
 state_collapser.git@v0.5.0
 ```
 
-The clean `state_collapser` remote now retains only:
+The clean `state_collapser` remote retained only:
 
 ```text
 v0.6.0
 ```
 
-Immediate follow-up:
+Required follow-up:
 
 ```text
 Update HGraphML's dependency pin to v0.6.0 and rerun its CI/local validation.
 ```
 
-This is the most concrete downstream preservation issue created by the public
-history cleanup.
+Release-readiness follow-up: this issue has now been corrected in HGraphML.
 
 ### P1: Public GitHub Release Should Be Recreated/Confirmed For v0.6.0
 
