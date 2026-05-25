@@ -1,0 +1,24 @@
+### ~~Subtask discovery~~ ← *Supertask creation*
+RL Engineers recognize that some RL problems happen to decompose into a hierarchy of RL subproblems, often called *subtasks*, that greatly aid in RL policy training. Other RL problems do not admit any "obvious" or "natural" such decomposition. *For example*, constraints in coordinating the movement of different parts of a single robot can restrict the problem to a [algebraic subvariety](https://en.wikipedia.org/wiki/Algebraic_variety) or [semialgebraic subset](https://en.wikipedia.org/wiki/Semialgebraic_set) of state/action-space, and subvarieties can be especially difficult to decompose into subtasks. The `state_collapser` package is meant to provide a robust strategy for inducing hierarchical structure even for RL problems that do *not* come with any obvious parameter reduction, human-readable decomposition, or intrinsically meaningful subtasks. The package is aimed at hard RL problems where existing HRL intuition is weak.
+
+The package is built around the idea that HRL should not depend on a problem already arriving with meaningful subtasks attached to it.
+> ***PACKAGE CAPABILITY:***</br>When reward functions are sufficiently local, `state_collapser` induces a performant hierarchical RL structure, even where no obvious hierarchy is given.
+
+The package accomplishes this by letting go of the assumption that *subtasks* are the only sort of intrinsic "reduced task" structures that one might use to "reduce" a given RL problem. The states and actions that appear in hierarchical reductions of a given RL problem do not need to correspond to anything beyond pure abstractions.
+> ***UNDERLYING MATHEMATICAL PRINCIPLE:***</br>As long the *states* and *actions* in the intermediate tiers of a given HRL problem *admit [*category theoretical lifts*](https://en.wikipedia.org/wiki/Lift_(mathematics)) to executable behavior* in the HRL problem's *overarching RL problem*, they can still aid in solving the overarching RL problem.
+  >>**‣** States and actions in intermediate tiers ***do not need to be*** interpreted as states or actions of any auxiliary RL problem.</br>
+  >>**‣** States and actions intermediate tiers ***do not need to be*** interpreted as states or actions in the top/bottom tier of the HRL problem.</br>
+  >>**‣** States and actions intermediate tiers ***do not need to be*** physically meaningful.</br>
+  >>**‣** States and actions intermediate tiers ***do not need to be*** directly realizeable or executable in any meaningful way.</br>
+
+Everyone knows this from direct experience. The command `'go from inside the house to outside the house'`, while physically meaningful, is a serverley underspecified instruction for a deterministic machine to execute. It's certainly not primitive enough to constitue an "*action*" in the standard sense of RL. Even if "the machine" has the correct internal bindings for `'inside the house'` and `'outside the house'`, it has to solve a hidden secondary task in order to execute : *generate specific action* associated to this *collapsed task* `'go from inside the house to outside the house'`.
+
+### Why is it important for HRL to be "problem agnostic."
+Many RL problems become easier to organize hierarchically once a clean parametrization is available. If the environment state can be expressed in a small number of decoupled coordinates, then it is often possible to identify lower-dimensional subproblems, staged skills, or natural curriculum layers directly from those coordinates. 
+<!-- In that sense, a good parametrization often gives HRL its hierarchy “for free.” -->
+
+But many important control problems do not present themselves this way. In robotics for instance, the feasible state/action space is often cut out by constraints imposed by the coordinated movement of the components of a larger system. These constraints can force the relevant behavior to live on an [algebraic subvariety](https://en.wikipedia.org/wiki/Algebraic_variety) or [semialgebraic subset]((https://en.wikipedia.org/wiki/Semialgebraic_set)) of a larger ambient space, rather than on an easy-to-read Cartesian product of coordinates. A general-purpose algorithm that contains aan algorithmic step such as “find geometrically meaningful parameters on an algebraic or semialgebraic variety” should still be treated as hiding a potentially very expensive resolution/stratification subroutine, unless one proves a separate complexity bound for the particular class of varieties involved. See the introduction of [MJL Brais, [*Streamlining resolution of singularities with weighted blow-ups*](arXiv:2512.01859v1)] for some remarks on the computational complextiy of parametrizing general algebraic varieties.
+
+"As a consequence, they grow out of control quite rapidly; even the resolution of mild singularities becomes uncomputable once a relatively low threshold in dimension or degree is exceeded."
+
+-- Tyler Foster

@@ -1,0 +1,701 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{xypic}
+\usepackage{graphicx}
+\usepackage{pagecolor}
+\pagecolor{white}
+\usepackage{hyperref}
+\usepackage{wrapfig}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    citecolor=blue!50!black,
+    urlcolor=blue!50!black,
+    pdftitle={state_collapser Mathematical Model},
+    pdfauthor={Tyler Foster}
+}
+
+\title{The \texttt{state\_collapser} package:\\ {Underlying mathematical model}}
+\author{Tyler Foster}
+\date{\today}
+
+\newtheorem{definition}{Definition}[subsection]
+\newtheorem{remark}{Remark}[subsection]
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{principle}{Principle}
+\newtheorem{lemma}{Lemma}
+\newtheorem{premise}{Design Premise}
+\newtheorem{failure}{Failure Hypotheses}
+\newtheorem{example}{Example}[subsection]
+
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+This document describes the mathematical model behind the \texttt{state\_collapser} package. The \href{https://github.com/TYLERSFOSTER/state_collapser}{{\em github project repository}} contains \texttt{.md} documents describing the package architecture and design. The present \texttt{.pdf} document focusses on a robust mathematical strategy for inducing a hierarchical structure on RL problems whose underlying constraints make hierarchical reduction difficult. The central insight behind the strategy is that {\em states} in hierarchical RL do not need to have any real-life, executable meaning whatsoever. They can be pure abstractions, as long as they {\em lift} to executible tasks in environment.
+\end{abstract}
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\section{Overview}
+
+This document records the first mathematical model for \texttt{state\_collapser}, and proves a theorem about the mathematical model suggesting that the \texttt{state\_collapser} package iiself might provide a good place to start if you're confronted with a modern RL problem where you can't see an obvious hierarchical structure to speed up training, or to get training to converge to a good policy at all.
+
+In practice, applying hierarchical RL strategies tends to require that the RL problem itself already have an intrinsic, discoverable hierarchical structure.
+
+\begin{remark}
+We try to follow the notation use din \cite{SBRL}
+
+
+\cite{MalikThesis}
+
+\end{remark}
+
+\subsection{Many RL problems hide a hierarchical structure}
+
+{\em Hierarchical reinforcement learning} ({\em HRL}) is a broad class of strategies in {\em reinforcement learning} ({\em RL}) that attempt break hard RL problems down into some kind of structured hierarchy of more tractible RL problems \cite{PSTQ}. Here ``tractable'' means ``{\em we can train a policy that guides an agent that solves the problem in quickly enough that the policy-guided control is a viable product.}''
+
+\begin{example}\label{ex: counterpoint}
+{\bf RL Problem with Hierarchical Structure: Musical counterpoint}
+\normalfont
+Consider the problem of training an policy that guides a control loop that writes ``good'' 3-part musicla chorales. [...]
+
+The state space $S$ implicit in this problem naturally forms a directed graph, where each node $s$ corresponds a trichord,\footnote{\;A 3-note chord} and where an edge
+$
+s_{1}\longrightarrow s_{2}
+$
+is present between trichords $s_{1}$ and $s_{2}$ if and only if the sequence consisting of the trichord $s_{1}$ followed by the trichord $s_{2}$ is an admissible trichord sequence in traditional Western counterpoint.\footnote{\;For instance, we might require {\em no parallel fifths}, {\em no stationary notes}, {\em no voice crossings}, etc.}
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=.35]{../../assets/images/mathematical_model/HRL_counterpoint.png}
+    \caption{[...]}
+\end{figure}
+[...Explain primitive action...]
+
+If we think about only this ``state graph'' consisting of admissible trichords and admissible voice leading, but ignore the intrinisic meaning of the nodes and edges in it, it's hard to see that this particular RL problem has a natural hierarchical structure. Students who learn counterpoint know this, because it's how the curriculum works: first you learn to write a good melody (1-part counterpoint), then you learn how to write good duets (2-part counterpoint) by adding a new voice on top of the strong melody you already know how to write, and {\em then} you learn how to write in a third voice to accompany the already strong duet you know how to write. 
+
+[...``hidden'' tower of graphs...]
+\end{example}
+
+\begin{example}\label{ex: counterpoint}
+{\bf RL Problems with Hard-to-Isolate Hierarchical Structure.}
+\normalfont
+	\cite{CAL}
+[...Coordinating support...]
+\begin{enumerate}
+	\item
+	\vskip -.25cm
+	{\em Articulated mechanism with loop-closure constraints}
+	\cite[\S\S2-4]{CT}
+	\item
+	\vskip -.25cm
+	{\em Parallelogram linkage with singularities}
+	\cite[Exam. 2.4-2.6]{LP}
+	\item
+	\vskip -.25cm
+	{\em Cable-driven parallel robot}
+	\cite[Figure 1.a \& \S4]{KH}
+	\item
+	\vskip -.25cm
+	{\em Dual-arm manipulation system}
+	\cite[\S2.1]{Setal}
+	\item
+	\vskip -.25cm
+	{\em Multi-contact humanoid robot}
+	\cite[Fig. 4]{Fetal}
+	\item
+	\vskip -.25cm
+	{\em Multi-ped robots}
+	\cite[Chp. 48]{WTK}
+\end{enumerate}
+\end{example}
+
+\begin{remark}
+{\bf Computer science is fixated on {\em subsets}, ignoring {\em quotient sets}.}
+\normalfont
+[...]
+
+I think a better way to see that many RL problems admit non-canonical hierarchical structure is to think about hierarchical structure in terms of state-action graph {\em contractions} and their resulting {\em towers of quotient graphs}, as opposed of state-action graph {\em inclusions} (via ``subtasks'') and their resulting {\em nested sequences of subgraphs}.
+\end{remark}
+
+\subsection{Hierarchical structure gives  spacial computation a logarithmic speed-up}
+
+Why would a hierarchical structure aid us in solving an RL problem? Part of the answer comes from the theory of computational complexity and the well known logarithmic improvement to computational complexity that a hierarchical structure provides.
+
+\cite[p. 39]{CLRS3}
+
+\begin{example}
+\normalfont
+{\bf Decimal addresses for numbers.}
+It is not something we tend to notice, but the difficulty of managing a given number $N$ tends to be a function of $\log N$ rather than a function of $N$. This is because we tend to use the decimal and binary representations of numbers.For many ordinary computations, the relevant input size is instead
+the number of digits needed to write \(N\).
+
+In base \(b\), a positive integer \(N\) has
+\[
+\lfloor \log_b N \rfloor + 1
+\]
+digits. Thus the length of the decimal address of \(N\) grows like
+\(\log_{10} N\), not like \(N\). Adding one more decimal digit does
+not add one more number; it multiplies the range of representable
+numbers by \(10\).
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=.45]{../../assets/images/mathematical_model/sparse_base_10.png}
+    \caption{[...]}
+\end{figure}
+
+\end{example}
+
+
+\begin{example}
+{\bf Moving through a dictionary.}
+\normalfont
+[...]
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=.4]{../../assets/images/mathematical_model/dict_lookup.png}
+    \caption{[...]}
+\end{figure}
+\end{example}
+
+
+\begin{theorem}\label{thm: HNSW log speedup}
+\normalfont
+[...This is just the classic discrete math / CS theorem that HNSW gives logarithmic speedup...]
+\begin{enumerate}
+\item
+$
+\textbf{Binary search:}
+$
+Let \(N\) be the number of ordered items.
+A linear scan has worst-case comparison complexity
+$
+T_{\mathrm{linear}}(N) = \Theta(N).
+$
+Binary search has worst-case comparison complexity
+$
+T_{\mathrm{binary}}(N) = \Theta(\log_2 N).
+$
+Thus the classical logarithmic speed-up is
+$
+\Theta(N)
+\quad\leadsto\quad
+\Theta(\log N),
+$
+or, equivalently, the asymptotic speed-up factor is
+$
+\frac{T_{\mathrm{linear}}(N)}
+     {T_{\mathrm{binary}}(N)}
+\asymp
+\frac{N}{\log N}.
+$
+So binary search replaces search through \(N\) candidates by search through
+approximately \(\log_2 N\) decisions.
+\item
+$
+\textbf{HNSW / approximate nearest-neighbor search:}
+$
+Let \(N\) be the number of stored vectors and let \(d\) be the ambient
+vector dimension.
+A brute-force nearest-neighbor search computes the distance from the query
+to every stored vector, so its cost is
+$
+T_{\mathrm{brute}}(N,d) = \Theta(Nd).
+$
+HNSW replaces this flat scan by greedy navigation through a hierarchical
+small-world proximity graph.  In the idealized or empirical scaling picture,
+for fixed graph parameters and fixed search width, the query cost is often
+summarized as
+$
+T_{\mathrm{HNSW}}(N,d)
+\approx
+\Theta(d \log N).
+$
+Therefore the corresponding logarithmic speed-up is
+$
+\Theta(Nd)
+\quad\leadsto\quad
+\Theta(d\log N),
+$
+with speed-up factor
+$
+\frac{T_{\mathrm{brute}}(N,d)}
+     {T_{\mathrm{HNSW}}(N,d)}
+\asymp
+\frac{N}{\log N}.
+$
+More explicitly, if \(M\) is the graph degree parameter and
+\(\mathrm{ef}\) is the search-width parameter, one often writes the
+practical cost schematically as
+$
+T_{\mathrm{HNSW}}(N,d;M,\mathrm{ef})
+\approx
+C(M,\mathrm{ef})\, d \log N,
+$
+where \(C(M,\mathrm{ef})\) absorbs the constant-factor cost of graph
+navigation, candidate expansion, and distance evaluations.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}
+{\bf Dictionary word lookup as a ``path finding'' problem.}
+\normalfont
+Because a dictionary is an alphabetically ordered list, finding a path from the word \texttt{"a"} to the word \texttt{"delusion"} in a given dictionary really just reduces to the question of where the right endpoint of the path is, i.e., it reduces to the search problem of finding the location of the entry \texttt{"delusion"} in said dictionary.\footnote{\;i.e., finding the index of the word in the list constituting the dictionary.} In this way, we can reinterpret Theorem \ref{thm: HNSW log speedup} as a statement that a small part of the general pathfinding problem, namely determining the terminal boundary point of a path, picks up a logarithmic speed-up when we put the path determining problem into a hierarchical tower of quotient look-up problems.
+
+The punchline here is that, in the same way that binary search and quotient-tower HNSW give a logarithmic speed-up in {\em movement over a space} by using a system for {\em hierarchically skipping over whole regions of the space} $X$, the \texttt{state\_collapser} package gives a logarithmic speed-up in {\em RL policy trainin} by using a system for {\em hierarchically skipping over whole regions of the associated path space}
+\end{remark}
+
+\begin{example}
+{\bf Speed-Up  in ML Training from Hierarchical Structure: U-Net/ResNet}
+\normalfont
+[...]
+
+\footnote{\;U-Net projects features into orthogonal subspaces to preserve linear independence $W_1 x + W_2 F(x)$, whereas ResNet pre-collapses these subspaces via forced linear dependence ($W x + W F(x)$). Because feature dimensions frequently mismatch across layers, ML engineers routinely deploy $1 \times 1$ projection convolutions ($W_s x + F(x)$), transforming ResNet's prized ``identity'' shortcut into the exact subspace-collapsing mechanism of a U-Net block and rendering the distinction mathematically vacuous.}
+
+
+\noindent
+{\bf A ResNet and a U-Net are the same thing.}
+A
+
+\begin{figure}[!h]
+    $$
+    \!\!\!\!
+    \includegraphics[scale=.3]{../../assets/images/mathematical_model/unet.png}
+    $$
+    \caption{[...]}
+\end{figure}
+
+[...]
+\end{example}
+
+\begin{theorem}
+[...]
+\end{theorem}
+
+\begin{principle}
+It is misleading, and maybe even ``incorrect,'' to treat examples like Example \ref{ex: counterpoint} as evidence of the following idea.
+\begin{center}
+\begin{minipage}{0.825\textwidth}
+\begin{quote}
+{\bf INCORRECT:}
+``A general RL problem {\em has no hierarchical structure}. That said, lots of real-world RL problems {\em have a hierarchical structure} coming from parameter reduction (dimensional reduction).''
+\end{quote}
+\end{minipage}
+\end{center}
+The present mathematical spec document for the \texttt{state\_collapser} package provides evidence that a better guidign principle for RL work is the following principle.
+\begin{center}
+\begin{minipage}{0.825\textwidth}
+\begin{quote}
+{\bf CORRECTED:}
+``A general RL problem {\em has many non-canonical hierarchical structures}, each coming from a long sequence of arbitrary state/action-collapsing operations. Lots of real-world RL problems {\em have a canonical hierarchical structure}, coming from parameter reduction (dimensional reduction).''
+\end{quote}
+\end{minipage}
+\end{center}
+\end{principle}
+
+\subsection{What does \texttt{state\_collapser} do?}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=.065]{../../assets/images/mathematical_model/main_light.png}
+    \caption{[...]}
+\end{figure}
+
+\begin{remark}
+{\bf What do states in the quotient graph represent?}
+\normalfont
+[IT DOESN'T MEAN ANYTHING OPERATIONALLY AND DOESN'T HAVE TO.] [The critical thing to stress here is that "collapsed states" in quotient tower are an abstraction, and need not represent anything beyond ``complex relationships'' between the original]
+[...]
+\begin{figure}[!h]
+	\centering
+    \includegraphics[scale=.065]{../../assets/images/mathematical_model/speed_up.png}
+    \caption{[...]}
+\end{figure}
+\end{remark}
+
+\section{Abstract environment: The underlying RL problem}
+
+\subsection{Hidden configuration space as a graph}
+We work with a discretized abstraction of some physical system. We define the {\em hidden configuration graph} $H$ of the discretized physical system to be the directed graph
+$$
+H
+\quad=\quad
+\begin{xy}
+(0,0)*+{A}="1";
+(15,0)*+{S}="0";
+{\ar@/^3pt/^{\text{in}} "1", "0"}
+{\ar@/_3pt/_{\text{out}} "1", "0"}
+\end{xy}
+$$
+with node set
+$$
+S\;:=\;\left\{\!\!
+\begin{array}{c}
+\text{all states that the}\\ \text{discretized system}\\ \text{can occupy}
+\end{array}
+\!\!\right\},
+$$
+and with edge set representing the possible {\em primitive actions} or {\em indecomposable transformations} in the system can undergo, such that an edge
+$$
+s_{0}\xrightarrow{\ \ \alpha\ \ }s_{1}
+$$
+exists in $H$ precisely when our physical system admits some primitive action $\alpha$ taking it from state $s_{0}$ to state $s_{1}$. In this case, the {\em in}- and {\em out}-{\em states of} $\alpha$ are
+$$
+\text{in}(\alpha)\;=\;s_{0}\quad\quad\text{and}\quad\quad\text{out}(\alpha)=s_{1}.
+$$
+
+\begin{remark}
+{\bf Possibility of parallel actions.}
+\normalfont
+The possiblity of parallel actions is not especially meaningfui in many RL problems. We tend to think of an action as being equivalent to a state-in state-out pair. But for the purposes of the \texttt{state\_collapser} package, parallel actions leading from and to the same states take on a real-world meaning that problem agnostic hierarchical RL.
+\end{remark}
+
+\begin{remark}
+{\bf ``Hidden'' nature of the state space.}
+\normalfont
+[...Just explain why it's ``hidden'' to reflect realistic industrial RL problems...]
+\end{remark}
+
+\subsection{Time evolution: History traced through configuration space}
+
+The graph $H$ is an abstraction of the notion of "configuration space" or "phase space" of a physical system. Time-evolution of our discretized physical system is equivalent to a directed path in $H$.
+
+For each positive integer $n\in\mathbb{Z}_{>0}$, define the $n$-{\em step interval} $I_{n}$ to be the directed graph with nodes labelled $0$ through $n$ of the form
+$$
+I_{n}\quad:=\quad
+\underset{0}{\bullet}\xrightarrow{\ \ e_{1}\ \ }
+\underset{1}{\bullet}\xrightarrow{\ \ e_2\ \ }
+\underset{2}{\bullet}\xrightarrow{\ \ e_3\ \ }\cdots\xrightarrow{\ \ e_{n}\ \ }
+\underset{n}{\bullet}
+$$
+Then an $n$-{\em step history} of our discretized physical system is an map of directed graphs
+$$
+\gamma:\; I_{n}\;\longrightarrow\;H.
+$$
+The nodes in the domain of $\gamma$ are the {\em time-steps} of the evolution, with the first node counted as {\em step}-$0$ or {\em state}-$0$. Thus, an $n$-step history amounts to a decorated linear graph
+$$
+s_{0}\xrightarrow{\ \ \alpha_1\ \ }s_{1}\xrightarrow{\ \ \alpha_2\ \ }s_{2}\xrightarrow{\ \ \alpha_3\ \ }\cdots\xrightarrow{\ \ \alpha_n\ \ }s_{n},
+$$
+where the $s_{t}$ and $\alpha_{t}$ are states and actions from $H$. Even though a history $\gamma$ is not actually a subgraph of $H$, but instead a map into $H$, we will still sometimes refer to $\gamma$ as {\em a history in} $H$.
+
+\begin{premise}
+The environment that our RL agent navigates \textemdash\ including not just spacial positions and orientations, but also the space of tuples of all agent state variables \textemdash\ admits a natural description as a directed graph of states (as nodes) connected by primitive actions (as edges) \cite[\S2]{Diet} \cite[\S1]{SPS}.
+\end{premise}
+
+\begin{failure}
+[...]
+\end{failure}
+
+
+\begin{remark}
+{\bf [...].}
+\normalfont
+ consisting of all continuous maps from the real interval $[0,\ 1]$ to the space $X$, i.e., all ``paths in $X$'':
+$$
+\bold{Path}(X)\;:=\;C^{0\!}\big([0,1],\ X\big)
+$$
+We equip $\bold{Path}(X)$ with the \href{https://en.wikipedia.org/wiki/Compact-open_topology}{{\em compact-open topology}}. When $X$ happens to be a \href{https://en.wikipedia.org/wiki/Metric_space}{{\em metric space}}, say with metric
+$
+d_{X}:X\!\times\!X\longrightarrow\mathbb{R}_{\ge0},
+$
+we get an induced {\em sup metric}
+$$
+d_{\text{un}}:\bold{Path}(X)\times\bold{Path}(X)\longrightarrow\mathbb{R}_{\ge0}
+$$
+on the associated path space, given by
+$$
+d_\text{un}(\gamma_{1},\ \!\gamma_{2})
+\;:=\;
+\underset{t\in[0,1]}{\text{sup}}
+\ d_{X\!}\big(\gamma_{1\!}(t),\ \!\gamma_{2}(t)\big).
+$$
+In this case, the resulting topology is called the \href{https://en.wikipedia.org/wiki/Uniform_convergence}{\em topology of uniform convergence} on $\bold{Path}(X)$, and it coincides with the compact-open topology.
+
+\end{remark}
+
+
+\subsection{Control Loop: RL agent's executive function}
+
+We assume an agent, guided by some control loop that samples from a trainable policy $\pi(\alpha_{t+1}|\gamma_{t})$. 
+
+\vskip .5cm
+
+\noindent
+[...policy guides action by some wrapper that might sample etc....]
+
+\subsection{Reward Structure: {\em Must be action-local!}}
+
+[...]
+
+Because $s_{t+1}=\text{out}(\alpha_{t+1})$, the singleton  $(\alpha_{t+1})$, the pair $(\alpha_{t+1},s_{t})$, and the triple $(s_{t+1},\alpha_{t+1},s_{t})$ can be interpreted as being equivalent pieces of information.\footnote{\;This is closely related to the idea that ``specifiying a function {\em includes} specifying its domain and codomain.''} We assume that ``{\em reward is computed locally at actions}'' in our RL problem, meaning that the only types of reward the agent receives are:
+\begin{itemize}
+\item {\bf Single action reward:} A {\em reward value} $r(\alpha_{t+1})=r(\alpha_{t+1},s_{t})=r(s_{t+1},\alpha_{t+1},s_{t})$ that depends only on the action $s_{t}\xrightarrow{\ \ \alpha_{t+1}\ }s_{t+1}$. We allow for the possibility that the dependence of reward on action be non-deterministic. For instance, we allow for the possibility that $r$is drawn from some distribution on the reward space $R_{\alpha}$:
+$$
+r(\alpha)\sim\mathcal{P}_{R_{\alpha}}.
+$$
+We also allow for the possibility that the control loop computes $r(\alpha)$ deterministically from $\alpha$.
+\item {\bf Compound action reward:} For the compound action given by a history
+$$
+\gamma\quad=\quad
+s_{0}\xrightarrow{\ \ \alpha_1\ \ }s_{1}\xrightarrow{\ \ \alpha_2\ \ }\cdots\xrightarrow{\ \ \alpha_n\ \ }s_{n},
+$$
+our control loop computes the reward $r(\gamma)$ as a {\em cumulative reward}, meaning that our control loop computes $r(\gamma)$ as some kind of weighted integral of reward over the full history:
+$$
+r(\gamma)
+\quad=\quad
+w_{1}\;r(\alpha_{1})\;+\;w_{2}\;r(\alpha_{2})\;+\;\cdots\;+\;w_{n}\;r(\alpha_{n}),
+$$
+where the weights $w_{t}$, for $0< t\le n$, depend only on their associated time step index $t$.\footnote{\;For example, one common convention in RL is to fix a small, positive real number $\varepsilon\in\mathbb{R}_{>0}$, and define $w_{t}:=(1-\varepsilon)^{n-t}$, so that the cumulative effect of the reward for a given action effectively ``decays with the passage of time.''} 
+\end{itemize}
+Equivalently, for each positive integer $n\in\mathbb{Z}_{>0}$, there exists an ($n$-{\em step}) {\em window weight} vector $w=(w_{t})\in\mathbb{R}^{n}_{>0}$, such that the cumulative reward $r(\gamma)$ associated to the composition action $\gamma$ is
+$$
+r(\gamma)
+\quad=\quad
+\int_{I_n}\!\!w_{t}\!\cdot\!r(\alpha_{t})\;dt
+$$
+
+The primary reason we make these assumptions on our reward function is the following lemma, whose proof is obvious:
+
+\begin{lemma}\label{lemma: totals commute}
+When rewards for compound actions are cumulative over action-local rewards, the total reward integral commutes with integrals over histories of a fixed step length. Specifically, for any finite collection $\Gamma_{\!n}$ of $n$-step histories in $H$, we have
+$$
+\int_{\Gamma_{\!n}}
+\ \underset{\text{over one history}}{\underset{\text{cummulative reward}}{\underbrace{\ 
+\int_{I_{n}}w_{t}\cdot\!r\big(\gamma(e_{t})\big)\;dt
+\ }}}\ 
+d\gamma
+\quad=\quad
+\int_{I_{n}}
+\ \underset{\text{over all histories}}{\underset{\text{total reward, this step,}}{\underbrace{\ 
+\int_{\Gamma_{\!n}}w_{t}\cdot\!r\big(\gamma(e_{t})\big)\;d\gamma
+\ }}}\ 
+dt
+$$
+\end{lemma}
+
+Lemma \ref{lemma: totals commute} will play a central role, in what follows, establishing that the reward structure of our RL problem ``descends'' down the problem-agnostic hierarchical RL tower we will construct below.
+
+\vskip .25cm
+
+We being by describing the uppermost tier of this tower \textemdash\ its $0^\text{th}$-{\em tier} \textemdash\ as a dynamically constructed auxilliary, decorated copy of the hidden configuration graph $H$.
+
+\section{Dynamic State Space Graph}
+[...]
+$$
+\begin{xy}
+(-10,0)*+{\ H^{0}_{t}\ }="Ht";
+(10,0)*+{G^{0}_{t}\ }="Gt";
+(0,-15)*+{H}="H";
+{\ar@{^{(}->} "Ht"; "Gt"}
+{\ar@{^{(}->} "Ht"; "H"}
+{\ar@{^{(}->} "Gt"; "H"}
+\end{xy}
+$$
+[...]
+
+\subsection{Explored subgraph}
+Choose a large positive integer $T>\!\!>0$ so that all histories in $H$, including all training episodes, have at most $T$ time steps. 
+
+If we fix any history $\gamma:I_{T}\longrightarrow H$, then for all integers $0<t\le T$, we have $I_{t}\subset I_{T}$, and thus we can consider the evaluation of $\gamma$ on the subgraph $I_{t}$. We define the {\em explored subgraph at time step} $t$ ({\em for the history $\gamma:I_{T}\longrightarrow H$}) to be the subgraph
+$$
+H^{0}_{t}\;:=\;\gamma(I_{t})\quad\subset\quad H.
+$$
+It is the part of $H$ that our agent has traversed at the conclusion of step $t$.
+
+\begin{remark}
+{\bf Memories of an explored subgraph.}
+\normalfont
+Because our RL agent has, at step $t$, traversed all edges and nodes of $H$ that appear in $H^{0}_{t}$, nothing about the graph $H^{0}_{t}$ is hidden. We can, at all time steps $t$, take the explored subgraph $H^{0}_{t}$ to be something that exists in memory.
+\end{remark}
+
+\subsection{1-Hop exploration vista}
+Each node in $H^{0}_{t}$ corresponds to a unique node in the hidden configuration graph $H$ where our agent stood at some moment $u$ before time step $t+1$. At this moment $u\le t$, whenever it occurred, we imagine our RL agent taking a moment to pause and ``take in the view at node $s_{u}$'' by recording the $1$-hop outgoing neighborhood of $s_{u}$, i.e., by recording all states reachable from state $s_{u}$ by a single primitive action:
+$$
+\mathcal{N}^{\text{out}\!}_{1}(s_{u})\quad\subset\quad H
+$$
+We define the {\em vista} at time step $t$ to the the union of these forward trajectory $1$-hop neighborhoods of the visited states:
+$$
+G^{0}_{t}
+\quad:=\;\;
+\bigcup_{s\in H^{0}_{t}}\!\mathcal{N}^{\text{out}\!}_{1}(s).
+$$
+Since every edge in $H^{0}_{t}$ is in the forward trajectory $1$-hop neighborhood of some node $s$ in $H^{0}_{t}$, we have $H^{0}_{t}\subset G^{0}_{t}$.
+
+\subsection{Message passing}
+
+We equip the graph $G^{0}_{t}$ with one aditional structure: along every edge $s_{\text{in}}\xrightarrow{\ \ \alpha\ \ }s_{\text{out}}$ in $G^{0}_{t}$, we reserve the ability to pass the following two messages.
+\begin{enumerate}
+\item
+We can pass a message, consisting of  $\mathcal{N}^{\text{out}\!}_{1}(s_{\text{in}})$ itself, ``{\em out}'' or ``{\em forward}'' along $\alpha$ so that a new copy of $\mathcal{N}^{\text{out}\!}_{1}(s_{\text{in}})$, denoted $\alpha_\ast\mathcal{N}^{\text{out}\!}_{1}(s_{\text{in}})$, decorates $s_{\text{out}}$:
+$$
+\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!
+\begin{xy}
+(0,0)*+{\mathcal{N}^{\text{out}\!}_{1}(s_{\text{in}})}="1";
+(25,0)*+{\alpha_\ast\mathcal{N}^{\text{out}\!}_{1}(s_{\text{in}})\!\!\!\!\!\!}="2";
+(0,-20)*+{s_\text{in}\!\!\!\!}="3";
+(25,-20)*+{\ \ s_\text{out}}="4";
+{\ar@{|->}^{\alpha_\ast} "1"; "2"}
+{\ar@{--} "1"; "3"}
+{\ar@{--} "2"; "4"}
+{\ar@{->}_{\!\!\!\!\!\!\!\!\alpha} "3"; "4"}
+\end{xy}
+$$
+\item
+We can pass a message, consisting of  $\mathcal{N}^{\text{out}\!}_{1}(s_{\text{out}})$ itself, ``{\em in}'' or ``{\em backward}'' along $\alpha$ that a new copy of $\mathcal{N}^{\text{out}\!}_{1}(s_{\text{out}})$, denoted $\alpha^{\ast}\mathcal{N}^{\text{out}\!}_{1}(s_{\text{out}})$, decorates $s_{\text{in}}$:
+$$
+\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!\!
+\!\!\!\!\!\!\!\!\!\!\!\!
+\begin{xy}
+(0,0)*+{\!\!\alpha^{\ast}\mathcal{N}^{\text{out}\!}_{1}(s_{\text{out}})}="1";
+(25,0)*+{\mathcal{N}^{\text{out}\!}_{1}(s_{\text{out}})\!\!\!\!\!\!\!\!\!}="2";
+(0,-20)*+{s_\text{in}\!\!\!\!}="3";
+(25,-20)*+{\ \ s_\text{out}}="4";
+{\ar@{|->}_{\ \ \alpha^\ast\!\!\!\!\!\!} "2"; "1"}
+{\ar@{--} "1"; "3"}
+{\ar@{--} "2"; "4"}
+{\ar@{->}_{\!\!\!\!\!\!\!\!\alpha} "3"; "4"}
+\end{xy}
+$$
+\end{enumerate}
+
+\begin{remark}
+{\bf Computational issue: Where is 1-hop knowledge stored?}
+\normalfont
+[...]
+\end{remark}
+
+\begin{premise}
+The hidden configuration graph stores a local copy of $\mathcal{N}^{\text{out}\!}_{1}(s)$ that is queryable by any agent in state $s$.
+\end{premise}
+
+\begin{failure}
+[...]
+\end{failure}
+
+\section{Quotient States and Quotient Graphs}
+
+\subsection{Contraction}
+
+A familiar construction from graph graph theory lets us form a quotient graph
+$$
+G^{1}_{t}\;:=\;G^{0}_{t}/E
+$$
+by choosing any subset of edges $E\subset G^{0}_{t}$ and then successively contracting $G^{0}_{t}$ along every edge $E$ [...DEAL WITH LOOPS...]. This quotient graph comes with a canonical surjective ``quotienting'' map
+$$
+\begin{xy}
+(0,0)*+{G^{0}_{t}}="1";
+(15,0)*+{G^{1}_{t}}="2";
+{\ar@{->>}^{\text{pr}^{0}_{1}} "1"; "2"}
+\end{xy}
+$$
+In this way, every path $\gamma_{0}:I_{n}\longrightarrow G^{0}_{t}$ \textemdash\ which is necessarily equivalent to a history $\gamma:I_{n}\longrightarrow H$ \textemdash\ induces a path
+$$
+\gamma_{1}\;:=\;\text{pr}^{0}_{1}{\small\ \!\circ\ \!}\gamma_0:\; I_{n}\longrightarrow G^{1}_{t}
+$$
+
+\subsection{Direct-image rewards}
+[...]
+
+$$
+r_{1}(\overline{\alpha})
+\quad\!\!:=\quad
+\frac{1}{\# (\text{pr}^{0}_{1})^{-1}(\overline{\alpha})}
+\ \ 
+\underset{\!\!\!\!{(\text{pr}^{0}_{1})}^{\!-1\!}(\overline{\alpha})}{\int}\!\!\!\! r(\beta)\;d\beta
+$$
+
+
+[...]
+$$
+r_{1}(\gamma_{1})\;:=\;
+\int_{I_{n}}
+$$
+
+\subsection{Tower Construction via Message Passing}
+
+\begin{figure}[!h]
+	\centering
+    \includegraphics[scale=.51]{../../assets/images/mathematical_model/realtime_tower.png}
+    \caption{[...]. It's not a coincidence that it looks a little like a U-Net}
+\end{figure}
+
+\section{Training-Time Control}
+
+\subsection{Always Be Closing}
+
+\begin{enumerate}
+\item
+A
+\end{enumerate}
+
+\begin{figure}[!h]
+$$
+\includegraphics[scale=.475]{../../assets/images/mathematical_model/train_explore.png}
+$$
+    \caption{[...]}
+\end{figure}
+
+\subsection{Logarithmic speed-up in path space}
+
+\begin{theorem}
+\begin{enumerate}
+\item
+Average training time in the dynamically growing $G^{0}_{t}$ grows, with respect to both {\em maximum episode length} $T$ and {\em exploratory time step} $t\le T$, like truncations of the power series
+$$
+\sum^{T}_{0\le k \le T}\mathbb{E}_{s\sim\mathcal{U}_{H^{0}_{t}}}\big[\deg^{\text{{\normalfont out}}}(s)\big]^{k}
+$$
+\item
+In the limit, as $T\to\infty$ and $t\to\infty$, we have the asymptotic identity
+\begin{equation}\label{eq: asymptotic measure}
+\underset{t\to\infty}{\operatorname{lim}}\sum^{\infty}_{k=0}\mathbb{E}_{s\sim\mathcal{U}_{H^{0}_{t}}}\big[\deg^{\text{{\normalfont out}}}(s)\big]^{k}
+\quad\sim\quad
+\sum^{\infty}_{k=0}\mathbb{E}_{s\sim H}\big[\mathcal{A}(s)\big]^{k}
+\end{equation}
+\item
+{\bf Non-hierarchical RL ``learn-speed'':}
+Define the {\em action expectation number} for a given RL problem to be this value
+$$
+N_\text{\!{\normalfont \ae}}\;:=\;\mathbb{E}_{s\sim H}\big[\mathcal{A}(s)\big],
+$$
+so that the right hand side of \eqref{eq: asymptotic measure} becomes a function in $N_\text{\!{\normalfont \ae}}$:
+$$
+\mathbb{E}\text{{\normalfont Vol}}_\text{{\normalfont Path}}(N_\text{\!{\normalfont \ae}})
+\;:=\;\sum_{k=0}^{\infty}N_\text{\!{\normalfont \ae}}^{k}
+$$
+\item
+{\bf Logarithmic speed-up from {\bf\texttt{state\_collapser}}:}
+In the limit, as $T\to\infty$ and $t\to\infty$, average training time in the {\normalfont \texttt{state\_collapser}} tower is asymptotic to
+$$
+\log\big(\mathbb{E}\text{{\normalfont Vol}}_\text{{\normalfont Path}}(N_\text{\!{\normalfont \ae}})\big).
+$$
+By \eqref{eq: asymptotic measure}, this implies that the problem-agnostic hierarchical RL imposed by {\normalfont \texttt{state\_collapser}} provides a logarithmic speed-up in RL ``learn speed.''
+\end{enumerate}
+\end{theorem}
+
+\subsection{Skipping control}
+
+[...Think binary search, how you actually don't try to reconstruct whole path]
+
+\subsection{Future direction: higher-homotopy rewards}
+
+\bibliographystyle{plain}
+\bibliography{mathematical_model}
+
+\end{document}

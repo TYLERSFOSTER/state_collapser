@@ -1,0 +1,97 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "state-collapser"
+version = "0.6.0"
+description = "Quotient-tower runtime and training surfaces for hierarchical structure in transition systems."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11,<3.13"
+authors = [
+  { name = "Tyler Foster" },
+]
+keywords = [
+  "gymnasium",
+  "hierarchical-reinforcement-learning",
+  "pytorch",
+  "reinforcement-learning",
+  "robotics",
+  "ros2",
+  "state-space",
+]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Typing :: Typed",
+]
+dependencies = [
+    "pillow>=12.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2.2",
+  "mypy>=1.18.0",
+  "pre-commit>=4.3.0",
+  "pytest>=8.4.0",
+  "pytest-cov>=7.0.0",
+  "ruff>=0.13.0",
+  "twine>=6.2.0",
+]
+rl = [
+  "gymnasium>=1.0.0",
+  "numpy>=2.0.0",
+]
+ml = [
+  "torch>=2.4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/TYLERSFOSTER/state_collapser"
+Repository = "https://github.com/TYLERSFOSTER/state_collapser"
+Issues = "https://github.com/TYLERSFOSTER/state_collapser/issues"
+Changelog = "https://github.com/TYLERSFOSTER/state_collapser/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/state_collapser"]
+
+[tool.pytest.ini_options]
+addopts = [
+  "--strict-markers",
+  "--strict-config",
+]
+testpaths = ["tests"]
+markers = [
+  "requires_torch: tests that require the torch optional dependency",
+  "requires_gymnasium: tests that require the gymnasium optional dependency",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "F",
+  "I",
+  "B",
+  "UP",
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_configs = true
+mypy_path = "src"
+packages = ["state_collapser"]

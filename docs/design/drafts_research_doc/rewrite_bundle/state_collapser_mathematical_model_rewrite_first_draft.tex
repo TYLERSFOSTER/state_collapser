@@ -1,0 +1,699 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{pagecolor}
+\pagecolor{white}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    citecolor=blue!50!black,
+    urlcolor=blue!50!black,
+    pdftitle={state_collapser: A quotient-tower model for path-space reduction in hierarchical reinforcement learning},
+    pdfauthor={Tyler Foster}
+}
+
+\title{The \texttt{state\_collapser} package:\\A quotient-tower model for path-space reduction in hierarchical reinforcement learning}
+\author{Tyler Foster\\[2pt]\small Draft rewrite prepared with LLM assistance}
+\date{First serious rewrite draft -- May 17, 2026}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{assumption}[definition]{Assumption}
+\newtheorem{construction}[definition]{Construction}
+\newtheorem{example}[definition]{Example}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{warning}[definition]{Warning}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{principle}[definition]{Principle}
+
+\newcommand{\State}{\mathsf{S}}
+\newcommand{\Act}{\mathsf{A}}
+\newcommand{\src}{\operatorname{src}}
+\newcommand{\tgt}{\operatorname{tgt}}
+\newcommand{\Path}{\operatorname{Path}}
+\newcommand{\Hist}{\operatorname{Hist}}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\Vol}{\operatorname{Vol}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\PVol}{\mathcal{P}\text{-}\mathrm{Vol}}
+\newcommand{\TV}{\operatorname{TVol}}
+\newcommand{\diam}{\operatorname{diam}}
+\newcommand{\im}{\operatorname{im}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\cost}{\operatorname{Cost}}
+\newcommand{\fiber}{\operatorname{Fib}}
+\newcommand{\quot}{\mathbin{/}}
+\newcommand{\localfigdir}{assets/images/mathematical_model}
+\newcommand{\projectfigdir}{../../assets/images/mathematical_model}
+
+% Prefer local bundled figures when this draft is compiled from the zip.
+% If this file is dropped into docs/design/ inside the repository, fall back
+% to the repository's existing assets directory. If neither exists, preserve
+% the figure slot as an explicit placeholder rather than silently deleting it.
+\newcommand{\safeincludegraphics}[2][]{%
+  \IfFileExists{\localfigdir/#2}{%
+    \includegraphics[#1]{\localfigdir/#2}%
+  }{%
+    \IfFileExists{\projectfigdir/#2}{%
+      \includegraphics[#1]{\projectfigdir/#2}%
+    }{%
+      \fbox{\begin{minipage}[c][1.55in][c]{0.82\linewidth}
+        \centering\small Figure file preserved but not found in this build:\\
+        \texttt{#2}
+      \end{minipage}}%
+    }%
+  }%
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\texttt{state\_collapser} is a research package for inducing hierarchical structure in reinforcement-learning problems that do not arrive with an obvious human-readable subtask decomposition.  The package does not try to discover a canonical hierarchy.  Instead it constructs a non-canonical quotient tower by recursively contracting discovered state/action graph structure.  The mathematical object that this document isolates is not the state space alone, but the reward-labelled path space implicitly sampled by reinforcement learning.  We introduce a finite-horizon path-volume quantity, denoted \(\PVol\), as a bookkeeping invariant for the effective size of this rollout space.  We then formulate a quotient-tower theorem: under explicit coverage, reward-locality, liftability, and balanced-refinement assumptions, a quotient tower replaces flat exploration of a reward-labelled path set of size \(\PVol\) by a coarse-to-fine address/refinement problem whose search term is logarithmic, or multilevel-logarithmic, in that path volume, up to residual lift and approximation errors.  The theorem is deliberately stated as an idealized search-complexity theorem rather than as an unconditional training-time theorem.  This is the strongest version currently justified by the package design.
+\end{abstract}
+
+\paragraph{Status of this draft.}
+This is a first serious rewrite of the mathematical model.  It is meant to be merged back into the repository source, not read as a final paper.  The theorem below makes explicit which assumptions are mathematical, which are algorithmic, and which must be validated experimentally by future instrumentation.  The original figure locations are preserved; this standalone zip also bundles extracted figure images under the same filenames used by the repository.
+
+\paragraph{Attribution and LLM-assisted transition.}
+The initial mathematical and engineering idea is Tyler Foster's.  This rewrite organizes that idea into a theorem-driven mathematical specification with assistance from GPT-5.5 Pro.  The intended role of the assistance is not to replace the authorial claim, but to turn an engineer's correct geometric intuition into a document closer to the mathematician's version: definitions first, assumptions stated, theorem scoped, proof separated from interpretation, and failure modes made visible.
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+\section{Executive summary}
+
+The package is built around two observations.  It is informed by standard reinforcement-learning and hierarchical-reinforcement-learning frameworks \cite{SBRL,SPS,Diet,PSTQ,HutsebautBuysseHRLSurvey}, by quotient-style graph constructions and HNSW-like multiscale search intuitions \cite{MalikThesis,MalkovYashuninHNSW2018,CLRS3}, and by recent multiscale CNN training work whose gradient estimator is best interpreted here as a tangent-level analogue rather than as the RL theorem itself \cite{AhamedZakariaeiHaberEliasofMGE2026}.
+
+First, reinforcement learning is not only a problem about states.  Once a policy is trained from rollouts, the effective labelled dataset is a virtual collection of reward-labelled histories.  In a finite graph model this is a finite-horizon path space
+\[
+    \Path_{\le K}(H)=\coprod_{0\le k\le K}\Path_k(H),
+\]
+where \(H\) is the hidden state/action graph and \(K\) is the episode horizon.  The size of this object typically grows like a truncated exponential series in the effective branching degree.  This is the reason a seemingly local control problem can become a hard learning problem.
+
+Second, a hierarchy need not be a hierarchy of meaningful subtasks.  A hierarchy can be a tower of quotient graphs
+\[
+    G^0_t \xrightarrow{q^0_t} G^1_t \xrightarrow{q^1_t} \cdots \xrightarrow{q^{m-1}_t} G^m_t,
+\]
+constructed by contracting discovered state/action structure.  A state in a quotient graph may have no standalone operational meaning.  It is useful if it supports two operations: rewards descend to it in a statistically meaningful way, and its decisions lift back to executable fine-scale behavior.
+
+The main theorem in this draft is therefore not: ``\texttt{state\_collapser} always speeds up RL.''  That would be false without strong assumptions.  The theorem is instead: if a dynamically constructed quotient tower gives a balanced, liftable, reward-compatible address system for the reward-labelled path space that matters to training, then the search term in the training problem is controlled by the logarithmic length of that address system rather than by the flat path volume.  The theorem says what the package is trying to make true in practice.
+
+\section{The base model: reinforcement learning as path-space learning}
+
+\subsection{Hidden configuration graph}
+
+\begin{definition}[directed state/action multigraph]
+A finite directed state/action graph is a tuple
+\[
+    H=(\State_H,\Act_H,\src,\tgt),
+\]
+where \(\State_H\) is a finite set of states, \(\Act_H\) is a finite set of primitive actions, and
+\[
+    \src,\tgt:\Act_H\to \State_H
+\]
+record the input and output states of an action.  We write
+\[
+    s \xrightarrow{\alpha} s'
+\]
+when \(\src(\alpha)=s\) and \(\tgt(\alpha)=s'\).  Parallel actions are allowed.
+\end{definition}
+
+Allowing parallel actions is important.  In many textbook graph abstractions an action is identified with its ordered pair of endpoint states.  For a package whose job is to learn quotient structure, this identification is too aggressive.  Two actions may have the same endpoints but different costs, rewards, constraints, safety margins, metadata, or lift behavior.  They should remain distinct unless a contraction or abstraction policy intentionally identifies them.
+
+\begin{assumption}[finite-horizon graph abstraction]\label{ass:graph}
+The environment being controlled admits, at the scale seen by the training loop, a finite or locally finite directed state/action graph approximation \(H\).  Training episodes have a fixed maximum length \(K<\infty\).
+\end{assumption}
+
+The finite-horizon assumption is not cosmetic.  Infinite formal series such as \(\sum_{k\ge 0} d^k\) diverge for every \(d>1\).  Since actual RL training uses finite episode horizons, the mathematical model should use the finite truncation from the beginning.
+
+\subsection{Histories as graph maps}
+
+For every \(k\ge 0\), let \(I_k\) be the directed interval graph
+\[
+    0 \xrightarrow{e_1} 1 \xrightarrow{e_2} \cdots \xrightarrow{e_k} k.
+\]
+
+\begin{definition}[history]
+A \(k\)-step history in \(H\) is a graph map
+\[
+    \gamma:I_k\to H.
+\]
+Equivalently, it is a sequence
+\[
+    \gamma=(s_0\xrightarrow{\alpha_1}s_1\xrightarrow{\alpha_2}\cdots\xrightarrow{\alpha_k}s_k).
+\]
+The set of all such histories is denoted \(\Path_k(H)\), and
+\[
+    \Path_{\le K}(H)=\coprod_{k=0}^{K}\Path_k(H)
+\]
+is the finite-horizon path space.
+\end{definition}
+
+This is the discrete analogue of the usual topological path space
+\[
+    \Path(X)=C^0([0,1],X).
+\]
+The package works with finite graph approximations, but the geometric point is the same: the object being sampled by rollout training is a space of ways of moving through the environment, not merely the environment itself.
+
+\subsection{Policies and the virtual rollout database}
+
+A policy \(\pi_\theta\) assigns to each history, or to a chosen observation of that history, a probability distribution over admissible next actions.  Together with the environment transition mechanism and reward computation, it induces a probability distribution
+\[
+    \mu_{\theta,k}\in \Delta(\Path_k(H))
+\]
+over \(k\)-step histories.  A training run samples from these distributions and uses the resulting reward-labelled histories to update \(\theta\).
+
+\begin{definition}[virtual rollout database]
+For a fixed policy \(\pi_\theta\), horizon \(K\), and reward mechanism \(R\), the virtual rollout database is the formal labelled object
+\[
+    \mathcal{D}_{\theta,K}(H,R)=\{(\gamma,R(\gamma)):\gamma\in \Path_{\le K}(H)\},
+\]
+together with the policy-dependent query distribution \(\mu_{\theta,\le K}\).  It is virtual because the table is normally never materialized.  It is sampled on demand by executing rollouts.
+\end{definition}
+
+This viewpoint rephrases the familiar RL picture.  The policy is not only an agent moving through a landscape.  It is also part of the query processor for a virtual labelled dataset whose rows are reward-labelled histories.  The difficulty of training is therefore strongly affected by the size and geometry of the path space being queried.
+
+\section{Path-volume}
+
+\subsection{Counting paths}
+
+Let
+\[
+    N_k(H)=|\Path_k(H)|
+\]
+when \(H\) is finite.  The flat finite-horizon path count is
+\[
+    N_{\le K}(H)=\sum_{k=0}^{K}N_k(H).
+\]
+If every state had exactly \(d\) outgoing actions and all histories were admissible, then \(N_k(H)\) would scale like \(d^k\), up to the number of initial states.  Real environments differ from this naive model because of constraints, invalid moves, symmetries, early termination, exploration rules, policy bias, and reward irrelevance.
+
+\begin{definition}[path-volume series]\label{def:pvol}
+Fix a reference branching number \(d\ge 1\).  The finite-horizon path-volume series of \(H\) at horizon \(K\) is
+\[
+    \PVol_H(d;K)=\sum_{k=0}^{K}c_k d^k,
+\]
+where
+\[
+    c_k=\frac{N_k(H)}{d^k}
+\]
+when \(d>0\).  Equivalently,
+\[
+    \PVol_H(d;K)=N_{\le K}(H).
+\]
+The coefficients \(c_k\) are not decoration; they record all deviations from the naive \(d^k\) branching model.
+\end{definition}
+
+The notation is intentionally redundant.  The expression \(\sum c_k d^k\) keeps the branching-growth intuition visible, while the equality with \(N_{\le K}(H)\) makes the invariant precise.
+
+\begin{definition}[policy-effective path-volume]
+For a policy \(\pi_\theta\), define the effective support at length \(k\) by
+\[
+    N_k^{\theta,\varepsilon}(H)=\left|\left\{\gamma\in \Path_k(H):\mu_{\theta,k}(\gamma)\ge \varepsilon\right\}\right|
+\]
+for a threshold \(\varepsilon>0\).  The \(\varepsilon\)-effective path-volume is
+\[
+    \PVol_{H}^{\theta,\varepsilon}(K)=\sum_{k=0}^{K} N_k^{\theta,\varepsilon}(H).
+\]
+An entropy-based variant replaces support size by \(\exp(H(\mu_{\theta,k}))\).  These variants are better suited to instrumentation than the raw count whenever the policy distribution is highly non-uniform.
+\end{definition}
+
+The raw path-volume is a worst-case geometric object.  The policy-effective path-volume is a training metric.  Both are useful.  The package should eventually estimate both.
+
+\begin{warning}[do not use the infinite series as a theorem]
+The informal expression \(\sum_{k\ge 0}N_{\mathrm{ae}}^k\), where \(N_{\mathrm{ae}}\) is an expected action count, is a good heuristic for path-space explosion but not a finite complexity invariant unless it is truncated or discounted.  The theorem below uses \(K<\infty\), or a discounted variant, throughout.
+\end{warning}
+
+\subsection{Why path-volume matters}
+
+In supervised learning the dataset is often materialized, or at least its size is legible.  In RL the dataset is generated by interaction.  The learner does not merely fit a table of states.  It samples histories, receives rewards, and updates a policy.  Thus the ambient burden is closer to
+\[
+    \Path_{\le K}(H)
+\]
+than to \(\State_H\).  Even when rewards are local, credit assignment and exploration are path-space phenomena.
+
+The counterpoint example is a useful mental model.  If a one-voice melody has roughly \(d=5\) locally reasonable continuations at each step, then the number of length-\(K\) melodic continuations already scales like \(5^K\).  In two or three voices the local branching factor can increase dramatically.  The pedagogical hierarchy of counterpoint--melody first, then two-part writing, then three-part writing--is a human-discovered way to avoid learning the full path space flatly.
+
+\begin{figure}[!ht]
+    \centering
+    \safeincludegraphics[width=.72\linewidth]{HRL_counterpoint.png}
+    \caption{Counterpoint as a hidden hierarchy: one-part structure supports two-part structure, which supports three-part structure.  The package does not require such a human-readable hierarchy, but this example explains why hierarchy matters.}
+    \label{fig:counterpoint}
+\end{figure}
+
+\section{Two ways to cut path space down}
+
+There are two broad strategies for reducing path-space difficulty.
+
+\subsection{Localize: replace paths by finite-order local data}
+
+One can reduce the burden by refusing to model full histories.  Classical mechanics is the canonical example: instead of storing a particle's whole future path, one models instantaneous data such as position and velocity and then integrates a differential equation.  In geometric language, one replaces path space by tangent, jet, or finite-memory data.
+
+For an environment space \(X\), the tangent bundle
+\[
+    TX\to X
+\]
+can be read as a first-order local shadow of a path-space object.  Higher jet bundles retain more local information.  Recurrent policies, finite-memory state augmentation, eligibility traces, and local Markov abstractions are machine-learning analogues of this localization strategy.
+
+\subsection{Hierarchize: put paths into a quotient tower}
+
+The second strategy is the strategy of this package.  Instead of replacing paths by instantaneous data, construct a tower of coarser spaces so that decisions are made coarse-to-fine.  The point is not to find a canonical subtask decomposition.  The point is to impose an address system on the path space.
+
+The analogy with decimal notation and binary search is exact enough to be useful.  A set with \(N\) elements can be scanned in \(\Theta(N)\) time, but if it is organized by a balanced address system, locating an element takes \(\Theta(\log N)\) address decisions.  HNSW-style graph search exploits a related multiscale idea for approximate nearest-neighbor search.  The proposal here is that quotient graph towers can do analogous work for reward-labelled rollout spaces.
+
+\begin{figure}[!ht]
+    \centering
+    \safeincludegraphics[width=.42\linewidth]{sparse_base_10.png}
+    \caption{A positional address system replaces flat enumeration by logarithmic-length descriptions.}
+    \label{fig:sparse-base}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \safeincludegraphics[width=1.02\linewidth]{dict_lookup.png}
+    \caption{Dictionary lookup as a path endpoint problem organized by a prefix tower.  Prefixes are quotient addresses.}
+    \label{fig:dictionary}
+\end{figure}
+
+\section{Rewards and quotient compatibility}
+
+\subsection{Action-local rewards}
+
+\begin{definition}[action-local reward]
+An action-local reward on \(H\) is a function, random variable, or conditional distribution attached to actions:
+\[
+    r:\Act_H\to \R
+\]
+or more generally \(r(\alpha)\sim P_{\alpha}\).  For a history
+\[
+    \gamma=(s_0\xrightarrow{\alpha_1}s_1\xrightarrow{\alpha_2}\cdots\xrightarrow{\alpha_k}s_k),
+\]
+a cumulative reward has the form
+\[
+    R(\gamma)=\sum_{i=1}^{k} w_i r(\alpha_i),
+\]
+where the weights \(w_i\) depend only on the time index, horizon, or a fixed discount rule.
+\end{definition}
+
+This hypothesis is strong but natural.  It includes many standard discounted-return models.  It excludes reward functions whose value depends on an arbitrary global property of the whole history unless that property is first encoded into the state/action graph.
+
+\subsection{Direct-image rewards}
+
+Let
+\[
+    q:G\to \bar G
+\]
+be a quotient map of directed state/action graphs.  At the action level, \(q\) sends fine actions to coarse actions or to degenerate/stutter moves created by contraction.  For the cleanest statement, first ignore stutters and assume each fine action maps to a coarse action.
+
+\begin{definition}[direct-image reward]
+Let \(r:\Act_G\to \R\) be an action-local reward and let \(\bar\alpha\in\Act_{\bar G}\).  The direct-image reward is the conditional expectation
+\[
+    (q_*r)(\bar\alpha)=\E\bigl[r(\alpha)\mid q(\alpha)=\bar\alpha\bigr],
+\]
+computed with respect to a chosen reference distribution on the fine actions lying above \(\bar\alpha\).  In an empirical implementation this reference distribution is the rollout distribution observed in the fiber.
+\end{definition}
+
+\begin{proposition}[reward descent by conditional expectation]\label{prop:reward-descent}
+Let \(q:G\to \bar G\) be a graph quotient.  Suppose rewards are action-local and cumulative.  Fix a coarse history
+\[
+    \bar\gamma=(\bar s_0\xrightarrow{\bar\alpha_1}\cdots\xrightarrow{\bar\alpha_k}\bar s_k)
+\]
+and condition on fine histories \(\gamma\) of the same length satisfying \(q\gamma=\bar\gamma\).  Then
+\[
+    \E\bigl[R(\gamma)\mid q\gamma=\bar\gamma\bigr]
+    =\sum_{i=1}^{k} w_i (q_*r)(\bar\alpha_i).
+\]
+\end{proposition}
+
+\begin{proof}
+By cumulative action-locality,
+\[
+    R(\gamma)=\sum_{i=1}^{k}w_i r(\alpha_i).
+\]
+Taking conditional expectation given \(q\gamma=\bar\gamma\) and using linearity gives
+\[
+    \E[R(\gamma)\mid q\gamma=\bar\gamma]
+    =\sum_{i=1}^{k}w_i\E[r(\alpha_i)\mid q(\alpha_i)=\bar\alpha_i]
+    =\sum_{i=1}^{k}w_i(q_*r)(\bar\alpha_i).
+\]
+\end{proof}
+
+\begin{remark}[stutters and contracted edges]
+When edge contraction creates degenerate moves, the quotient path is obtained by compressing or recording stutters.  The same proof applies after choosing a convention: either retain stutter actions with their own reward statistics, or remove them and add their reward contribution to the adjacent quotient edge or to a fiber correction term.  The implementation should record which convention is used.
+\end{remark}
+
+\section{Dynamic discovered graphs}
+
+The package cannot assume that the whole hidden graph \(H\) is known.  It constructs a runtime graph from what has been observed.
+
+\begin{definition}[explored graph]
+Fix a rollout history \(\gamma:I_K\to H\).  At time \(t\le K\), the explored graph is
+\[
+    H^0_t=\gamma(I_t)\subseteq H.
+\]
+It contains the states and actions actually traversed so far.
+\end{definition}
+
+\begin{definition}[one-hop vista]
+For a state \(s\in H\), let \(N^{\mathrm{out}}_1(s)\) be its outgoing one-hop action neighborhood.  The vista graph at time \(t\) is
+\[
+    G^0_t=\bigcup_{s\in H^0_t}N^{\mathrm{out}}_1(s).
+\]
+Thus \(H^0_t\subseteq G^0_t\subseteq H\).  It contains both the traversed path and the immediately visible next actions from visited states.
+\end{definition}
+
+\begin{construction}[message-passing decoration]
+Each edge \(s\xrightarrow{\alpha}s'\) in \(G^0_t\) may carry local messages forward or backward.  A basic message is the outgoing neighborhood of one endpoint, transported to the other endpoint.  These messages are not part of the hidden environment; they are runtime annotations used to decide which edges or local subgraphs should be contracted.
+\end{construction}
+
+\begin{figure}[!ht]
+    \centering
+    \safeincludegraphics[width=.92\linewidth]{main_light.png}
+    \caption{The dynamic graph picture: a discovered graph is decorated, locally contracted, and organized into quotient states.  Collapsed states are structural abstractions, not necessarily executable states.}
+    \label{fig:main-light}
+\end{figure}
+
+\section{Quotient graphs and towers}
+
+\subsection{Contractions}
+
+\begin{definition}[edge contraction quotient]
+Let \(G\) be a directed multigraph and let \(E_c\subseteq \Act_G\) be a set of actions selected for contraction.  The quotient graph
+\[
+    G\quot E_c
+\]
+is obtained by imposing the smallest equivalence relation on states for which \(\src(\alpha)\sim \tgt(\alpha)\) for every \(\alpha\in E_c\), then pushing forward the remaining actions to equivalence classes.  Loops and parallel actions are retained unless the implementation explicitly simplifies them.
+\end{definition}
+
+A contraction policy may be random, deterministic, learned, trust-weighted, reward-weighted, geometry-aware, or purely exploratory.  The theorem below does not require a unique correct contraction policy.  It requires only that the induced tower satisfy measurable lift and refinement assumptions on the path set being controlled.
+
+\subsection{The tower}
+
+\begin{definition}[runtime quotient tower]
+At time \(t\), a runtime quotient tower is a sequence
+\[
+    \mathcal{T}_t:
+    G^0_t \xrightarrow{q^0_t} G^1_t \xrightarrow{q^1_t}\cdots\xrightarrow{q^{m-1}_t}G^m_t
+\]
+where each \(G^{i+1}_t\) is obtained from \(G^i_t\) by contracting a selected family of edges or local subgraphs.
+\end{definition}
+
+Each map \(q^i_t\) induces a map on paths, after the chosen stutter convention:
+\[
+    (q^i_t)_*:\Path_{\le K}(G^i_t)\to \Path_{\le K}(G^{i+1}_t).
+\]
+Composing these maps gives a coarse address for each fine path.
+
+\begin{definition}[lift fiber]
+Let \(q:G\to \bar G\) be a quotient and let \(\bar\gamma\in \Path_{\le K}(\bar G)\).  The lift fiber of \(\bar\gamma\) is
+\[
+    \fiber_q(\bar\gamma)=\{\gamma\in \Path_{\le K}(G):q_*(\gamma)=\bar\gamma\}.
+\]
+A coarse path is liftable when this set is nonempty.
+\end{definition}
+
+\begin{figure}[!ht]
+    \centering
+    \safeincludegraphics[width=.86\linewidth]{realtime_tower.png}
+    \caption{A tower is constructed dynamically as the explored/vista graph grows.  The mathematical tower is a sequence of quotient graphs; the runtime tower is a changing data structure.}
+    \label{fig:realtime-tower}
+\end{figure}
+
+\section{The path-volume address theorem}
+
+This section states the central theorem in the strongest form that is currently defensible.  The theorem is an address/search theorem.  It becomes a training-time theorem only after additional assumptions relating sample complexity, optimization dynamics, and approximation error to the tower search term.
+
+\subsection{Flat and tower costs}
+
+Let \(\Omega\subseteq \Path_{\le K}(G^0_t)\) be the finite set of reward-labelled histories relevant to the current training problem.  This may be the full path set, an admissible subset, a high-probability support under the current policy, or a benchmark-defined success set.
+
+The flat enumeration cost proxy is
+\[
+    \cost_{\mathrm{flat}}(\Omega)=|\Omega|.
+\]
+When \(\Omega=\Path_{\le K}(G^0_t)\), this equals \(\PVol_{G^0_t}(d;K)\) for any chosen reference \(d\), in the sense of \cref{def:pvol}.
+
+The tower induces nested quotient images
+\[
+    \Omega_i=(q^{i-1}_t\circ\cdots\circ q^0_t)_*(\Omega)
+    \subseteq \Path_{\le K}(G^i_t).
+\]
+A fine path can be specified by first selecting its coarsest image in \(\Omega_m\), then selecting successive lift refinements through the fibers
+\[
+    \fiber_{q^i_t}(\gamma_{i+1})\cap \Omega_i.
+\]
+This is the quotient-tower analogue of writing an object by its address digits.
+
+\begin{assumption}[coverage]\label{ass:coverage}
+The path set \(\Omega\) relevant to the learning problem is represented inside the current vista tower.  Equivalently, \(\Omega\subseteq \Path_{\le K}(G^0_t)\) for the time window under consideration.
+\end{assumption}
+
+\begin{assumption}[reward compatibility]\label{ass:reward-compat}
+Rewards are action-local after any necessary state augmentation, and quotient rewards are trained or estimated as direct-image rewards in the sense of \cref{prop:reward-descent}.
+\end{assumption}
+
+\begin{assumption}[liftability]\label{ass:liftability}
+Every coarse decision sequence used by the tower controller has at least one executable lift at the next finer tier.  Moreover, the controller has access to a refinement routine that searches only inside the corresponding lift fiber.
+\end{assumption}
+
+\begin{assumption}[balanced addressability]\label{ass:balanced}
+There are positive integers \(b_m,b_{m-1},\ldots,b_0\) and nonnegative residual terms \(\epsilon_i\) such that the tower controller can choose the coarsest address and each subsequent refinement with expected cost
+\[
+    O(\log b_i)+\epsilon_i,
+\]
+and the induced address capacity satisfies
+\[
+    \prod_{i=0}^{m} b_i \ge |\Omega|.
+\]
+When the tower is approximately balanced, the product is of the same order as \(|\Omega|\).
+\end{assumption}
+
+The \(b_i\) are not necessarily graph degrees.  They are effective address branching factors for the path/refinement problem.  The instrumentation problem is to estimate them from tower fibers, policy supports, reward variance, and lift success rates.
+
+\begin{theorem}[path-volume address theorem for quotient-tower HRL]\label{thm:path-volume-address}
+Let \(H\) be a finite directed state/action graph, let \(K<\infty\), and let
+\[
+    \mathcal{T}_t:G^0_t\to G^1_t\to\cdots\to G^m_t
+\]
+be a quotient tower constructed from the discovered graph at time \(t\).  Let \(\Omega\subseteq\Path_{\le K}(G^0_t)\) be a finite reward-labelled path set.  Suppose \cref{ass:coverage,ass:reward-compat,ass:liftability,ass:balanced} hold.  Then flat search over \(\Omega\) has enumeration cost
+\[
+    \cost_{\mathrm{flat}}(\Omega)=\Theta(|\Omega|)=\Theta(\PVol_{\Omega}),
+\]
+where \(\PVol_{\Omega}=|\Omega|\) is the finite path volume of the relevant path set.  By contrast, the tower controller has search cost bounded by
+\[
+    \cost_{\mathcal{T}}(\Omega)
+    \le C\sum_{i=0}^{m}\log b_i + \sum_{i=0}^{m}\epsilon_i
+\]
+for a model-dependent constant \(C\).  In the balanced case, where \(\prod_i b_i\asymp |\Omega|\), this becomes
+\[
+    \cost_{\mathcal{T}}(\Omega)
+    =O\bigl(\log \PVol_{\Omega}\bigr)+\sum_{i=0}^{m}\epsilon_i.
+\]
+More generally, without balance, the tower cost is controlled by the multilevel address length \(\sum_i\log b_i\) plus residual lift/refinement errors.
+\end{theorem}
+
+\begin{proof}
+The quotient maps in \(\mathcal{T}_t\) induce nested partitions of \(\Omega\): two fine paths are equivalent at level \(i\) if they have the same image in \(\Omega_i\).  Selecting a fine path can therefore be decomposed into selecting a coarsest class, then selecting a class in the lift fiber above it, and so on until level zero is reached.  By \cref{ass:liftability}, every selected address corresponds to at least one executable fine path.  By \cref{ass:balanced}, the expected cost of selecting the \(i\)-th address/refinement digit is bounded by \(O(\log b_i)+\epsilon_i\).  Summing over levels gives
+\[
+    \cost_{\mathcal{T}}(\Omega)
+    \le C\sum_i\log b_i+
+    \sum_i\epsilon_i.
+\]
+If the address capacity is balanced, then
+\[
+    \sum_i\log b_i=\log\left(\prod_i b_i\right)=\Theta(\log |\Omega|).
+\]
+Since \(|\Omega|\) is the finite path volume of \(\Omega\), the stated bound follows.  Reward compatibility is not needed for the combinatorial address bound itself; it ensures that the address/refinement decisions optimize the same expected cumulative reward as the fine-scale problem, up to the residual errors included above.
+\end{proof}
+
+\begin{corollary}[state\_collapser target theorem]\label{cor:state-collapser}
+If the runtime contractions produced by \texttt{state\_collapser} generate a quotient tower satisfying coverage, action-local reward descent, liftability, and balanced addressability for the path set actually explored by training, then the package replaces the flat path-space search term \(\Theta(\PVol)\) by a quotient-tower search term of order
+\[
+    O(\log \PVol)+\text{lift/refinement/statistical residuals}.
+\]
+\end{corollary}
+
+\begin{warning}[what the theorem does not say]
+The theorem does not say that arbitrary contractions help.  Bad contractions can increase reward variance inside fibers, destroy liftability, or create coarse decisions that are cheap but useless.  The theorem says that a quotient tower is a valid route to logarithmic path-space reduction precisely when it behaves like a balanced executable address system for the reward-labelled histories that matter.
+\end{warning}
+
+\subsection{Relationship to the original learn-speed formula}
+
+The earlier draft used an action-expectation number \(N_{\mathrm{ae}}\) and the formal expression
+\[
+    \operatorname{EVol}_{\Path}(N_{\mathrm{ae}})=\sum_{k\ge0}N_{\mathrm{ae}}^k.
+\]
+The professional version should replace that infinite expression by either the finite horizon
+\[
+    \operatorname{EVol}_{\Path}(N_{\mathrm{ae}};K)=\sum_{k=0}^{K}N_{\mathrm{ae}}^k
+\]
+or a discounted series
+\[
+    \sum_{k\ge0}\lambda^kN_{\mathrm{ae}}^k,
+    \qquad 0<\lambda<1/N_{\mathrm{ae}}.
+\]
+The finite-horizon quantity is preferable because it matches episode-based RL training.  The theorem then reads as a statement about reducing a finite path-volume search term, not as a claim about convergence of a divergent formal series.
+
+\begin{figure}[!ht]
+    \centering
+    \safeincludegraphics[width=.78\linewidth]{speed_up.png}
+    \caption{The coarse-to-fine idea: the controller should not process every fine movement through a region when a quotient-level decision can route around the flat search.}
+    \label{fig:speed-up}
+\end{figure}
+
+\section{Training-time interpretation}
+
+\Cref{thm:path-volume-address} is a theorem about search structure.  Training time requires additional statistical assumptions.  A safe interpretation is the following.
+
+Let \(S_{\mathrm{flat}}(\delta)\) be the sample budget required for a flat learner to identify a policy whose value is within \(\delta\) of a target value on \(\Omega\).  Let \(S_{\mathcal{T}}(\delta)\) be the corresponding sample budget for a tower learner.  The theorem supports a training-speed hypothesis of the schematic form
+\[
+    S_{\mathcal{T}}(\delta)
+    \lesssim
+    A(\delta)\left(\sum_i\log b_i\right)
+    +B(\delta)\sum_i\epsilon_i
+    +\mathrm{Approx}_{\mathcal{T}},
+\]
+where \(A,B\) depend on the learning algorithm and \(\mathrm{Approx}_{\mathcal{T}}\) measures approximation error introduced by quotient rewards, policies, and lifts.  Turning this into an empirical claim is the job of the evaluation suite.
+
+The package should therefore report not only return curves, but also tower diagnostics:
+\begin{enumerate}[label=(\roman*)]
+    \item flat and policy-effective \(\PVol\) estimates;
+    \item quotient compression ratios \(|\Omega_i|/|\Omega_{i-1}|\);
+    \item lift-fiber size and entropy;
+    \item reward variance inside quotient fibers;
+    \item lift success rate;
+    \item coarse-policy value error and fine-refinement residual;
+    \item wall-clock and sample-efficiency comparisons against a non-tower baseline.
+\end{enumerate}
+
+\begin{figure}[!ht]
+    \centering
+    \safeincludegraphics[width=.88\linewidth]{train_explore.png}
+    \caption{Training-time control should be measured as a freeze/lift/refine process: learn coarse structure, lift it, then spend fine-scale computation only on the correction the coarse tier cannot supply.}
+    \label{fig:train-explore}
+\end{figure}
+
+\section{The U-Net analogy: tangent-level evidence, not the main theorem}
+
+The README asks for the CNN multiscale-training connection to be handled carefully.  The right placement is here, after the path-space theorem.
+
+A multiscale CNN or U-Net theorem concerns gradients.  Gradients live in a tangent or cotangent object.  They are instantaneous first-order data.  A theorem about multiscale gradient estimation is therefore not itself a theorem about reward-labelled path spaces.  It is a tangent-level shadow of the same geometric idea.
+
+In the notation of multiscale gradient estimation \cite{AhamedZakariaeiHaberEliasofMGE2026}, the finest-resolution expected gradient can be decomposed as a telescoping multiscale sum
+\[
+    \E[g_L]
+    =\E[g_0]+\sum_{\ell=1}^{L}\E[g_\ell-g_{\ell-1}],
+\]
+where coarse levels estimate most of the signal and finer levels estimate corrections.  This is structurally parallel to quotient-tower HRL:
+\[
+    \text{coarse policy} + \text{fine lift corrections}.
+\]
+The analogy should be described as follows.
+
+\begin{principle}[tangent shadow principle]
+Multiscale U-Net/CNN training shows that coarse-to-fine computation can reduce the cost of estimating first-order training signals.  The \texttt{state\_collapser} theorem aims at the path-space version: coarse-to-fine quotient towers reduce the effective search burden over reward-labelled histories.  The former is a tangent-bundle shadow; the latter is a path-space statement.
+\end{principle}
+
+This framing avoids the overclaim that ResNet/U-Net facts directly prove a reinforcement-learning theorem.  They do not.  They support the geometric plausibility of the same multiscale correction pattern.
+
+\begin{figure}[!ht]
+    \centering
+    \safeincludegraphics[width=.82\linewidth]{unet.png}
+    \caption{A U-Net-style multiscale architecture is best read here as an instantaneous/tangent analogue of a path-space quotient tower.}
+    \label{fig:unet}
+\end{figure}
+
+\section{Failure modes and design consequences}
+
+The theorem usefully identifies ways the package can fail.
+
+\begin{description}[leftmargin=2.6cm,style=nextline]
+    \item[Nonlocal reward.] If reward depends on global history properties not encoded in the state/action graph, direct-image quotient rewards may be biased or meaningless.  Remedy: augment state or use higher-order path features.
+
+    \item[Bad contraction.] A contraction may merge states whose future reward distributions are incompatible.  Remedy: measure reward variance and value disagreement inside quotient fibers.
+
+    \item[Non-liftability.] A coarse path may not lift to an executable fine path.  Remedy: include lift success as a first-class tower metric and avoid trusting tiers with poor liftability.
+
+    \item[Unbalanced fibers.] A quotient may create one enormous fiber and many tiny fibers.  Remedy: report fiber entropy and maximum fiber size, not just average compression.
+
+    \item[Coverage failure.] The vista graph may not contain the relevant paths.  Remedy: separate exploration metrics from quotient metrics; do not attribute failure to hierarchy when the discovered graph is insufficient.
+
+    \item[Optimization failure.] Even a good tower search structure may not produce a good neural policy if the function approximator or optimizer fails.  Remedy: compare oracle/tabled tower controllers to neural approximations.
+\end{description}
+
+\section{Package-facing specification}
+
+The current package layout suggests the following mathematical roles.
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Package area & Mathematical role \\
+\midrule
+\texttt{core} & states, actions, rewards, labels, annotations \\
+\texttt{graph} & hidden/explored/vista graphs and local-star data \\
+\texttt{contract} & contraction policies and edge/subgraph selection \\
+\texttt{quotient} & quotient maps, cosets, fibers, tier views \\
+\texttt{tower} & runtime tower, snapshots, trust, exploit/explore control \\
+\texttt{instrumentation} & path-volume, fiber, reward-variance, liftability metrics \\
+\texttt{examples} & executable test environments and benchmark stories \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The instrumentation layer is mathematically essential, not merely cosmetic.  The theorem's assumptions are not self-certifying.  A usable package should estimate the quantities that make the theorem plausible or falsify it on a given run.
+
+\section{Recommended rewrite structure for the repository document}
+
+The repository document should be organized as follows.
+
+\begin{enumerate}[label=\textbf{\arabic*.},leftmargin=1.2cm]
+    \item \textbf{Purpose, status, and attribution.}  Explain that this is an LLM-assisted mathematical specification and distinguish theorem from research program.
+    \item \textbf{Path-space view of RL.}  Define \(H\), histories, virtual rollout database, reward-labelled path space.
+    \item \textbf{Path-volume.}  Define \(\PVol\) as a finite-horizon quantity and explain the coefficient series \(\sum c_kd^k\).
+    \item \textbf{Local versus hierarchical reduction.}  Explain tangent/jet truncation and quotient-tower reduction as the two basic strategies.
+    \item \textbf{Quotient rewards.}  Prove reward descent by conditional expectation under action-local cumulative rewards.
+    \item \textbf{Dynamic graph and quotient tower.}  Define explored graph, vista graph, message passing, contractions, fibers, lifts.
+    \item \textbf{Main theorem.}  State \cref{thm:path-volume-address}, then the \texttt{state\_collapser} corollary.
+    \item \textbf{Training interpretation and metrics.}  Convert theorem assumptions into measurable package diagnostics.
+    \item \textbf{U-Net/CNN analogy.}  Present multiscale gradient estimation as tangent-level evidence, not as the RL theorem.
+    \item \textbf{Failure modes and future work.}  Treat nonlocal rewards, non-liftability, and higher-homotopy/path rewards explicitly.
+\end{enumerate}
+
+\section{Future direction: higher path rewards}
+
+The action-local hypothesis is the correct starting point for a theorem.  It is not the end of the story.  Many tasks reward higher-order features: loops, avoidance of repeated motifs, global smoothness, topological winding, long-range consistency, or delayed success.  These are path-level or homotopy-level rewards.
+
+A future version of the theory should replace action-local rewards by rewards on higher path features and ask when those features descend to quotient towers.  The relevant objects may be path groupoids, finite automata over histories, jet bundles, loop spaces, or higher categorical quotients.  For the first usable package theorem, however, action-local reward plus explicit state augmentation is the right line to hold.
+
+\section{Conclusion}
+
+The strongest professional claim for \texttt{state\_collapser} is this:
+
+\begin{quote}
+A reinforcement-learning problem is hard partly because its implicit labelled dataset is a path space.  \texttt{state\_collapser} attempts to impose a quotient-tower address system on that path space by recursively contracting discovered state/action graph structure.  If the tower is reward-compatible, liftable, and balanced on the relevant path set, then the flat \(\PVol\)-scale search burden is replaced by a logarithmic or multilevel-logarithmic address/refinement burden, plus measurable residual errors.
+\end{quote}
+
+That statement is mathematically honest, operationally meaningful, and directly connected to the package's current design.
+
+\bibliographystyle{plain}
+\bibliography{state_collapser_mathematical_model_rewrite_first_draft}
+
+\end{document}
