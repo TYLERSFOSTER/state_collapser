@@ -113,7 +113,7 @@ def test_episode_collector_accumulates_episode_summary() -> None:
     )
 
     assert episode.steps_taken <= 4
-    assert episode.total_reward == sum(step.reward for step in episode.steps)
+    assert episode.total_reward == pytest.approx(sum(step.reward for step in episode.steps))
     assert episode.max_tower_depth >= 1
 
 

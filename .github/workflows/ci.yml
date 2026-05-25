@@ -40,7 +40,7 @@ jobs:
         run: uv run python -m build
 
       - name: Upload coverage to Codecov
-        if: ${{ !github.event.repository.private }}
+        if: github.event.repository.private == false
         uses: codecov/codecov-action@v5
         with:
           files: ./coverage.xml
