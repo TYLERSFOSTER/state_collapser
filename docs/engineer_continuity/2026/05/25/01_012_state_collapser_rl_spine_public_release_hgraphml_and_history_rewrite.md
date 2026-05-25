@@ -827,3 +827,48 @@ but a real quotient-tower structural layer with RL and graph-ML applications
 ```
 
 That is a much cleaner public posture than the project had one report ago.
+
+## Final Release Closure Addendum
+
+After the main body of this report was written, the public release sequence was
+closed out for `state_collapser`.
+
+The release now has a GitHub Release object for `v0.6.0` titled
+`state_collapser v0.6.0: Public Research Baseline`. The release is intentionally
+GitHub/source-first rather than PyPI-first. That matches the PO decision that
+PyPI should wait until the benchmark story is much stronger.
+
+The public tag `v0.6.0` identifies the clean public research baseline. Public
+`main` has subsequently advanced with release-support commits for continuity
+reporting, CI correction, and citation metadata. This is acceptable: the tag is
+the release baseline, while `main` carries the ordinary post-release cleanup
+trail.
+
+The red CI badge concern was investigated after release. The visible failure was
+not caused by the Codecov skip condition. The actual failing job was Python 3.12
+pytest, caused by an exact floating-point equality assertion in the collector
+tests. That assertion was changed to use approximate comparison, and the Python
+3.12 CI-equivalent test run passed locally afterward. The Codecov upload remains
+non-blocking and skipped while inappropriate for the repository state.
+
+A `CITATION.cff` file was added after the release so GitHub can surface a
+`Cite this repository` affordance and so downstream users have a canonical
+software-citation path. This is metadata hardening rather than a change to the
+runtime package.
+
+The downstream HGraphML release now depends on the public `state_collapser`
+`v0.6.0` tag rather than a local path. That is the key downstream compatibility
+fact to preserve until either `state_collapser` is published to PyPI or a newer
+public tag is intentionally cut.
+
+The remaining release gaps are deliberately not hidden:
+
+- no PyPI release yet,
+- no benchmark-supported speed-up claim yet,
+- no mature production RL training stack yet,
+- serious benchmarking remains the next major public-readiness milestone.
+
+PO attribution: the PO made the final release-posture decisions here, including
+keeping PyPI deferred, treating benchmarking as the next serious milestone,
+requiring clean public-history posture, and requiring explicit continuity around
+the HGraphML downstream dependency.
