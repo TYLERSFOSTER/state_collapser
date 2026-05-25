@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use state_collapser, please cite this software."
+type: software
+title: "state_collapser"
+abstract: "A pre-alpha research package for constructing quotient-tower structure over discovered transition systems and exposing tower-aware runtime and training surfaces."
+authors:
+  - family-names: "Foster"
+    given-names: "Tyler"
+version: "0.6.0"
+date-released: "2026-05-25"
+license: "MIT"
+repository-code: "https://github.com/TYLERSFOSTER/state_collapser"
+url: "https://github.com/TYLERSFOSTER/state_collapser"
+keywords:
+  - "hierarchical reinforcement learning"
+  - "quotient graph"
+  - "transition systems"
+  - "reinforcement learning"
+  - "research software"
