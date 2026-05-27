@@ -1,0 +1,99 @@
+# state_collapser
+
+`state_collapser` is a pre-alpha research package for constructing quotient
+tower structure over discovered transition systems and exposing tower-aware
+runtime and training surfaces.
+
+Use this file as a compact routing map for agents, retrieval systems, and
+humans. It is documentation, not a claim that LLMs or search systems will index
+the project in any particular way.
+
+## Start Here
+
+- `README.md`: repository overview, positioning, installation, quick starts,
+  current maturity, and links to the main documentation.
+- `EVALUATION.md`: current evaluation philosophy, example environments,
+  runnable probes, and the difference between smoke evaluation and serious
+  benchmarking.
+- `CONTRIBUTING.md`: contributor workflow, current TODOs, release posture, and
+  repository layout.
+- `SECURITY.md`: security policy and vulnerability-reporting guidance.
+- `CITATION.cff`: citation metadata for the package.
+- `CHANGELOG.md`: release history and current unreleased changes.
+
+## Engineer Usage
+
+- `docs/usage/01_001_what_state_collapser_is.md`: the shortest engineer-facing
+  explanation of what the package is and is not.
+- `docs/usage/01_002_tower_runtime_mental_model.md`: tier direction,
+  partition-tower mental model, and local query vocabulary.
+- `docs/usage/01_003_training_surface_quickstart.md`: how to use the current
+  training surfaces without hiding the training loop.
+- `docs/usage/01_004_fiber_conditioned_training.md`: the current
+  fiber-conditioned training spine: freeze coarse behavior, train/lift in the
+  finer fiber.
+- `docs/usage/01_005_using_your_own_training_loop.md`: guidance for engineers
+  bringing their own learner or training loop.
+- `docs/usage/01_006_gymnasium_integration.md`: current Gymnasium integration
+  posture.
+- `docs/usage/01_007_glossary.md`: project vocabulary.
+- `docs/usage/01_008_common_misunderstandings.md`: common incorrect readings of
+  the package.
+- `docs/usage/01_009_downstream_applications.md`: HGraphML and non-RL graph
+  dataflow context.
+
+## API Notes
+
+- `docs/public_api.md`: public API policy and stability expectations.
+- `docs/package_usage.md`: package usage routing and maturity notes.
+- `docs/api_notes/partition_tower.md`: partition-tower runtime surface.
+- `docs/api_notes/training_inputs_and_transitions.md`: training input and
+  transition records.
+- `docs/api_notes/frozen_quotient_behavior.md`: frozen coarse-tier behavior.
+- `docs/api_notes/path_fiber.md`: lift fibers over coarse decisions.
+- `docs/api_notes/fiber_conditioned_stage.md`: adjacent-tier training stage
+  surface.
+
+## Research And Design
+
+- `docs/design/logHRL.pdf`: companion research paper draft motivating
+  quotient-tower structure and logarithmic speed-up.
+- `docs/design/logHRL.tex`: TeX source for the companion research paper draft.
+- `docs/design/log_tropical_geometry/01_001_log_tropical_geometry_and_quotient_tower_discussion.md`:
+  research note on the relationship between quotient towers, scale
+  filtrations, log/tropical geometry, and semiring-valued dataflow.
+- `docs/design/RL_framework_maturity/`: discussion, blueprints, and
+  implementation records for the fiber-conditioned training spine.
+- `docs/design/Young_tableaux_refactor/`: design and implementation records for
+  the partition-table / Young-tableaux-style tower runtime.
+- `docs/design/public_release_security_audit/`: public release, security, and
+  discoverability audit trail.
+- `docs/engineer_continuity/`: continuity reports recording major engineering
+  phases and Project Owner attributions.
+
+## Evaluation And Benchmarks
+
+- `src/state_collapser/examples/`: example environments and runnable training
+  paths.
+- `src/state_collapser/benchmarks/`: lightweight in-repo benchmark smoke
+  tooling.
+- `tests/`: regression, partition runtime, training, example-environment, and
+  benchmark smoke tests.
+- External serious benchmarking work is expected to live outside this package,
+  for example in the `big_boy_benchmarking` repository.
+
+## Downstream Application
+
+- `HGraphML`: downstream graph-ML application that uses `state_collapser`
+  partition towers over known graphs, runs message passing on coarse structure,
+  and lifts messages over node and edge fibers.
+- Repository: `https://github.com/TYLERSFOSTER/HGraphML`
+
+## Current Posture
+
+- This is a public GitHub research release, not a PyPI release.
+- The package is pre-alpha.
+- The top-level stable import surface is intentionally small.
+- Many useful internal modules are importable and tested, but not yet stable
+  public API.
+- Serious benchmarking remains the major empirical-release need.
