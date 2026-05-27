@@ -920,4 +920,60 @@ quotient towers ask how this tropicalized dataflow behaves under scale-indexed
 contraction and lifting.
 \end{claimbox}
 
+\section{Scale Filtration Formulation}
+
+The preceding analogy should be stated in a way that does not over-identify the
+constructions. The common object is not ``the logarithm'' as a single function.
+The common object is a filtration by scale.
+
+\begin{claimbox}
+Logarithms, valuations, degeneration parameters, tropical limits, special
+fibers, and quotient towers are different ways of extracting scale filtration
+data from a complicated object, computing on the resulting reduced, graded, or
+skeletal object, and then lifting local information back through the fibers.
+\end{claimbox}
+
+In the Archimedean setting, this appears as coordinatewise log maps and
+amoebas. In tropical geometry, it appears as valuation or leading-order data.
+In adic and degeneration settings, it appears as a parameter whose powers
+filter the object and whose special fiber records the reduced scale-visible
+geometry. In each case, the logarithmic operation is not merely a numerical
+change of coordinates. It is a mechanism for passing from a flat fine object to
+a filtered object, and then to a reduced, skeletal, or associated-graded shadow
+on which computation is cheaper.
+
+The \SC{} analogy is therefore not that the state/action graph is literally
+tropicalized or adified. Rather, the quotient tower is a finite algorithmic
+analogue of this pattern. The state/action graph is equipped with an ordered
+contraction structure that behaves like a scale filtration. Passing to higher
+tiers discards fine distinctions while preserving the decision data visible at
+that scale. Computation can then be performed on the coarser quotient object,
+and executable behavior is recovered by lifting through the state/action
+fibers.
+
+The broad paradigm is:
+
+\begin{claimbox}
+fine object
+\(\longrightarrow\)
+scale filtration/contraction
+\(\longrightarrow\)
+reduced or skeletal computation
+\(\longrightarrow\)
+local lift back through fibers.
+\end{claimbox}
+
+The logarithm is the signature of this passage from flat fine geometry to
+scale-organized computation. Sometimes it appears as an actual coordinatewise
+logarithm. Sometimes it appears as valuation or order-of-magnitude data.
+Sometimes it appears as a degeneration parameter. Sometimes it appears as the
+source of max-plus/tropical algebra. In the \logHRL{} theorem, it appears as
+the observed complexity reduction produced by hierarchical address structure.
+
+The hidden mathematical word is therefore \emph{filtration}. The logarithm is
+how multiplicative or analytic size becomes additive filtration data. The tower
+is not yet proved to be a tropicalization, but it is plausibly a finite
+computational filtration whose quotient tiers play the role that associated
+graded objects, special fibers, skeleta, or tropical shadows play elsewhere.
+
 \end{document}
