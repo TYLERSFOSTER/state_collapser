@@ -612,3 +612,209 @@ discrete critical events in a logarithmic visibility flow.
 That stronger thesis is not established here, but it is now framed in a way
 that looks mathematically attackable rather than merely metaphorical.
 
+## Relation To Semiring-Valued Polynomial-Span Dataflow
+
+The Project Owner's reading is that the relevant Dudzik--Veličković line of
+work is structurally tropical, even when it is not advertised in those words.
+That is: Dudzik is, in this sense, secretly operating as a tropical geometer.
+
+This should not be stated as a claim about the authors' intent. The point is
+structural. Dudzik--Veličković foreground graph neural networks, dynamic
+programming, polynomial spans, pullback, pushforward, bag/list monads,
+semirings, and algorithmic alignment. But the tropical geometry is already
+sitting inside the semiring choices.
+
+The same point applies to the Gavranović--Lessard--Dudzik--von Glehn--Araújo--
+Veličković categorical deep learning paper: the paper presents an algebraic
+architecture story, but the moment the architecture is evaluated over tropical
+or idempotent semirings, it is also a tropical-geometric story in disguise.
+
+Their basic graph-dataflow template has the form
+
+$$
+[W,R]
+\xrightarrow{i^*}
+[X,R]
+\xrightarrow{p_\otimes}
+[Y,R]
+\xrightarrow{o_\oplus}
+[Z,R].
+$$
+
+Here \(R\) is the value or latent space, and the two aggregation operations
+\(\otimes\) and \(\oplus\) supply the algebra needed to combine message
+arguments and aggregate incoming messages. Their key observation is that the
+same polynomial-span / integral-transform skeleton can describe both ordinary
+GNN message passing and dynamic programming, once one chooses the appropriate
+coefficient algebra.
+
+On the dynamic-programming side, one naturally meets tropical semirings such as
+
+$$
+(\mathbb N\cup\{\infty\},\min,+)
+$$
+
+or sign-reversed max-plus variants. This is not an incidental coefficient
+choice. It is the Bellman/tropical algebra of optimal path computation.
+
+The present note adds the following extra interpretation:
+
+```text
+Dudzik--Veličković:
+    fix the graph/dataflow diagram;
+    vary the semiring or latent value algebra;
+    observe that GNNs and dynamic programming share the same abstract
+    polynomial-span computation.
+
+This note:
+    treat the passage between ordinary positive aggregation and tropical
+    Bellman aggregation as a logarithmic degeneration;
+    view max-plus direct image as the tropicalization of sum direct image;
+    ask whether the quotient tower itself is the finite tropical skeleton of
+    state/action path geometry.
+```
+
+So the connection is not merely that both stories mention semirings. The shared
+structure is:
+
+$$
+\text{pullback}
+\quad+\quad
+\text{product-like local combination}
+\quad+\quad
+\text{sum/max-like pushforward aggregation}.
+$$
+
+In Dudzik--Veličković, this appears as polynomial-span dataflow. In the
+log/tropical quotient-tower picture, the same architecture is read through the
+dequantizing map
+
+$$
+\log_b
+\left(
+\sum_i b^{a_i}
+\right)
+\longrightarrow
+\max_i a_i.
+$$
+
+Thus a sum-type pushforward over a fiber,
+
+$$
+(q_*F_b)(\bar s)
+=
+\sum_{s\in q^{-1}(\bar s)} b^{V(s)},
+$$
+
+dequantizes to the tropical direct image
+
+$$
+(q_*^{\mathrm{trop}}V)(\bar s)
+=
+\max_{s\in q^{-1}(\bar s)}V(s).
+$$
+
+This is exactly the state/action quotient analogue of the message pushforward
+\(o_\oplus\), with \(\oplus\) specialized to a tropical aggregator.
+
+The rhetorical point should be made carefully:
+
+```text
+Dudzik--Veličković identify the semiring-polynomial-span form of graph message
+passing and dynamic programming. The present perspective reads the tropical
+semiring appearing in their dynamic-programming examples not as an isolated
+coefficient choice, but as the logarithmic degeneration of ordinary positive
+aggregation. This moves the semiring parameter itself into the geometry.
+```
+
+The additional `state_collapser` contribution is the tower:
+
+$$
+G_t^0
+\twoheadrightarrow
+G_t^1
+\twoheadrightarrow
+\cdots
+\twoheadrightarrow
+G_t^N.
+$$
+
+The question is no longer only how to run semiring-valued dataflow on one graph.
+The question is how semiring-valued dataflow behaves under quotient maps,
+direct images, lifts, frozen tiers, and scale-indexed contraction events. This
+is where the Project Owner's stronger log/tropical thesis genuinely goes beyond
+the Dudzik--Veličković setup.
+
+## Literature Trail For This Connection
+
+The immediate machine-learning/categorical-dataflow literature is:
+
+- [Dudzik and Veličković, *Graph Neural Networks are Dynamic Programmers*](https://arxiv.org/abs/2203.15544).
+  This is the closest source. It identifies a polynomial-span / integral-transform
+  skeleton common to GNN message passing and dynamic programming, with semiring
+  structure on the latent/value space \(R\). The OpenReview page is
+  [here](https://openreview.net/forum?id=wu1Za9dY1GY).
+- [Gavranović, Lessard, Dudzik, von Glehn, Araújo, and Veličković, *Position:
+  Categorical Deep Learning is an Algebraic Theory of All Architectures*](https://proceedings.mlr.press/v235/gavranovic24a.html).
+  This places the Dudzik-style algebraic architecture perspective inside a
+  broader categorical deep learning program. The arXiv page is
+  [here](https://arxiv.org/abs/2402.15332), and the project page is
+  [here](https://categoricaldeeplearning.com/).
+- [Dudzik, *Quantales and Hyperstructures: Monads, Mo' Problems*](https://arxiv.org/abs/1707.09227).
+  This is useful background for why the semiring/quantale/hyperstructure thread
+  in Dudzik's work is not accidental.
+
+The older dynamic-programming and path-problem background is:
+
+- [de Moor, *Categories, Relations and Dynamic Programming*](https://www.cambridge.org/core/journals/mathematical-structures-in-computer-science/article/categories-relations-and-dynamic-programming/552525CAD62B986E5C7461DB55B3B952).
+  This is one of the categorical dynamic-programming sources explicitly used by
+  Dudzik--Veličković.
+- [Carré, *Semirings and path spaces*](https://www.sciencedirect.com/science/article/pii/0012365X7990061X).
+  This is a classical algebraic path-problem source: graph path problems are
+  treated through semiring-like algebraic structure.
+- [Baras and Theodorakopoulos, *Path Problems in Networks*](https://link.springer.com/book/10.1007/978-3-031-79983-9).
+  A book-length treatment of the algebraic path problem and its applications.
+- [Master, *The Open Algebraic Path Problem*](https://arxiv.org/abs/2005.06682).
+  This extends algebraic path problems to open networks and emphasizes
+  functoriality.
+- [GraphBLAS](https://graphblas.org/).
+  This is the engineering-standard version of the same semiring insight:
+  graph algorithms can be expressed as linear-algebraic operations over chosen
+  semirings.
+
+The polynomial-span / polynomial-functor background is:
+
+- [Gambino and Kock, *Polynomial functors and polynomial monads*](https://arxiv.org/abs/0906.4931).
+  Foundational source for polynomial functors and polynomial monads.
+- [Weber, *Polynomials in categories with pullbacks*](https://webercat.au/poly.pdf).
+  Useful for the more general categorical setting of polynomial functors beyond
+  locally cartesian closed categories.
+- [Willerton, *Integral Transforms and the Pull-Push Perspective, I*](https://golem.ph.utexas.edu/category/2010/11/integral_transforms_and_pullpu.html).
+  Helpful conceptual background for the pull-push/integral-transform language.
+- [Tambara, *On multiplicative transfer*](https://www.tandfonline.com/doi/abs/10.1080/00927879308824627).
+  Relevant because finite polynomial diagrams and multiplicative/additive
+  transfer are part of the deeper Lawvere-theory story around commutative
+  semirings.
+
+The tropical and semiring-scheme background is:
+
+- [Maclagan and Sturmfels, *Introduction to Tropical Geometry*](https://www.ams.org/publications/authors/books/postpub/gsm-161).
+  Standard entry point for tropical geometry, tropical varieties, and the
+  algebraic/combinatorial role of the tropical semiring.
+- [Giansiracusa and Giansiracusa, *Equations of tropical varieties*](https://arxiv.org/abs/1308.0042).
+  Especially relevant because it treats tropical hypersurfaces through semiring
+  schemes over idempotent semirings.
+- [Maclagan, *Introduction to tropical algebraic geometry*](https://arxiv.org/abs/1207.1925).
+  A shorter expository bridge into tropical algebraic geometry.
+
+The key interpretive bridge is:
+
+```text
+semiring-valued graph dataflow
+    -> polynomial-span / pull-push architecture
+        -> dynamic programming over tropical coefficients
+            -> logarithmic dequantization explains why tropical coefficients
+               are the natural Bellman limit
+                -> quotient towers ask how this tropicalized dataflow behaves
+                   under scale-indexed contraction and lifting.
+```
