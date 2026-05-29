@@ -953,3 +953,352 @@ HGraphML:
 ```
 
 That distinction should be preserved in future work.
+
+## Same-Day Addendum: v0.7.0 Release Exposure, CI Verification, And Benchmark Bridge
+
+### Why This Addendum Exists
+
+After the initial version of this report was written, the Project Owner moved
+from tensorization implementation into release exposure and downstream
+coordination.
+
+The important question became:
+
+```text
+How can HGraphML depend on the new EncodingRegistry if the public
+state_collapser release tag still points at v0.6.0?
+```
+
+The answer was that the tensorization boundary is a real package-surface change,
+so it should be released as:
+
+```text
+v0.7.0
+```
+
+rather than as a patch release.
+
+### Release Version Decision
+
+The assistant recommended:
+
+```text
+v0.7.0
+```
+
+instead of:
+
+```text
+v0.6.1
+```
+
+because the work added new importable package surfaces:
+
+- `state_collapser.training.EncodingRegistry`
+- `state_collapser.training.LinearizationConfig`
+- `state_collapser.training.LinearizationReport`
+- `state_collapser.training.LinearizationState`
+- `state_collapser.training.NumericBackend`
+- `state_collapser.training.TensorDeviceKind`
+- `state_collapser.training.linearize_action_selection_input`
+- `state_collapser.training.linearize_training_transition`
+- `state_collapser.training.torch.TorchDecisionBatch`
+- `state_collapser.training.torch.TorchTransitionBatch`
+
+This is a new pre-1.0 minor feature surface, not a patch-only correction.
+
+### Commands Given For Release
+
+The assistant gave commands to:
+
+- verify status,
+- bump `pyproject.toml`,
+- bump `src/state_collapser/_version.py`,
+- run validation,
+- commit release files,
+- tag `v0.7.0`,
+- push `main`,
+- and push the tag.
+
+The Project Owner executed that release flow.
+
+The resulting release commit is:
+
+```text
+1b8eb84 Release v0.7.0 tensorization boundary
+```
+
+The tag points at that commit:
+
+```text
+v0.7.0 -> 1b8eb84
+```
+
+The release title and notes supplied were:
+
+```text
+state_collapser v0.7.0: Tensorization Boundary
+```
+
+with release notes describing:
+
+- backend-independent linearization surfaces,
+- `EncodingRegistry`,
+- explicit tensorization mode fields,
+- benchmark-facing labels,
+- optional Torch conversion,
+- tensorization documentation,
+- HGraphML bridge notes,
+- and preservation of object-native runtime/training loops.
+
+### CI Concern And Verification
+
+The Project Owner then correctly raised a concern:
+
+```text
+My guess is you just fucked up my CI
+```
+
+The assistant investigated rather than guessing.
+
+Local checks showed:
+
+```text
+uv run ruff check .
+uv run mypy src
+uv run pytest --cov=state_collapser --cov-report=xml
+uv run python -m build
+```
+
+all passing.
+
+The assistant also queried GitHub Actions via the GitHub API because `gh` was
+not authenticated locally.
+
+The latest CI run for:
+
+```text
+Release v0.7.0 tensorization boundary
+```
+
+on:
+
+```text
+1b8eb84a43501d79ce44255aa1cc3b1f17d3248e
+```
+
+had:
+
+```text
+conclusion: success
+```
+
+So the release commit did not break CI.
+
+### Lockfile Issue
+
+The investigation did find a real release-hygiene issue.
+
+After bumping package metadata to `0.7.0`, `uv.lock` had a local diff:
+
+```diff
+state-collapser 0.6.0 -> 0.7.0
+```
+
+The release commit did not include that lockfile update. CI still passed because
+the workflow runs:
+
+```text
+uv sync --extra dev --extra rl
+```
+
+without `--locked`, so GitHub could resolve and continue. However, the lockfile
+should still match package metadata.
+
+The assistant recommended a follow-up commit:
+
+```bash
+git add uv.lock
+git commit -m "Update lockfile for v0.7.0"
+git push
+```
+
+That follow-up was completed.
+
+Current `state_collapser` state at this addendum:
+
+```text
+5c9195f (HEAD -> main, origin/main, origin/HEAD) Update lockfile for v0.7.0
+1b8eb84 (tag: v0.7.0) Release v0.7.0 tensorization boundary
+```
+
+This means:
+
+- the release tag points at the release commit,
+- `main` has one extra lockfile hygiene commit after the tag,
+- and CI for the release commit was verified green.
+
+No new release tag is required solely for the lockfile follow-up unless the
+Project Owner specifically wants the tag to include the lockfile correction.
+
+### HGraphML Bridge Document
+
+During this interval, another agent added:
+
+```text
+docs/design/tensorization/01_005_hgraphml_tensorization_followup_bridge.md
+```
+
+inside `state_collapser`.
+
+The Project Owner explicitly warned not to erase it. The assistant acknowledged
+that warning and did not modify, overwrite, rename, stage, or delete the file.
+
+The bridge document states the real cross-repo blocker:
+
+```text
+HGraphML does not need full tensorization.
+HGraphML needs a released state_collapser dependency that exposes
+state_collapser.training.EncodingRegistry.
+```
+
+The assistant read the bridge and verified its central claim:
+
+- HGraphML depends on `state-collapser @ ...@v0.6.0`.
+- HGraphML could not import `EncodingRegistry` from that installed dependency.
+- Local `state_collapser` source did contain `EncodingRegistry`.
+- Therefore HGraphML was not conceptually blocked but was dependency-exposure
+  blocked.
+
+This was the immediate reason to make `v0.7.0`.
+
+### Big Boy Benchmarking Note
+
+Before executing the HGraphML bridge work, the Project Owner asked to check
+`big_boy_benchmarking` and put a note there describing what had been done in
+`state_collapser` tensorization.
+
+The assistant inspected:
+
+```text
+/Users/foster/big_boy_benchmarking
+```
+
+and added:
+
+```text
+/Users/foster/big_boy_benchmarking/docs/design/shared_benchmark_machinery/01_004_state_collapser_tensorization_resume_note.md
+```
+
+That note records that the earlier upstream blocker:
+
+```text
+state_collapser lacks explicit tensor-capable disabled/enabled architecture
+```
+
+has moved to:
+
+```text
+state_collapser now exposes the first explicit tensorization boundary and mode
+vocabulary needed by big_boy_benchmarking
+```
+
+The note explains:
+
+- `LinearizationState`,
+- `NumericBackend`,
+- `TensorDeviceKind`,
+- derived benchmark labels,
+- `LinearizationConfig`,
+- `LinearizationReport`,
+- what upstream implemented,
+- what upstream did not implement,
+- what `big_boy_benchmarking` should integrate next,
+- and what claims remain forbidden until local benchmark integration exists.
+
+At the time of this addendum, the benchmark note is untracked in the
+`big_boy_benchmarking` repo:
+
+```text
+?? docs/design/shared_benchmark_machinery/01_004_state_collapser_tensorization_resume_note.md
+```
+
+### Current Cross-Repo State
+
+`state_collapser`:
+
+```text
+main at 5c9195f
+origin/main at 5c9195f
+v0.7.0 tag at 1b8eb84
+working tree clean before this addendum
+```
+
+`HGraphML`:
+
+The HGraphML-side follow-up remains to be implemented. The necessary upstream
+release exposure now exists through `v0.7.0`, so the next HGraphML action is to
+update its dependency pin from:
+
+```text
+state-collapser @ ...@v0.6.0
+```
+
+to:
+
+```text
+state-collapser @ ...@v0.7.0
+```
+
+then verify:
+
+```bash
+uv run --extra dev python -c "from state_collapser.training import EncodingRegistry; print(EncodingRegistry.__name__)"
+```
+
+`big_boy_benchmarking`:
+
+The repo now has a design note explaining that the upstream tensorization resume
+gate has been met, but local benchmark-mode/artifact integration remains future
+work.
+
+### Updated Open Follow-Ups
+
+Immediate HGraphML follow-up:
+
+1. Update HGraphML dependency to `state_collapser` `v0.7.0`.
+2. Refresh HGraphML lockfile.
+3. Verify `EncodingRegistry` import.
+4. Write or execute the narrow HGraphML compatibility blueprint:
+
+```text
+TensorGraph
+    -> TowerBundle.partition_tower
+        -> EncodingRegistry.from_tower(...)
+```
+
+5. Do not route HGraphML through fake RL records.
+
+Immediate benchmark follow-up:
+
+1. Use the new benchmark note in `big_boy_benchmarking`.
+2. Add artifact fields for `LinearizationConfig` and `LinearizationReport`.
+3. Add benchmark-mode entries for:
+
+```text
+none_control_flow
+tensor_available_disabled
+tensor_enabled_cpu
+tensor_enabled_cuda
+```
+
+4. Keep speed-up and tensor-on/tensor-off claims blocked until local benchmark
+   integration is implemented and validated.
+
+Immediate state_collapser hygiene:
+
+1. No CI failure is currently indicated.
+2. The release tag is good for dependency exposure.
+3. If desired later, add a `CHANGELOG.md` section for `0.7.0`.
+4. If desired later, update README/CITATION references still mentioning
+   `0.6.0`, but this is documentation hygiene rather than CI breakage.
