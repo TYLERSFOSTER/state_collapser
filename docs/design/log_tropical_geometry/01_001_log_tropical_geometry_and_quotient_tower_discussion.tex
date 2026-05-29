@@ -4,10 +4,33 @@
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{microtype}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amssymb,amsthm, mathtools}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{enumitem}
 \usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{xypic}
+\usepackage[all,line,color]{xy}
+\usepackage{graphicx}
+\usepackage{pagecolor}
+\pagecolor{white}
+\usepackage{hyperref}
+\usepackage{wrapfig
+}\usepackage{caption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usepackage{amsmath,amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\captionsetup[figure]{
+  format=plain,
+  justification=justified,
+  singlelinecheck=false,
+  margin=1.75cm,
+  font=small
+}
 
 \hypersetup{
   colorlinks=true,
@@ -951,17 +974,13 @@ that scale. Computation can then be performed on the coarser quotient object,
 and executable behavior is recovered by lifting through the state/action
 fibers.
 
-The broad paradigm is:
-
-\begin{claimbox}
-fine object
-\(\longrightarrow\)
-scale filtration/contraction
-\(\longrightarrow\)
-reduced or skeletal computation
-\(\longrightarrow\)
-local lift back through fibers.
-\end{claimbox}
+The broad paradigm is: {\em fine object}
+$\to$
+{\em scale filtration/contraction}
+$\to$
+{\em reduced or skeletal computation}
+$\to$
+{\em local lift back through fibers}.
 
 The logarithm is the signature of this passage from flat fine geometry to
 scale-organized computation. Sometimes it appears as an actual coordinatewise
@@ -975,5 +994,17 @@ how multiplicative or analytic size becomes additive filtration data. The tower
 is not yet proved to be a tropicalization, but it is plausibly a finite
 computational filtration whose quotient tiers play the role that associated
 graded objects, special fibers, skeleta, or tropical shadows play elsewhere.
+
+{\bf Tyler:} Here's a picture I drew that, to me, shows "this same sort of structure we invented for log speed-up weirdly shows up in {\em other} logarithmic settings as well, where it serves a very similar purpose":
+\begin{figure}[!h]
+\vskip -.2cm
+    $$
+    \includegraphics[scale=.25]{../../../assets/images/mathematical_model/log_contractions.png}
+    $$
+    \vskip -.2cm
+    \caption{(Top) Non-Archimedean analytic, or ``{\em adic}'' geometry in as a curve collapses into a logarithmic pole. (Bottom) The degeneration of an amoeba down to a combinatorial curve as the base of its defining logarithm approaches $0$.}
+    \label{fig: hierarchical paths}
+\end{figure}
+
 
 \end{document}

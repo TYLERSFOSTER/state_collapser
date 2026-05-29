@@ -32,20 +32,13 @@
 
 ***<ins>WHERE</ins>**:*
 For an engineer used to existing RL tooling, `state_collapser` sits near
-frameworks such as RLlib and Stable-Baselines3, but it is not trying to be
-either. `RLlib` says "*Give me an env; I will run scalable RL algorithms on it*."
-`Stable-Baselines3` says "*Give me an env; I will run standard reliable RL algorithms on it*." `state_collapser` says:
-> "*Give me an env or discovered transition system; I will construct a better hierarchical/quotient decision structure around it*."
-
-`state_collapser` is a structural layer that can sit before or
+frameworks such as RLlib and Stable-Baselines3, but it is not trying to be either. `state_collapser` is a structural layer that can sit before or
 beside a learner:
-
 ```text
 Gymnasium env
     -> state_collapser discovers graph/tower/quotient structure
         -> policy learner trains using tower-aware decision inputs
 ```
-
 The same quotient/tower layer can also support non-RL graph dataflow. The first
 downstream application is
 [`HGraphML`](https://github.com/TYLERSFOSTER/HGraphML), which treats a known

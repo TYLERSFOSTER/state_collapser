@@ -1,0 +1,240 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\newcommand{\PVol}{\operatorname{PVol}}
+\newcommand{\cost}{\operatorname{cost}}
+\newcommand{\Path}{\operatorname{\mathbf{Path}}}
+\newcommand{\fiber}{\operatorname{fib}}
+
+\newtheorem{observation}{Observation}
+\newtheorem{recommendation}{Recommendation}
+
+\title{Notation Note: State-Address Capacity Versus Path-Address Capacity}
+\author{}
+\date{May 2026}
+
+\begin{document}
+
+\maketitle
+
+\section*{Purpose}
+
+This note records a notational issue in the draft of \emph{Problem agnostic hierarchies, path-volume, and log speed-up in RL}.  The issue is not that the later path-volume theorem is obviously false.  The issue is that an earlier theorem-like preview uses the same symbols \(b_i\) for a state-address capacity, while the later path-volume theorem uses \(b_i\) for an effective path-address capacity.
+
+Those are different mathematical objects.  If they are not distinguished, the paper appears to conflate address size over discovered states with path-space volume.
+
+\section*{The Problem}
+
+The early statement uses positive integers
+\[
+    b_m,b_{m-1},\ldots,b_0
+\]
+with an address-capacity condition of the form
+\[
+    \prod_{i=0}^{m} b_i
+    \;\ge\;
+    \#\{\text{discovered states}\}
+\]
+or, in another version,
+\[
+    \prod_{i=0}^{m} b_i
+    \;\ge\;
+    |G_t^0|.
+\]
+This is a statement about capacity to address the discovered base state/action graph.
+
+However, the theorem then describes flat search over a finite path set \(\Omega\) and uses
+\[
+    |\Omega|
+    =
+    \PVol_\Omega
+\]
+as the path-volume term.  In the balanced case it writes
+\[
+    \prod_i b_i \asymp |\Omega|.
+\]
+That is a different claim.  In general,
+\[
+    \#\{\text{discovered states}\}
+    \quad\text{and}\quad
+    |\Omega|
+\]
+need not be comparable.  For finite horizon \(K\), the path set can grow exponentially in \(K\) even when the discovered state set is fixed or modest.
+
+\begin{observation}
+State-address capacity does not automatically imply path-address capacity.
+\end{observation}
+
+The correct bridge is that a tower of state/action partitions can \emph{induce} nested partitions of a finite path set \(\Omega\).  Once that induced path-address system is made explicit, one can state a path-volume theorem.  But the theorem must use the branching factors of the induced path-address system, not merely the branching factors of the state/cell address system.
+
+\section*{Two Different Capacities}
+
+There should be two notationally distinct objects.
+
+\subsection*{State-address capacity}
+
+Let
+\[
+    b_i^{\mathcal S}
+\]
+denote a tier-\(i\) state/cell address factor.  This is the kind of quantity that can support a statement such as
+\[
+    \prod_i b_i^{\mathcal S}
+    \;\gtrsim\;
+    |\mathcal S_t^0|
+\]
+or some closely related discovered-graph capacity statement.
+
+This is useful for claims about addressing, navigating, or organizing discovered states and quotient cells.  It is not, by itself, a path-volume statement.
+
+\subsection*{Path-address capacity}
+
+Let
+\[
+    \Omega\subseteq \Path_{\le K}(G_t^0)
+\]
+be the finite path set relevant to the learning problem.  Each tier of the tower induces a path-address map
+\[
+    \pi_{i,*}:\Omega\longrightarrow \Omega_i,
+\]
+where
+\[
+    \Omega_i:=\pi_{i,*}(\Omega).
+\]
+There are coarsening maps
+\[
+    q_i:\Omega_{i-1}\longrightarrow \Omega_i
+\]
+between adjacent path-address levels.
+
+A worst-case refinement branching factor can then be defined by
+\[
+    b_i^\Omega
+    :=
+    \max_{\eta_i\in\Omega_i}
+    \#\left\{
+        \eta_{i-1}\in\Omega_{i-1}
+        \;:\;
+        q_i(\eta_{i-1})=\eta_i
+    \right\}.
+\]
+Equivalently, \(b_i^\Omega\) measures the largest number of tier-\((i-1)\) path-address refinements lying over one tier-\(i\) path-address.
+
+With this notation,
+\[
+    |\Omega_0|
+    \le
+    |\Omega_N|\prod_{i=1}^{N}b_i^\Omega.
+\]
+Since \(\Omega_0=\Omega\), this gives
+\[
+    |\Omega|
+    \le
+    |\Omega_N|\prod_{i=1}^{N}b_i^\Omega.
+\]
+If the coarsest relevant address set \(\Omega_N\) has bounded size, or if its size is absorbed into a top-level factor \(b_N^\Omega\), then the path-address capacity condition becomes
+\[
+    \prod_{i=0}^{N}b_i^\Omega
+    \;\gtrsim\;
+    |\Omega|.
+\]
+
+\section*{Balanced Addressability}
+
+The phrase ``balanced'' should also refer to the relevant object.
+
+For state addressing, balanced means roughly that the state/cell address capacity is not mostly wasted:
+\[
+    \prod_i b_i^{\mathcal S}
+    \asymp
+    |\mathcal S_t^0|.
+\]
+
+For path-volume, balanced means that the path-address capacity is not mostly wasted:
+\[
+    |\Omega_N|\prod_{i=1}^{N} b_i^\Omega
+    \asymp
+    |\Omega|.
+\]
+In words: the induced path-address cells and lift fibers should not contain asymptotically huge unused slack relative to the relevant path set.  A distributional or policy-effective version could replace the worst-case \(b_i^\Omega\) by effective support size, entropy, or reward-relevant fiber size under the current rollout distribution.
+
+\section*{Effect On The Later Theorem}
+
+The later path-volume theorem is much closer to the correct statement.  It already phrases the key assumption over the finite path set:
+\[
+    \prod_i b_i \ge |\Omega|.
+\]
+It also explains that the numbers \(b_i\) are not graph degrees, but effective address branching factors for the path/refinement problem.
+
+Thus the later theorem is best read as a conditional theorem about path-address capacity.  It is not invalidated by the state/path distinction.  The theorem is assumption-heavy, but coherent:
+
+\[
+    \text{if the tower induces a balanced searchable address system on }\Omega,
+\]
+then
+\[
+    \cost_{\mathcal T}(\Omega)
+    \le
+    C\sum_i \log b_i^\Omega
+    +
+    \sum_i\epsilon_i.
+\]
+If additionally
+\[
+    \prod_i b_i^\Omega\asymp |\Omega|,
+\]
+then
+\[
+    \sum_i\log b_i^\Omega
+    =
+    \log\left(\prod_i b_i^\Omega\right)
+    =
+    \Theta(\log|\Omega|)
+    =
+    \Theta(\log \PVol_\Omega).
+\]
+
+\section*{Recommended Fix}
+
+\begin{recommendation}
+Use separate notation for state-address factors and path-address factors.
+\end{recommendation}
+
+A clean convention would be:
+\[
+    b_i^{\mathcal S}
+    \quad\text{for state/cell address factors,}
+\]
+and
+\[
+    b_i^\Omega
+    \quad\text{for path/refinement address factors induced on }\Omega.
+\]
+
+Then the early preview theorem should either:
+
+\begin{enumerate}
+    \item become a state-address statement only, with no conclusion involving \(\PVol_\Omega\), or
+    \item be rewritten to use \(b_i^\Omega\) and the induced path-address maps \(\pi_{i,*}\).
+\end{enumerate}
+
+The later path-volume theorem can remain structurally intact if its \(b_i\) are renamed \(b_i^\Omega\), or if the theorem explicitly states that, within that theorem only, \(b_i\) denotes effective path-refinement branching rather than discovered-state address branching.
+
+\section*{Short Verdict}
+
+There is a real notational bug:
+\[
+    b_i
+    \quad\text{is currently doing two jobs.}
+\]
+
+There is not necessarily a fatal mathematical bug in the later theorem.  The later theorem is coherent as a conditional path-address theorem.  The early theorem-like preview is the part that currently conflates state-address capacity with path-volume capacity.
+
+\end{document}
