@@ -27,20 +27,28 @@ PyPI readiness later.
 
 ### Critical TODO
 
-- ***System maturity:*** The first tensorization boundary now exists, but the
-  package is still not a mature RL framework. Deep tensor-backend hardening,
-  large-scale training framework maturity, vectorized rollout semantics, replay
-  design, checkpoint/resume, and experiment manifests remain future work.
+- ***System maturity:*** The first tensorization boundary now exists in
+  `src/state_collapser/training/linearization.py` and
+  `src/state_collapser/training/torch.py`, but the package is still not a
+  mature RL framework. Replay design, vectorized rollout, checkpoint/resume,
+  experiment manifests, production learner loops, and large-scale training
+  framework maturity remain future work.
 - ***Training surfaces:*** The first reusable training layer now has explicit
   action masks, continuation/bootstrap semantics, fiber-conditioned stages, and
-  backend-independent linearized records. The next hardening stage is
-  batch/sequence, vectorized rollout, artifact/checkpoint integration, CUDA
-  validation, and serious learner integration.
+  backend-independent linearized records. The next hardening stage is making
+  `LinearizationConfig` and `LinearizationReport` flow into benchmark artifacts,
+  experiment manifests, and downstream harnesses such as `big_boy_benchmarking`,
+  not hiding training behind a package-owned learner framework.
 - ***Tensorization boundary:*** Preserve the object-native runtime by default.
   Tensorization should remain an explicit learner/benchmark boundary using
-  `LinearizationConfig`, `LinearizationReport`, `EncodingRegistry`, and optional
-  Torch batch conversion. Do not force ordinary runtime paths through tensor
-  adapters just because the tensor-capable surface exists.
+  `LinearizationConfig`, `LinearizationReport`, `EncodingRegistry`,
+  backend-independent linearized records, and optional Torch batch conversion.
+  Do not force ordinary runtime paths through tensor adapters just because the
+  tensor-capable surface exists.
+- ***Optional Torch boundary:*** Torch is the first optional model-backend target
+  behind the `ml` extra. Backend-independent linearization must remain usable
+  without importing Torch, and HGraphML must not be forced into Torch or
+  RL-specific training records.
 - ***Runtime surfaces:*** The runtime now separates `LiveRuntimeView` from
   serializable `RuntimeSnapshot` values and keeps compatibility quotient
   readouts lazy. Future performance work should preserve that
@@ -57,7 +65,9 @@ PyPI readiness later.
   We still need serious benchmarking across larger coordination-constrained
   environments, including explicit `none_control_flow`,
   `tensor_available_disabled`, `tensor_enabled_cpu`, and future
-  `tensor_enabled_cuda` conditions.
+  `tensor_enabled_cuda` conditions. Benchmark work should persist
+  `LinearizationConfig.to_dict()`, `LinearizationReport.to_dict()`, benchmark
+  labels, seed/config metadata, and git/package versions.
 - ***Gymnasium bridge hardening:*** The package now has an explicit hook-based
   Gymnasium wrapper, but the harder observation-vs-state inference problem
   remains future work. Automatic inference is not required for the core package
@@ -349,8 +359,10 @@ Contributors adding metrics, path-space analysis, or training-run visualization 
 Current compatibility commitments are:
 
 - `gymnasium` as the primary RL environment API target
-- `torch` as the primary ML backend target
+- `torch` as the primary optional model-backend target behind the `ml` extra
 - `ROS 2` as the intended robotics integration boundary
+- `HGraphML` as the first downstream graph-ML compatibility target for
+  partition towers, fiber/readout behavior, and shared tower encodings
 
 Contributions should preserve that layering.
 
@@ -358,6 +370,9 @@ In particular:
 
 - do not make robot-specific infrastructure part of the conceptual core
 - do not collapse the RL environment boundary into the robotics boundary
+- do not make backend-independent linearization depend on Torch imports
+- do not force HGraphML through RL-specific `ActionSelectionInput`,
+  `TrainingTransition`, or Torch batch surfaces
 - prefer adapters over hard-coded backend assumptions
 
 ## Gymnasium Integration Guidance
@@ -409,6 +424,25 @@ After runtime hot-path changes, run at least:
 ```bash
 uv run pytest tests/benchmarks
 uv run python -m state_collapser.benchmarks.tower_runtime_bench --steps 10 --summary-only
+```
+
+After tensorization-adjacent changes, run the focused tensorization and
+downstream-compatibility tests:
+
+```bash
+uv run pytest tests/training/test_encoding_registry.py
+uv run pytest tests/training/test_linearization_config.py
+uv run pytest tests/training/test_linearized_records.py
+uv run pytest tests/training/test_torch_batches.py
+uv run pytest tests/examples/test_torch_tensor_boundary_smoke_model.py
+uv run pytest tests/tower/partition/test_hgraphml_downstream_compatibility.py
+```
+
+If Torch is not installed, install the `ml` extra before treating Torch-specific
+validation as complete:
+
+```bash
+uv sync --extra dev --extra ml
 ```
 
 ## Documentation Expectations

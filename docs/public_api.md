@@ -34,7 +34,7 @@ The repository's current external compatibility targets are design commitments,
 not blanket stable runtime APIs:
 
 - `gymnasium` for environment interoperability
-- `torch` for model-backend interoperability
+- `torch` for optional model-backend interoperability behind the `ml` extra
 - `ROS 2` for robotics-stack interoperability
 - `HGraphML` as a downstream graph-ML package that consumes partition-tower
   construction and fiber/readout information
@@ -54,6 +54,7 @@ The current HGraphML-facing dependency surface includes:
 - contraction schemas, especially label-block schemas
 - `PartitionTower`
 - `build_partition_tower_full`
+- `EncodingRegistry.from_tower(...)` for shared tower/cell/edge encodings
 - state-cell and edge/source/target queries needed to recover node and edge
   fibers
 

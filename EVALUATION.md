@@ -429,6 +429,40 @@ For tensor-capable experiments, also persist:
 - `LinearizationReport.to_dict()`
 - `LinearizationReport.benchmark_label`
 
+## Tensorization Evaluation Protocol
+
+The tensorization boundary is now implemented, but serious tensorization
+evaluation is still future work. Until the benchmark harness is mature, use
+tensorization metadata to make benchmark conditions explicit rather than to make
+large performance claims.
+
+The important distinction is:
+
+- `none_control_flow`: object-native runtime with no tensor-capable boundary
+  participating in the run.
+- `tensor_available_disabled`: the tensor-capable boundary exists and reports
+  its configuration, but no Torch batch is created for model execution.
+- `tensor_enabled_cpu`: linearized records are converted to Torch CPU batches.
+- `tensor_enabled_cuda`: future CUDA-backed tensor execution; do not claim this
+  mode unless CUDA availability, device placement, and timing are explicit.
+
+For tensorization comparisons, the minimum responsible artifact should include:
+
+- the benchmark label from `LinearizationReport.benchmark_label`
+- the full serialized `LinearizationConfig`
+- the full serialized `LinearizationReport`
+- whether Torch was installed and which version was observed
+- whether CUDA was requested and whether CUDA was available
+- conversion counts and elapsed conversion time when measured
+- whether the learner/model path actually consumed `TorchDecisionBatch` or
+  `TorchTransitionBatch`
+- the ordinary environment, seed, contraction-schema, and tower-runtime metadata
+
+Do not compare a historical pre-linearization run directly against a
+tensor-enabled run and call that tensor-off versus tensor-on evidence. The
+meaningful tensor-off arm is `tensor_available_disabled`: the architecture is
+tensor-capable, but the tensor path is intentionally disabled.
+
 ## Current Limitations
 
 The current evaluation surface is still limited in several ways:
