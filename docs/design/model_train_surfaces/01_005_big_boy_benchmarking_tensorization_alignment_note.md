@@ -213,3 +213,40 @@ the tensor-off versus tensor-on distinction meaningful?
 Only then should `big_boy_benchmarking` proceed to blueprint and gameplan for the
 first serious counterpoint evaluation.
 
+## Status Addendum: 2026-05-29
+
+The upstream blocker described in this note has been resolved at the
+`state_collapser` package-boundary level by the `v0.7.0` tensorization release.
+
+The package now exposes:
+
+```python
+from state_collapser.training import EncodingRegistry
+from state_collapser.training import LinearizationConfig
+from state_collapser.training import LinearizationReport
+from state_collapser.training import LinearizationState
+from state_collapser.training import NumericBackend
+from state_collapser.training import TensorDeviceKind
+```
+
+and optional Torch conversion under:
+
+```python
+from state_collapser.training.torch import TorchDecisionBatch
+from state_collapser.training.torch import TorchTransitionBatch
+```
+
+The remaining work is now downstream integration work:
+
+- update `big_boy_benchmarking` to consume `LinearizationConfig` and
+  `LinearizationReport`;
+- record benchmark labels such as `none_control_flow`,
+  `tensor_available_disabled`, `tensor_enabled_cpu`, and future
+  `tensor_enabled_cuda`;
+- distinguish tensor-capable-disabled runs from truly pre-linearization
+  historical baselines;
+- avoid making tensor-on/tensor-off benchmark claims until those modes are
+  actually wired into benchmark artifacts.
+
+This addendum preserves the original note as the record of why tensorization was
+needed, while clarifying that the upstream resume signal now exists.

@@ -68,11 +68,36 @@ numeric_backend = tensor_enabled_cuda
 Names can change, but the semantic distinction should remain explicit and
 machine-readable.
 
-## Planned Documents
+## Current Documents
 
-Expected next documents:
+This folder now contains the design, implementation, and downstream bridge
+records for the first tensorization boundary:
 
 - `01_001_tensorization_architecture_blueprint.md`
 - `01_002_tensorization_engineer_usage_blueprint.md`
 - `01_003_tensorization_implementation_gameplan.md`
 - `01_004_tensorization_implementation_log.md`
+- `01_005_hgraphml_tensorization_followup_bridge.md`
+
+## Current Status
+
+The first tensorization boundary has been implemented in the package source and
+released as part of `v0.7.0`.
+
+The implemented source surfaces are:
+
+- `src/state_collapser/training/linearization.py`
+- `src/state_collapser/training/torch.py`
+
+The boundary supports:
+
+- backend-independent linearized records,
+- `EncodingRegistry.from_tower(...)`,
+- `LinearizationConfig`,
+- `LinearizationReport`,
+- explicit benchmark labels for disabled/enabled tensor paths,
+- optional Torch batch conversion behind the `ml` extra.
+
+This does not make `state_collapser` a full RL framework. Vectorized rollout,
+large replay buffers, checkpoint/resume, experiment manifests, CUDA hardening,
+and serious learner integration remain future work.

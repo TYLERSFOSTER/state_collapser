@@ -41,6 +41,8 @@ the project in any particular way.
   the package.
 - `docs/usage/01_009_downstream_applications.md`: HGraphML and non-RL graph
   dataflow context.
+- `docs/usage/01_010_tensorization_boundary.md`: backend-independent
+  linearization, benchmark-mode reporting, and optional Torch batches.
 
 ## API Notes
 
@@ -53,6 +55,8 @@ the project in any particular way.
 - `docs/api_notes/path_fiber.md`: lift fibers over coarse decisions.
 - `docs/api_notes/fiber_conditioned_stage.md`: adjacent-tier training stage
   surface.
+- `docs/api_notes/tensorization_boundary.md`: provisional tensorization API
+  names and benchmark labels.
 
 ## Research And Design
 
@@ -66,6 +70,8 @@ the project in any particular way.
   implementation records for the fiber-conditioned training spine.
 - `docs/design/Young_tableaux_refactor/`: design and implementation records for
   the partition-table / Young-tableaux-style tower runtime.
+- `docs/design/tensorization/`: design, implementation, and HGraphML bridge
+  notes for the first tensorization boundary.
 - `docs/design/public_release_security_audit/`: public release, security, and
   discoverability audit trail.
 - `docs/engineer_continuity/`: continuity reports recording major engineering
