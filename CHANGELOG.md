@@ -7,6 +7,47 @@ and this project aims to follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-29
+
+### Added
+
+- Added the first tensorization boundary under `state_collapser.training`,
+  including backend-independent linearization records, benchmark-mode config,
+  and benchmark-visible reports.
+- Added `EncodingRegistry` for stable numeric ids over states, edges, actions,
+  state cells, action cells, action collections, tower tiers, stage ids, fiber
+  ids, frozen behavior ids, departure reasons, and labels.
+- Added optional Torch conversion under `state_collapser.training.torch`,
+  including `TorchDecisionBatch`, `TorchTransitionBatch`, and
+  `action_decision_from_logits`.
+- Added tensorization usage documentation and design records under:
+  - `docs/usage/01_010_tensorization_boundary.md`
+  - `docs/design/tensorization/`
+- Added a HGraphML tensorization-follow-up bridge documenting how downstream
+  graph-ML compatibility should use shared tower encoding without depending on
+  RL-specific training records or Torch.
+
+### Changed
+
+- Bumped package metadata and runtime version to `0.7.0`.
+- Clarified that tensorization is an explicit learner, adapter, or benchmark
+  boundary rather than a replacement for the object-native runtime.
+- Preserved the position that `state_collapser` is not a full RL framework:
+  PPO/DQN/SAC, replay buffers, vectorized rollout, checkpoint/resume, and
+  experiment manifests remain outside the first tensorization release.
+
+### Validation
+
+- Static validation passed during release preparation:
+  - `ruff check .`
+  - `mypy src`
+- Regression and tensorization validation passed during release preparation:
+  - full pytest suite with coverage
+  - tensorization-focused training tests
+  - optional Torch smoke tests when the `ml` extra is installed
+- Package build validation passed during release preparation:
+  - `python -m build`
+
 ## [0.6.0] - 2026-05-25
 
 ### Added

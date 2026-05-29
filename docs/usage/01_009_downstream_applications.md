@@ -66,6 +66,17 @@ recover:
 - edge fibers from edge preimages grouped by coarse source and target cells,
 - coarse graph readouts by tier.
 
+Starting with the `v0.7.0` tensorization boundary, HGraphML can also target the
+shared tower-encoding layer:
+
+```python
+from state_collapser.training import EncodingRegistry
+```
+
+That registry is useful for graph-message-passing ids because it can be built
+from a `PartitionTower` without constructing RL-specific `ActionSelectionInput`
+or `TrainingTransition` objects and without importing Torch.
+
 These surfaces are still pre-alpha, but they are now more than internal
 implementation details: they have at least one real downstream package depending
 on them.

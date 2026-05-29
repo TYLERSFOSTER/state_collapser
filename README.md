@@ -66,7 +66,7 @@ pip install -e .
 Install from a public GitHub tag once the repository is public:
 
 ```bash
-pip install "state-collapser @ git+https://github.com/TYLERSFOSTER/state_collapser.git@v0.6.0"
+pip install "state-collapser @ git+https://github.com/TYLERSFOSTER/state_collapser.git@v0.7.0"
 ```
 
 Install a local checkout with development tooling:
@@ -202,6 +202,8 @@ default smoke schemas; pass `NoContractionSchema()` in Python, or
   packages such as HGraphML.
 - Tower runtime snapshots and tower-aware training support.
 - An initial internal `state_collapser.training` package with reusable training-facing surfaces.
+- A first tensorization boundary for backend-independent linearization,
+  benchmark-mode reporting, and optional Torch batch conversion.
 - A first exploit/explore active-tier controller.
 - Example environments and runnable example training paths.
 - Strong design-document support for the mathematical and architectural model.
@@ -232,7 +234,11 @@ The package currently contains real code for:
 - `state_collapser.tower`
   - schema-driven partition-backed tower runtime, `LiveRuntimeView`, serializable `RuntimeSnapshot`, lazy compatibility readouts, trustworthiness, and exploit/explore control
 - `state_collapser.training`
-  - internal reusable decision inputs, action masks, continuation-aware transitions, collectors, learners, metrics, reference loops, and fiber-conditioned training surfaces
+  - internal reusable decision inputs, action masks, continuation-aware
+    transitions, collectors, learners, metrics, reference loops,
+    fiber-conditioned training surfaces, backend-independent linearization,
+    `EncodingRegistry`, `LinearizationConfig`, `LinearizationReport`, and
+    optional Torch batch conversion under `state_collapser.training.torch`
 - `state_collapser.adapters`
   - `StateCollapserGymWrapper` hook surfaces and legacy/toy adapter examples
 - `state_collapser.benchmarks`
@@ -282,12 +288,15 @@ What is solid enough to rely on:
 - the existence of both old and new training paths for `PlateSupportEnv`
 - the first internal `state_collapser.training` component layer
 - the first `FrozenQuotientBehavior -> PathFiber -> FiberConditionedStage` bridge
+- the first tensorization boundary for linearized training records and optional
+  Torch batches
 - the migrated `rl_counterpoint_v3` training path as a first training-surface reality check
 
 What should still be treated as unstable:
 
 - the broad public API
 - the public shape of `state_collapser.training`
+- the public shape of tensorization and Torch batch-conversion surfaces
 - exploit/explore control tuning and behavior
 - long-term naming of some modules and surfaces
 - future instrumentation and benchmark interfaces
@@ -339,15 +348,18 @@ General package docs:
 
 Mathematical and design docs:
 
-- [`docs/design/mathematical_model.pdf`](./docs/design/mathematical_model.pdf)
+- [`docs/design/logHRL.pdf`](./docs/design/logHRL.pdf)
+- [`docs/design/log_tropical_geometry/01_001_log_tropical_geometry_and_quotient_tower_discussion.md`](./docs/design/log_tropical_geometry/01_001_log_tropical_geometry_and_quotient_tower_discussion.md)
 - [`docs/design/reward_locality_for_quotient_training.md`](./docs/design/reward_locality_for_quotient_training.md)
 - [`docs/design/module_design_desiderata.md`](./docs/design/module_design_desiderata.md)
 - [`docs/design/package_best_practices_proposal.md`](./docs/design/package_best_practices_proposal.md)
 - [`docs/design/model_train_surfaces/01_001_model_and_training_surface_architecture.md`](./docs/design/model_train_surfaces/01_001_model_and_training_surface_architecture.md)
 - [`docs/design/model_train_surfaces/01_002_model_and_training_surface_blueprint.md`](./docs/design/model_train_surfaces/01_002_model_and_training_surface_blueprint.md)
+- [`docs/design/model_train_surfaces/01_005_big_boy_benchmarking_tensorization_alignment_note.md`](./docs/design/model_train_surfaces/01_005_big_boy_benchmarking_tensorization_alignment_note.md)
 - [`docs/design/RL_framework_maturity/01_001_rl_framework_maturity_and_tower_training_spine_discussion.md`](./docs/design/RL_framework_maturity/01_001_rl_framework_maturity_and_tower_training_spine_discussion.md)
 - [`docs/design/RL_framework_maturity/01_002_fiber_conditioned_training_spine_blueprint.md`](./docs/design/RL_framework_maturity/01_002_fiber_conditioned_training_spine_blueprint.md)
 - [`docs/design/Young_tableaux_refactor/01_001_young_tableaux_runtime_refactor_blueprint.md`](./docs/design/Young_tableaux_refactor/01_001_young_tableaux_runtime_refactor_blueprint.md)
+- [`docs/design/tensorization`](./docs/design/tensorization)
 
 Major implementation docs:
 
@@ -360,6 +372,9 @@ Major implementation docs:
 - [`docs/design/Young_tableaux_refactor/01_003_young_tableaux_runtime_refactor_implementation_log.md`](./docs/design/Young_tableaux_refactor/01_003_young_tableaux_runtime_refactor_implementation_log.md)
 - [`docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md`](./docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md)
 - [`docs/design/RL_framework_maturity/01_006_fiber_conditioned_training_spine_paired_implementation_log.md`](./docs/design/RL_framework_maturity/01_006_fiber_conditioned_training_spine_paired_implementation_log.md)
+- [`docs/design/tensorization/01_003_tensorization_implementation_gameplan.md`](./docs/design/tensorization/01_003_tensorization_implementation_gameplan.md)
+- [`docs/design/tensorization/01_004_tensorization_implementation_log.md`](./docs/design/tensorization/01_004_tensorization_implementation_log.md)
+- [`docs/design/tensorization/01_005_hgraphml_tensorization_followup_bridge.md`](./docs/design/tensorization/01_005_hgraphml_tensorization_followup_bridge.md)
 
 Continuity / project history:
 
@@ -367,6 +382,8 @@ Continuity / project history:
 - [`docs/engineer_continuity/2026/05/20/01_009_evaluation_family_counterpoint_and_training_surface_consolidation.md`](./docs/engineer_continuity/2026/05/20/01_009_evaluation_family_counterpoint_and_training_surface_consolidation.md)
 - [`docs/engineer_continuity/2026/05/23/01_010_package_readiness_and_loghrl_research_document_consolidation.md`](./docs/engineer_continuity/2026/05/23/01_010_package_readiness_and_loghrl_research_document_consolidation.md)
 - [`docs/engineer_continuity/2026/05/24/01_011_young_tableaux_runtime_review_release_and_synthetic_blow_revisions.md`](./docs/engineer_continuity/2026/05/24/01_011_young_tableaux_runtime_review_release_and_synthetic_blow_revisions.md)
+- [`docs/engineer_continuity/2026/05/25/01_012_state_collapser_rl_spine_public_release_hgraphml_and_history_rewrite.md`](./docs/engineer_continuity/2026/05/25/01_012_state_collapser_rl_spine_public_release_hgraphml_and_history_rewrite.md)
+- [`docs/engineer_continuity/2026/05/29/01_013_log_tropical_tensorization_and_hgraphml_followup.md`](./docs/engineer_continuity/2026/05/29/01_013_log_tropical_tensorization_and_hgraphml_followup.md)
 
 ## Development
 

@@ -59,6 +59,11 @@ Install the model-backend optional dependency group with:
 pip install -e ".[ml]"
 ```
 
+The backend-independent tensorization layer lives in
+`state_collapser.training.linearization` and is documented through the training
+package. It does not import Torch at module import time. The `ml` extra is needed
+for `state_collapser.training.torch` and its Torch batch-conversion helpers.
+
 Install everything currently defined for local development with:
 
 ```bash

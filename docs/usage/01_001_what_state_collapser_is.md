@@ -56,6 +56,8 @@ What exists now:
 - tower-aware training inputs, decisions, transitions, collectors, and reference
   loops
 - `FrozenQuotientBehavior`, `PathFiber`, and `FiberConditionedStage`
+- backend-independent linearization records, shared tower encodings, benchmark
+  mode reports, and optional Torch batch conversion
 - example environments and smoke training paths
 
 What does not exist yet:
@@ -68,6 +70,9 @@ What does not exist yet:
 
 For the implemented training-stage surface, start with
 [fiber-conditioned training](./01_004_fiber_conditioned_training.md).
+
+For the current tensor/model boundary, read
+[tensorization boundary](./01_010_tensorization_boundary.md).
 
 For the first non-RL downstream application, read
 [downstream applications](./01_009_downstream_applications.md).

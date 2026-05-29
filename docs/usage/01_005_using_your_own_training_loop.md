@@ -39,7 +39,7 @@ closed framework.
 ## Fitting A Neural Learner Later
 
 A neural learner can consume `ActionSelectionInput` exactly where the reference
-`TabularQLearner` does. Future tensor/device utilities should convert:
+`TabularQLearner` does. The first tensorization boundary now converts:
 
 - observation
 - tower-position key
@@ -47,4 +47,10 @@ A neural learner can consume `ActionSelectionInput` exactly where the reference
 - stage context
 - diagnostics selected by the engineer
 
-into model inputs. That tensor stack is not implemented yet.
+into backend-independent linearized records and, when the `ml` extra is
+installed, optional Torch batches.
+
+This is still not a package-owned neural training framework. The engineer still
+owns the model, optimizer, replay/storage, checkpointing, and experiment policy.
+For the current tensor/model boundary, read
+[tensorization boundary](./01_010_tensorization_boundary.md).

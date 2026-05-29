@@ -27,12 +27,20 @@ PyPI readiness later.
 
 ### Critical TODO
 
-- ***System maturity:*** Deep tensor-backend hardening, large-scale training
-  framework maturity, and full vectorized rollout semantics.
+- ***System maturity:*** The first tensorization boundary now exists, but the
+  package is still not a mature RL framework. Deep tensor-backend hardening,
+  large-scale training framework maturity, vectorized rollout semantics, replay
+  design, checkpoint/resume, and experiment manifests remain future work.
 - ***Training surfaces:*** The first reusable training layer now has explicit
-  action masks and continuation/bootstrap semantics. The next hardening stage
-  is tensor/device, batch/sequence, vectorized rollout, and
-  serialization/checkpoint integration.
+  action masks, continuation/bootstrap semantics, fiber-conditioned stages, and
+  backend-independent linearized records. The next hardening stage is
+  batch/sequence, vectorized rollout, artifact/checkpoint integration, CUDA
+  validation, and serious learner integration.
+- ***Tensorization boundary:*** Preserve the object-native runtime by default.
+  Tensorization should remain an explicit learner/benchmark boundary using
+  `LinearizationConfig`, `LinearizationReport`, `EncodingRegistry`, and optional
+  Torch batch conversion. Do not force ordinary runtime paths through tensor
+  adapters just because the tensor-capable surface exists.
 - ***Runtime surfaces:*** The runtime now separates `LiveRuntimeView` from
   serializable `RuntimeSnapshot` values and keeps compatibility quotient
   readouts lazy. Future performance work should preserve that
@@ -47,7 +55,9 @@ PyPI readiness later.
   [src/state_collapser/examples](./src/state_collapser/examples)
   and lightweight runtime benchmark smoke tooling in `state_collapser.benchmarks`.
   We still need serious benchmarking across larger coordination-constrained
-  environments.
+  environments, including explicit `none_control_flow`,
+  `tensor_available_disabled`, `tensor_enabled_cpu`, and future
+  `tensor_enabled_cuda` conditions.
 - ***Gymnasium bridge hardening:*** The package now has an explicit hook-based
   Gymnasium wrapper, but the harder observation-vs-state inference problem
   remains future work. Automatic inference is not required for the core package
@@ -59,8 +69,8 @@ PyPI readiness later.
   [docs/design/PyPl_readiness](./docs/design/PyPl_readiness).
 - ***Downstream compatibility:*** Treat `HGraphML` as the first real downstream
   package consuming `state_collapser` partition towers outside RL. Public
-  release work should preserve its current first-import behavior or document a
-  migration path.
+  release work should preserve its current first-import behavior, protect shared
+  tower encoding assumptions, or document a migration path.
 - ***Research document hardening:*** Edit, proofread, and perfect
   [docs/design/logHRL.tex](./docs/design/logHRL.tex).
 
@@ -179,7 +189,9 @@ High-level roles:
 - `tower/`
   - partition-backed tower runtime, snapshots, trustworthiness, lazy quotient readouts, and exploit/explore control
 - `training/`
-  - reusable training-facing inputs, transitions, masks, collectors, learner hooks, reference loops, and fiber-conditioned stage surfaces
+  - reusable training-facing inputs, transitions, masks, collectors, learner
+    hooks, reference loops, fiber-conditioned stage surfaces, linearization
+    reports, encoding registries, and optional Torch conversion boundaries
 - `examples/`
   - reference environments and runtime/training integrations
 - `instrumentation/`
@@ -224,6 +236,12 @@ In particular, several design stacks now matter:
 - [docs/usage](./docs/usage)
 - [docs/api_notes](./docs/api_notes)
 
+### Tensorization boundary
+
+- [docs/design/tensorization](./docs/design/tensorization)
+- [docs/usage/01_010_tensorization_boundary.md](./docs/usage/01_010_tensorization_boundary.md)
+- [docs/api_notes/tensorization_boundary.md](./docs/api_notes/tensorization_boundary.md)
+
 ### First major implementation stack
 
 - [docs/design/final_initial/final_initial_blueprint.md](./docs/design/final_initial/final_initial_blueprint.md)
@@ -239,7 +257,8 @@ In particular, several design stacks now matter:
 
 ### General package and mathematical context
 
-- [docs/design/mathematical_model.pdf](./docs/design/mathematical_model.pdf)
+- [docs/design/logHRL.pdf](./docs/design/logHRL.pdf)
+- [docs/design/log_tropical_geometry](./docs/design/log_tropical_geometry)
 - [docs/design/reward_locality_for_quotient_training.md](./docs/design/reward_locality_for_quotient_training.md)
 - [docs/design/module_design_desiderata.md](./docs/design/module_design_desiderata.md)
 - [docs/design/package_best_practices_proposal.md](./docs/design/package_best_practices_proposal.md)
@@ -283,6 +302,8 @@ Current important testing areas include:
 - tower runtime snapshots and control behavior
 - partition-tower state/action layer behavior
 - reusable training surfaces and fiber-conditioned stage behavior
+- tensorization boundary behavior, including linearization configs/reports,
+  encoding registries, linearized records, and optional Torch batches
 - example runtime/training paths
 - benchmark CLI/import smoke behavior
 
@@ -374,8 +395,11 @@ When changing runtime-sensitive code:
 - avoid hidden calls to `to_quotient_tier_views()` in default step/update paths
 - keep compatibility readouts behind explicit APIs such as
   `compatibility_quotient_tiers()`
+- keep tensorization behind explicit learner, adapter, or benchmark boundaries
 - benchmark both readout-disabled and readout-enabled modes when performance is
   part of the claim
+- record tensorization benchmark labels and reports when comparing tensor-off
+  and tensor-on paths
 - avoid unit tests that assert brittle wall-clock thresholds
 - prefer benchmark tests that assert importability, CLI shape, flags, and
   structured result fields
@@ -400,6 +424,10 @@ If a contribution changes any of the following, update docs in the same change:
 At minimum, contributors should consider whether the change requires updates to:
 
 - [README.md](./README.md)
+- [CHANGELOG.md](./CHANGELOG.md)
+- [CITATION.cff](./CITATION.cff)
+- [EVALUATION.md](./EVALUATION.md)
+- [llms.txt](./llms.txt)
 - [docs/package_usage.md](./docs/package_usage.md)
 - [docs/public_api.md](./docs/public_api.md)
 - env-specific design docs
@@ -414,7 +442,12 @@ Typical release work includes:
 - updating version metadata in:
   - [pyproject.toml](./pyproject.toml)
   - [src/state_collapser/_version.py](./src/state_collapser/_version.py)
+  - [CITATION.cff](./CITATION.cff)
+- updating release documentation in:
+  - [CHANGELOG.md](./CHANGELOG.md)
+  - [README.md](./README.md)
 - ensuring CI is green
+- refreshing `uv.lock` when package metadata changes
 - creating a git tag such as:
   - `vX.Y.Z`
 - pushing the tag to GitHub
@@ -435,6 +468,8 @@ This repository now contains:
 - a first exploit/explore active-tier control implementation
 - a reusable internal `state_collapser.training` package
 - a first `FrozenQuotientBehavior -> PathFiber -> FiberConditionedStage` bridge
+- a first tensorization boundary with backend-independent linearized records,
+  benchmark-mode reports, shared tower encodings, and optional Torch batches
 - lightweight benchmark smoke tooling for hot-path/readout comparisons
 
 So contributions should treat the repository as a real package with live runtime semantics, not just as a design notebook.

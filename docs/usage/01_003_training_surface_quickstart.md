@@ -82,3 +82,20 @@ The engineer still owns:
 - evaluation policy
 
 The package supplies tower-aware structure and typed handoff objects.
+
+## Tensorization Boundary
+
+When a learner or benchmark harness needs numeric records or Torch tensors, use
+the explicit tensorization boundary rather than changing the ordinary training
+loop shape.
+
+The current path is:
+
+```text
+ActionSelectionInput / TrainingTransition
+    -> LinearizedActionSelectionInput / LinearizedTrainingTransition
+        -> optional TorchDecisionBatch / TorchTransitionBatch
+```
+
+For exact imports and benchmark-mode labels, read
+[tensorization boundary](./01_010_tensorization_boundary.md).

@@ -14,6 +14,8 @@
   - focused tests for each example environment
   - a CLI tower-depth probe utility for inspecting dynamic tower growth
   - lightweight runtime benchmark smoke tooling for hot-path/readout checks
+  - a first tensorization boundary with machine-readable benchmark labels for
+    tensor-capable disabled/enabled runs
 - **Not yet in place:**
   - a polished benchmark harness with persistent artifacts and standardized result tables
   - broad empirical claims across many seeds and many budgets
@@ -408,6 +410,8 @@ When reporting evaluation results, it helps to record:
 - exact training or probe command
 - seed
 - contraction-policy settings
+- linearization state, numeric backend, device kind, and benchmark label when a
+  tensor-capable path is present
 - number of steps or episodes
 - any reset policy used in the probe
 - whether the result is structural, behavioral, or performance-oriented
@@ -419,6 +423,12 @@ For now, a good minimum standard is:
 - explicit environment
 - explicit note of whether contraction policy was enabled
 
+For tensor-capable experiments, also persist:
+
+- `LinearizationConfig.to_dict()`
+- `LinearizationReport.to_dict()`
+- `LinearizationReport.benchmark_label`
+
 ## Current Limitations
 
 The current evaluation surface is still limited in several ways:
@@ -426,6 +436,8 @@ The current evaluation surface is still limited in several ways:
 - flat vs top-tier-only vs full-tower benchmarking is not yet fully standardized across all environments
 - exploit/explore evaluation is still most mature only on `PlateSupportEnv`
 - tower-depth probing exists, but richer instrumentation and visualization are still under active development
+- tensorization mode reporting exists, but serious tensor-off versus tensor-on
+  benchmark harnesses and artifact tables remain future work
 - the repo does not yet ship a full artifact-writing benchmark harness with plots, CSV outputs, or standardized reports
 
 So the current evaluation suite should be read as:

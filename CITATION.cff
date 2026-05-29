@@ -6,8 +6,8 @@ abstract: "A pre-alpha research package for constructing quotient-tower structur
 authors:
   - family-names: "Foster"
     given-names: "Tyler"
-version: "0.6.0"
-date-released: "2026-05-25"
+version: "0.7.0"
+date-released: "2026-05-29"
 license: "MIT"
 repository-code: "https://github.com/TYLERSFOSTER/state_collapser"
 url: "https://github.com/TYLERSFOSTER/state_collapser"
