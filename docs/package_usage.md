@@ -16,6 +16,8 @@ pre-alpha, and duplicating them here would make this file drift from the repo.
   [fiber-conditioned training](./usage/01_004_fiber_conditioned_training.md)
 - Using your own training loop:
   [own training loop guide](./usage/01_005_using_your_own_training_loop.md)
+- Adding a tensor/model boundary:
+  [tensorization boundary](./usage/01_010_tensorization_boundary.md)
 - Integrating a Gymnasium environment:
   [Gymnasium integration](./usage/01_006_gymnasium_integration.md)
 - Looking at downstream applications:

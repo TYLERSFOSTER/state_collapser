@@ -23,6 +23,7 @@ For the current documented provisional surfaces, use the API notes:
 - [FrozenQuotientBehavior](./api_notes/frozen_quotient_behavior.md)
 - [PathFiber](./api_notes/path_fiber.md)
 - [FiberConditionedStage](./api_notes/fiber_conditioned_stage.md)
+- [tensorization boundary](./usage/01_010_tensorization_boundary.md)
 
 These notes are the right place to look for exact current names and usage
 patterns. This file should not duplicate that inventory.

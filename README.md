@@ -323,6 +323,7 @@ Where to go next:
 - New to the package: start with [`docs/usage/01_001_what_state_collapser_is.md`](./docs/usage/01_001_what_state_collapser_is.md).
 - Trying to understand the tower runtime: read [`docs/usage/01_002_tower_runtime_mental_model.md`](./docs/usage/01_002_tower_runtime_mental_model.md).
 - Trying to train with your own learner: read [`docs/usage/01_003_training_surface_quickstart.md`](./docs/usage/01_003_training_surface_quickstart.md) and [`docs/usage/01_004_fiber_conditioned_training.md`](./docs/usage/01_004_fiber_conditioned_training.md).
+- Adding a tensor/model boundary: read [`docs/usage/01_010_tensorization_boundary.md`](./docs/usage/01_010_tensorization_boundary.md).
 - Looking for exact implemented surfaces: use [`docs/api_notes`](./docs/api_notes).
 - Looking for downstream applications: read [`docs/usage/01_009_downstream_applications.md`](./docs/usage/01_009_downstream_applications.md).
 - Planning to contribute: read [`CONTRIBUTING.md`](./CONTRIBUTING.md).

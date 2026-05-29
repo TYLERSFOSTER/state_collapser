@@ -11,6 +11,19 @@ from .fibers import FiberDeparture, FiberDepartureReason, FiberStageContext, Pat
 from .frozen import FrozenQuotientBehavior, FrozenQuotientStep
 from .inputs import ActionSelectionInput, build_action_selection_input, tower_position_key
 from .learners import Learner, LearnerUpdateSummary, TabularQLearner
+from .linearization import (
+    EncodingRegistry,
+    LinearizationConfig,
+    LinearizationReport,
+    LinearizationState,
+    LinearizedActionSelectionInput,
+    LinearizedTrainingTransition,
+    NumericBackend,
+    TensorDeviceKind,
+    build_linearization_report,
+    linearize_action_selection_input,
+    linearize_training_transition,
+)
 from .masks import action_is_legal, legal_actions, mask_from_info
 from .metrics import EpisodeMetrics, MetricsHook, TrainingMetrics
 from .reference_loops import (
@@ -29,6 +42,7 @@ __all__ = [
     "CollectedStep",
     "EpisodeCollector",
     "EpisodeMetrics",
+    "EncodingRegistry",
     "FiberConditionedStage",
     "FiberDeparture",
     "FiberDepartureReason",
@@ -37,19 +51,29 @@ __all__ = [
     "FrozenQuotientStep",
     "Learner",
     "LearnerUpdateSummary",
+    "LinearizationConfig",
+    "LinearizationReport",
+    "LinearizationState",
+    "LinearizedActionSelectionInput",
+    "LinearizedTrainingTransition",
     "MetricsHook",
+    "NumericBackend",
     "PathFiber",
     "ReferenceLoopResult",
     "RuntimeSnapshotSummary",
     "StepCollector",
     "TabularQLearner",
+    "TensorDeviceKind",
     "TrainingMetrics",
     "TrainingTransition",
     "action_is_legal",
     "build_action_selection_input",
+    "build_linearization_report",
     "default_bootstrap_allowed",
     "default_bootstrap_reason",
     "legal_actions",
+    "linearize_action_selection_input",
+    "linearize_training_transition",
     "mask_from_info",
     "run_reference_episode_loop",
     "run_reference_online_loop",
