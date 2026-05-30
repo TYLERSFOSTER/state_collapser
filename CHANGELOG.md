@@ -7,6 +7,8 @@ and this project aims to follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-05-30
+
 ### Fixed
 
 - Added active-tier degenerate control handling so exploit/explore runtime
