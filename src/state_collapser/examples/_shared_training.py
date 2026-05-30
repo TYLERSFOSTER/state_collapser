@@ -11,25 +11,37 @@ from state_collapser.training.collectors import RuntimeLike
 
 
 class TowerTrainingConfigLike(Protocol):
-    """Config attributes required by the shared example training loop."""
+    """Config protocol required by the shared example training loop."""
 
     @property
-    def episodes(self) -> int: ...
+    def episodes(self) -> int:
+        """Return the number of training episodes to run."""
+        ...
 
     @property
-    def max_steps_per_episode(self) -> int: ...
+    def max_steps_per_episode(self) -> int:
+        """Return the maximum primitive steps in each episode."""
+        ...
 
     @property
-    def alpha(self) -> float: ...
+    def alpha(self) -> float:
+        """Return the tabular Q-learning update rate."""
+        ...
 
     @property
-    def gamma(self) -> float: ...
+    def gamma(self) -> float:
+        """Return the tabular Q-learning discount factor."""
+        ...
 
     @property
-    def epsilon(self) -> float: ...
+    def epsilon(self) -> float:
+        """Return the epsilon-greedy exploration probability."""
+        ...
 
     @property
-    def seed(self) -> int: ...
+    def seed(self) -> int:
+        """Return the deterministic random seed for the reference loop."""
+        ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -51,7 +63,7 @@ class SharedTowerTrainingResult:
 
 
 def tower_state_key(snapshot: LiveRuntimeView) -> tuple[object | None, ...]:
-    """Return the tower-position key used by the shared tabular learner."""
+    """Return the nested tower-position key used by the shared tabular learner."""
 
     return tuple(snapshot.current_position_at_every_tier)
 
@@ -62,7 +74,12 @@ def run_shared_tower_training(
     action_count: int,
     config: TowerTrainingConfigLike,
 ) -> SharedTowerTrainingResult:
-    """Run a tower-aware tabular loop through the package learner surfaces."""
+    """Run a tower-aware tabular loop through package learner surfaces.
+
+    The helper is intentionally small and example-agnostic. It demonstrates how
+    current tower positions can serve as tabular state keys without introducing
+    a package-owned neural model or rigid training loop.
+    """
 
     learner = TabularQLearner(
         action_count=action_count,

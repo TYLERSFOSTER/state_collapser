@@ -33,21 +33,21 @@ class ActionId:
 
 @dataclass(frozen=True, slots=True, order=True)
 class TierIndex:
-    """Tower tier index."""
+    """Typed tower tier index for APIs that should not accept raw integers."""
 
     value: int
 
 
 @dataclass(frozen=True, slots=True)
 class SchemaBlockId:
-    """Identifier for one ordered contraction-schema block."""
+    """Identifier for one ordered block in a contraction schema."""
 
     value: Hashable
 
 
 @dataclass(frozen=True, slots=True, order=True)
 class StateCellId:
-    """Identifier for one state partition cell at one tier."""
+    """Identifier for one historical state partition cell at one tier."""
 
     tier: int
     ordinal: int
@@ -55,7 +55,7 @@ class StateCellId:
 
 @dataclass(frozen=True, slots=True, order=True)
 class ActionCollectionId:
-    """Identifier for one outgoing action collection at one tier."""
+    """Identifier for one outgoing-action collection at one tier."""
 
     tier: int
     ordinal: int
@@ -70,13 +70,15 @@ class ActionCellId:
 
 
 class IdAllocator:
-    """Monotone integer allocator for one id namespace."""
+    """Monotone integer allocator for one registry-local id namespace."""
 
     def __init__(self) -> None:
+        """Start allocation at zero for a fresh id namespace."""
+
         self._next_value = 0
 
     def next(self) -> int:
-        """Return the next integer and advance the allocator."""
+        """Return the next integer and advance the namespace counter."""
 
         value = self._next_value
         self._next_value += 1

@@ -384,6 +384,8 @@ class PlateSupportEnv(gymnasium.Env[np.ndarray, int]):
     metadata = {"render_modes": [None, "ansi"]}
 
     def __init__(self, render_mode: str | None = None) -> None:
+        """Initialize spaces, start/goal state, render mode, and step counter."""
+
         self.render_mode = render_mode
         self.action_space = gymnasium.spaces.Discrete(ACTION_COUNT)
         self.observation_space = gymnasium.spaces.MultiDiscrete([5, 5, 4, 3, 3, 3])
@@ -397,6 +399,8 @@ class PlateSupportEnv(gymnasium.Env[np.ndarray, int]):
         seed: int | None = None,
         options: dict[str, object] | None = None,
     ) -> tuple[np.ndarray, dict[str, object]]:
+        """Reset to the fixed start state and return observation metadata."""
+
         super().reset(seed=seed)
         _ = options
         self.state = START_STATE
@@ -410,6 +414,8 @@ class PlateSupportEnv(gymnasium.Env[np.ndarray, int]):
         self,
         action: int,
     ) -> tuple[np.ndarray, float, bool, bool, dict[str, object]]:
+        """Apply one discrete plate-support action and return Gymnasium outputs."""
+
         if isinstance(action, bool) or not self.action_space.contains(action):
             raise ValueError(f"Unsupported action index: {action}")
 
@@ -435,6 +441,8 @@ class PlateSupportEnv(gymnasium.Env[np.ndarray, int]):
         )
 
     def render(self) -> str | None:
+        """Render the current state as an ANSI string when requested."""
+
         if self.render_mode is None:
             return None
         if self.render_mode == "ansi":

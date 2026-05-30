@@ -1,4 +1,10 @@
-"""Torch conversion boundary for linearized training records."""
+"""Optional Torch conversion boundary for linearized training records.
+
+This module is intentionally downstream of `training.linearization`: it accepts
+backend-independent numeric records and turns them into Torch tensors only when
+the optional `ml` dependency is installed. Importing the package's training
+surfaces should not require Torch.
+"""
 
 from __future__ import annotations
 
@@ -18,7 +24,12 @@ from .linearization import (
 
 @dataclass(frozen=True, slots=True)
 class TorchDecisionBatch:
-    """Torch tensor batch for action-selection records."""
+    """Torch tensor batch for action-selection records.
+
+    The batch owns tensor layout only, not model policy semantics. Ragged fields
+    are padded at this boundary, with `-1` used for absent ids and `False` used
+    for padded action-mask positions.
+    """
 
     observations: object
     tower_positions: object
@@ -35,7 +46,13 @@ class TorchDecisionBatch:
         *,
         config: LinearizationConfig,
     ) -> TorchDecisionBatch:
-        """Convert backend-independent action records into Torch tensors."""
+        """Convert backend-independent decision records into Torch tensors.
+
+        The conversion uses the device and dtype described by
+        `LinearizationConfig`; it does not inspect or mutate the semantic tower
+        runtime. Empty batches produce width-zero tensors for fields whose width
+        is inferred from records.
+        """
 
         torch_module = _require_torch()
         device = _torch_device(torch_module, config)
@@ -104,7 +121,13 @@ class TorchDecisionBatch:
 
 @dataclass(frozen=True, slots=True)
 class TorchTransitionBatch:
-    """Torch tensor batch for transition records."""
+    """Torch tensor batch for source-target transition records.
+
+    This is the first neural-learner-facing container in the package. It keeps
+    source and target decision batches explicit so actor-critic, Q-learning, and
+    supervised smoke models can choose their own update logic without changing
+    the package-owned transition schema.
+    """
 
     source: TorchDecisionBatch
     target: TorchDecisionBatch
@@ -122,7 +145,7 @@ class TorchTransitionBatch:
         *,
         config: LinearizationConfig,
     ) -> TorchTransitionBatch:
-        """Convert backend-independent transition records into Torch tensors."""
+        """Convert backend-independent transitions into Torch tensor batches."""
 
         torch_module = _require_torch()
         device = _torch_device(torch_module, config)
@@ -173,7 +196,13 @@ def action_decision_from_logits(
     *,
     row: int = 0,
 ) -> ActionDecision:
-    """Build an `ActionDecision` from masked Torch logits."""
+    """Build an `ActionDecision` from one row of masked Torch logits.
+
+    Invalid actions are masked to negative infinity before argmax selection.
+    The returned decision remains package-native so callers can plug a toy Torch
+    model into existing collector/reference-loop surfaces without adopting a
+    package-owned policy architecture.
+    """
 
     torch_module = _require_torch()
     tensor_logits = cast(Any, logits)

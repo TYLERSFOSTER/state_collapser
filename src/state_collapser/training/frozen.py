@@ -17,6 +17,8 @@ class FrozenQuotientStep:
     metadata: Mapping[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
+        """Copy metadata so frozen steps remain immutable after construction."""
+
         object.__setattr__(self, "metadata", dict(self.metadata))
 
 
@@ -37,6 +39,8 @@ class FrozenQuotientBehavior:
     metadata: Mapping[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
+        """Validate adjacent tier support and normalize stored tuple/dict fields."""
+
         if self.coarse_tier != self.supported_fine_tier + 1:
             raise ValueError(
                 "FrozenQuotientBehavior first-scope use requires "

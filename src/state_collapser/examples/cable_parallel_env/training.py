@@ -19,6 +19,8 @@ from state_collapser.tower.snapshot import LiveRuntimeView
 
 @dataclass(frozen=True, slots=True)
 class TowerTrainingConfig:
+    """Configuration for the cable-parallel tower-aware tabular loop."""
+
     episodes: int = 10
     max_steps_per_episode: int = 32
     alpha: float = 0.5
@@ -29,6 +31,8 @@ class TowerTrainingConfig:
 
 @dataclass(frozen=True, slots=True)
 class TowerTrainingEpisodeSummary:
+    """Summary of one cable-parallel tower-training episode."""
+
     episode_index: int
     total_reward: float
     steps: int
@@ -37,12 +41,16 @@ class TowerTrainingEpisodeSummary:
 
 @dataclass(frozen=True, slots=True)
 class TowerTrainingResult:
+    """Structured result of a cable-parallel tower-training run."""
+
     config: TowerTrainingConfig
     q_table: dict[tuple[object | None, ...], dict[int, float]]
     episodes: tuple[TowerTrainingEpisodeSummary, ...]
 
 
 def tower_state_key(snapshot: LiveRuntimeView) -> tuple[object | None, ...]:
+    """Return the tower-position key used by the cable-parallel learner."""
+
     return shared_tower_state_key(snapshot)
 
 
@@ -53,6 +61,8 @@ def run_tower_training(
     contraction_schema: ContractionSchema | None = None,
     config: TowerTrainingConfig | None = None,
 ) -> TowerTrainingResult:
+    """Run the cable-parallel tower-aware tabular training loop."""
+
     training_config = TowerTrainingConfig() if config is None else config
     runtime = CableParallelEnvRuntime(
         env=CableParallelEnv() if env is None else env,

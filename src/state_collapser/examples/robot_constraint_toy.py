@@ -27,6 +27,8 @@ class RobotConstraintToy:
     """Small discretized robot-constraint environment with partially labeled regions."""
 
     def __init__(self) -> None:
+        """Initialize the toy grid, blocked cells, regions, and action table."""
+
         self.width = 4
         self.height = 3
         self._blocked = {(1, 1)}
@@ -124,22 +126,34 @@ class RobotConstraintHiddenGraph:
     """Hidden-graph binding for the robot-constraint toy environment."""
 
     def __init__(self, environment: RobotConstraintToy) -> None:
+        """Bind the hidden graph to a concrete toy environment instance."""
+
         self.environment = environment
         self.spec = environment.graph_spec()
 
     def is_valid_state(self, state: State) -> bool:
+        """Return whether a state belongs to the toy grid's feasible set."""
+
         return state in set(self.environment.valid_states())
 
     def is_valid_action(self, action: PrimitiveAction) -> bool:
+        """Return whether an action is one of the toy movement actions."""
+
         return action in set(self.environment.valid_actions())
 
     def apply_action(self, state: State, action: PrimitiveAction) -> State | None:
+        """Apply one toy movement action through the hidden constraint geometry."""
+
         return self.environment.transition(state, action)
 
     def is_valid_edge(self, edge: BaseEdge) -> bool:
+        """Return whether an edge matches the toy transition function."""
+
         return self.apply_action(edge.source, edge.action) == edge.target
 
     def out_actions(self, state: State) -> tuple[PrimitiveAction, ...]:
+        """Return movement actions that have valid successors from a state."""
+
         return tuple(
             action
             for action in self.environment.valid_actions()
@@ -147,6 +161,8 @@ class RobotConstraintHiddenGraph:
         )
 
     def out_neighbors(self, state: State) -> tuple[State, ...]:
+        """Return valid successor states from a toy grid state."""
+
         return tuple(
             target
             for action in self.out_actions(state)
@@ -154,6 +170,8 @@ class RobotConstraintHiddenGraph:
         )
 
     def out_edges(self, state: State) -> tuple[BaseEdge, ...]:
+        """Return valid outgoing base edges, labeled by target-region metadata."""
+
         return tuple(
             BaseEdge(
                 source=state,

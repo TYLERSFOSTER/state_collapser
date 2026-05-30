@@ -26,6 +26,8 @@ class FiberStageContext:
     frozen_behavior_version: int | str
 
     def __post_init__(self) -> None:
+        """Validate adjacent fine/coarse tier relationship for first-scope use."""
+
         if self.coarse_tier != self.fine_tier + 1:
             raise ValueError(
                 "FiberStageContext first-scope use requires "
@@ -58,6 +60,8 @@ class FiberDeparture:
     diagnostics: Mapping[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
+        """Copy diagnostics to detach the immutable payload from caller mutation."""
+
         object.__setattr__(self, "diagnostics", dict(self.diagnostics))
 
 
@@ -82,6 +86,8 @@ class PathFiber:
     metadata: Mapping[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
+        """Validate fiber/tower/frozen-behavior tier alignment and copy metadata."""
+
         if self.coarse_tier != self.fine_tier + 1:
             raise ValueError("PathFiber requires coarse_tier == fine_tier + 1.")
         if self.frozen_behavior.coarse_tier != self.coarse_tier:

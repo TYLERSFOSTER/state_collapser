@@ -20,25 +20,35 @@ class TierSignalState:
 
     @property
     def success_rate(self) -> float:
+        """Return empirical success rate, or zero before outcomes exist."""
+
         total = self.success_count + self.failure_count
         if total == 0:
             return 0.0
         return self.success_count / total
 
     def record_visit(self) -> None:
+        """Record one visit to this tier-local learning locus."""
+
         self.visit_count += 1
 
     def record_td_error(self, td_error: float, *, alpha: float = 0.5) -> None:
+        """Update the exponential moving average of absolute TD error."""
+
         absolute_td = abs(td_error)
         self.td_error_ema = _ema(self.td_error_ema, absolute_td, alpha)
 
     def record_outcome(self, *, success: bool) -> None:
+        """Record a successful or failed observed outcome."""
+
         if success:
             self.success_count += 1
         else:
             self.failure_count += 1
 
     def record_reward_residual(self, reward_residual: float, *, alpha: float = 0.5) -> None:
+        """Update the reward-residual moving average and mark it available."""
+
         self.reward_residual_ema = _ema(self.reward_residual_ema, abs(reward_residual), alpha)
         self.has_reward_residual = True
 

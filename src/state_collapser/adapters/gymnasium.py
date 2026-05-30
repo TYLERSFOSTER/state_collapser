@@ -1,4 +1,9 @@
-"""Gymnasium adapter and wrapper surfaces."""
+"""Gymnasium adapter and wrapper surfaces.
+
+The wrapper observes realized Gymnasium transitions and records them as
+`state_collapser` states/actions/edges. It does not attempt to own the
+environment, infer a hidden graph, or replace Gymnasium's training loop.
+"""
 
 from __future__ import annotations
 
@@ -30,24 +35,38 @@ class GymnasiumLike(Protocol):
     """Minimal Gymnasium-like environment surface consumed by the wrapper."""
 
     @property
-    def action_space(self) -> object: ...
+    def action_space(self) -> object:
+        """Return the wrapped environment's action-space object."""
+        ...
 
     @property
-    def observation_space(self) -> object: ...
+    def observation_space(self) -> object:
+        """Return the wrapped environment's observation-space object."""
+        ...
 
     def reset(
         self,
         *,
         seed: int | None = None,
         options: dict[str, object] | None = None,
-    ) -> tuple[object, Mapping[str, object]]: ...
+    ) -> tuple[object, Mapping[str, object]]:
+        """Reset and return a Gymnasium-style observation/info pair."""
+        ...
 
-    def step(self, action: object) -> tuple[object, float, bool, bool, Mapping[str, object]]: ...
+    def step(self, action: object) -> tuple[object, float, bool, bool, Mapping[str, object]]:
+        """Advance one action and return Gymnasium-style step outputs."""
+        ...
 
 
 @dataclass(frozen=True, slots=True)
 class StateCollapserGymHooks:
-    """Explicit hooks for interpreting a Gymnasium env structurally."""
+    """Hooks that map opaque Gymnasium data into structural graph identities.
+
+    Callers provide state/action identity functions because generic Gymnasium
+    observations and actions are not guaranteed to be hashable, canonical, or
+    semantically stable. Optional masks and labels are copied into the info
+    payload for downstream collectors.
+    """
 
     state_key: StateKeyHook
     action_key: ActionKeyHook
@@ -56,9 +75,11 @@ class StateCollapserGymHooks:
 
 
 class RobotConstraintRuntimeAdapter:
-    """Toy robot adapter exposing the package runtime through Gymnasium-style methods."""
+    """Toy adapter exposing `TowerRuntime` through Gymnasium-style methods."""
 
     def __init__(self, contraction_policy: ContractionPolicy | None = None) -> None:
+        """Create the toy environment, hidden graph, and tower runtime."""
+
         self.environment = RobotConstraintToy()
         self.hidden_graph = RobotConstraintHiddenGraph(self.environment)
         self.runtime = TowerRuntime(
@@ -68,7 +89,7 @@ class RobotConstraintRuntimeAdapter:
         )
 
     def reset(self) -> tuple[object, dict[str, object]]:
-        """Reset the runtime and return Gymnasium-style `(observation, info)`."""
+        """Reset the toy runtime and return `(observation, info)`."""
 
         snapshot = self.runtime.reset(initial_state=self.environment.start_state)
         return snapshot.current_base_state, {"runtime_snapshot": snapshot}
@@ -77,7 +98,7 @@ class RobotConstraintRuntimeAdapter:
         self,
         action: PrimitiveAction,
     ) -> tuple[object, float, bool, bool, dict[str, object]]:
-        """Advance one step and return Gymnasium-style step outputs."""
+        """Advance one primitive action and return Gymnasium-style outputs."""
 
         snapshot = self.runtime.step(action)
         observation = snapshot.current_base_state
@@ -88,9 +109,16 @@ class RobotConstraintRuntimeAdapter:
 
 
 class StateCollapserGymWrapper:
-    """Hook-based wrapper for recording realized Gymnasium transitions."""
+    """Hook-based wrapper that records realized Gymnasium transitions.
+
+    The wrapper is deliberately observation-only. It delegates `reset` and
+    `step` to the environment, converts the realized transition into a base edge,
+    and exposes the explored graph through the returned `info` dictionary.
+    """
 
     def __init__(self, env: GymnasiumLike, hooks: StateCollapserGymHooks) -> None:
+        """Wrap an environment with caller-provided structural hooks."""
+
         self.env = env
         self.hooks = hooks
         self.explored_graph = ExploredGraph()
@@ -100,14 +128,20 @@ class StateCollapserGymWrapper:
 
     @property
     def action_space(self) -> object:
+        """Expose the wrapped environment's action space unchanged."""
+
         return self.env.action_space
 
     @property
     def observation_space(self) -> object:
+        """Expose the wrapped environment's observation space unchanged."""
+
         return self.env.observation_space
 
     @property
     def observed_edges(self) -> tuple[BaseEdge, ...]:
+        """Return realized transitions recorded as base graph edges."""
+
         return self.explored_graph.visited_edges()
 
     def reset(

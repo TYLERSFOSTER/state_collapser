@@ -1,4 +1,9 @@
-"""Compatibility readouts from partition towers to quotient tier views."""
+"""Compatibility readouts from partition towers to quotient tier views.
+
+The partition runtime is the source of truth. This module projects it into the
+older `QuotientTierView` shape for callers and tests that still consume quotient
+views rather than direct state/action partition tables.
+"""
 
 from __future__ import annotations
 
@@ -11,7 +16,12 @@ if TYPE_CHECKING:
 
 
 def to_quotient_tier_views(partition_tower: PartitionTower) -> tuple[QuotientTierView, ...]:
-    """Build compatibility quotient-tier views from partition tower data."""
+    """Build legacy quotient-tier views from partition tower data.
+
+    The readout translates active state-cell membership, action-cell membership,
+    outgoing knowledge, and current tier positions into the compatibility object
+    without changing the underlying partition tower.
+    """
 
     registry = partition_tower.registry
     positions = (

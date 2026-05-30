@@ -16,14 +16,22 @@ from state_collapser.training.torch import TorchDecisionBatch, action_decision_f
 
 @pytest.mark.requires_torch
 def test_tiny_torch_model_outputs_action_decision_compatible_result() -> None:
+    """Show a tiny Torch module can feed package-native action decisions."""
+
     torch = pytest.importorskip("torch")
 
     class _TinyPolicy(torch.nn.Module):
+        """Minimal policy module used only to exercise the tensor boundary."""
+
         def __init__(self) -> None:
+            """Create the small linear layer used by the smoke model."""
+
             super().__init__()
             self.linear = torch.nn.Linear(2, 3)
 
         def forward(self, batch: TorchDecisionBatch) -> object:
+            """Map a tensorized decision batch to action logits."""
+
             return self.linear(batch.observations)
 
     config = LinearizationConfig(

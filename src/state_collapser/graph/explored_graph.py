@@ -10,6 +10,8 @@ class ExploredGraph:
     """Visited-history restriction of the hidden graph."""
 
     def __init__(self) -> None:
+        """Initialize empty visited-state, visited-edge, and path history."""
+
         self._visited_states: dict[State, None] = {}
         self._visited_edges: dict[BaseEdge, None] = {}
         self._current_state: State | None = None

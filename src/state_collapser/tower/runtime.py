@@ -1,4 +1,9 @@
-"""Tower-runtime contract surface."""
+"""Tower-runtime contract surface.
+
+`TowerRuntime` coordinates environment discovery, vista refresh, and tower
+maintenance. The partition backend is the current source-of-truth runtime; the
+legacy dynamic tower remains available for compatibility and validation.
+"""
 
 from __future__ import annotations
 
@@ -51,7 +56,13 @@ from state_collapser.tower.snapshot import LiveRuntimeView
 
 
 class TowerRuntime:
-    """Package-owned coordinator for discovered graph, vista graph, and dynamic tower state."""
+    """Coordinate discovered graph state, local vistas, and tower maintenance.
+
+    The runtime owns the mutable exploration loop around a hidden graph. Each
+    step realizes a primitive action, refreshes local visible graph data, updates
+    either the partition tower or the legacy dynamic tower, and returns a
+    `LiveRuntimeView` snapshot suitable for collectors, examples, and adapters.
+    """
 
     def __init__(
         self,
@@ -65,11 +76,13 @@ class TowerRuntime:
         reward_aggregator: RewardAggregator | None = None,
         build_morphism: bool = False,
     ) -> None:
-        """Initialize a tower runtime.
+        """Initialize a tower runtime around a hidden transition system.
 
         The partition backend is the normal runtime path. The legacy dynamic
         builder remains available with ``tower_backend="legacy"`` for
-        validation and compatibility checks.
+        validation and compatibility checks. `build_morphism` controls whether
+        partition updates retain old-to-new cell image maps for downstream
+        consumers that need cache/readout continuity.
         """
 
         if tower_backend not in {"partition", "legacy"}:
@@ -102,7 +115,7 @@ class TowerRuntime:
         self._tower_stopping_reason: str = "uninitialized"
 
     def reset(self, initial_state: State | None = None) -> LiveRuntimeView:
-        """Reset runtime graph layers and return the initial snapshot."""
+        """Reset explored/vista/tower state and return the initial snapshot."""
 
         self._explored_graph = ExploredGraph()
         self._vista_graph = VistaGraph(self._hidden_graph, self._explored_graph)
@@ -128,7 +141,13 @@ class TowerRuntime:
         )
 
     def step(self, action: PrimitiveAction) -> LiveRuntimeView:
-        """Advance the runtime by one primitive action."""
+        """Realize one primitive action and update graph/tower state.
+
+        The hidden graph supplies the successor. The explored graph records the
+        realized edge, the vista graph refreshes local outgoing information, and
+        the active tower backend incorporates the newly visible data before the
+        snapshot is returned.
+        """
 
         current_state = self._explored_graph.current_state()
         if current_state is None:
@@ -197,7 +216,7 @@ class TowerRuntime:
         return self.compatibility_quotient_tiers()
 
     def compatibility_quotient_tiers(self) -> tuple[QuotientTierView, ...]:
-        """Build or return cached compatibility quotient-tier readouts."""
+        """Build or return cached quotient readouts for legacy callers."""
 
         if self._tower_backend != "partition":
             return self._quotient_tiers
@@ -211,17 +230,25 @@ class TowerRuntime:
 
     @property
     def selected_base_edges(self) -> tuple[BaseEdge, ...]:
+        """Return base edges selected for contraction or scheduled partition update."""
+
         return self._selected_base_edges
 
     @property
     def tier_contraction_records(self) -> tuple[TierContractionRecord, ...]:
+        """Return legacy dynamic-tower contraction records when available."""
+
         return self._tier_contraction_records
 
     @property
     def tower_stopping_reason(self) -> str:
+        """Return the latest backend-specific tower update/stopping reason."""
+
         return self._tower_stopping_reason
 
     def current_deepest_tier(self) -> int | None:
+        """Return the deepest currently available tier index, if any."""
+
         if self._tower_backend == "partition" and self._partition_tower is not None:
             if not self._partition_tower.state_layers:
                 return None
@@ -231,6 +258,8 @@ class TowerRuntime:
         return self._quotient_tiers[-1].tier
 
     def project_state_to_tier(self, state: State, tier_index: int) -> object | None:
+        """Project a base state to its tier-level state cell/readout object."""
+
         if self._tower_backend == "partition" and self._partition_tower is not None:
             return self._partition_tower.current_state_cell(tier_index, state)
         if tier_index < 0 or tier_index >= len(self._quotient_tiers):
@@ -238,6 +267,8 @@ class TowerRuntime:
         return self._quotient_tiers[tier_index].projection.project_state(state)
 
     def project_edge_to_tier(self, edge: BaseEdge, tier_index: int) -> object | None:
+        """Project a base edge to a tier-level edge/readout object."""
+
         if self._tower_backend == "partition" and self._partition_tower is not None:
             source = self._partition_tower.current_state_cell(tier_index, edge.source)
             target = self._partition_tower.current_state_cell(tier_index, edge.target)
@@ -249,6 +280,8 @@ class TowerRuntime:
         return self._quotient_tiers[tier_index].projection.project_edge(edge)
 
     def states_share_coset(self, left: State, right: State, tier_index: int) -> bool:
+        """Return whether two base states occupy the same tier-level state cell."""
+
         if self._tower_backend == "partition" and self._partition_tower is not None:
             left_cell = self._partition_tower.current_state_cell(tier_index, left)
             right_cell = self._partition_tower.current_state_cell(tier_index, right)
@@ -258,6 +291,8 @@ class TowerRuntime:
         return self._quotient_tiers[tier_index].same_coset(left, right)
 
     def projected_edge_is_trivial_at_tier(self, edge: BaseEdge, tier_index: int) -> bool:
+        """Return whether an edge projects to an internal/self edge at a tier."""
+
         if self._tower_backend == "partition" and self._partition_tower is not None:
             return self.states_share_coset(edge.source, edge.target, tier_index)
         if tier_index < 0 or tier_index >= len(self._quotient_tiers):
@@ -265,6 +300,8 @@ class TowerRuntime:
         return projected_edge_is_trivial(self._quotient_tiers[tier_index], edge)
 
     def tier_is_point(self, tier_index: int) -> bool:
+        """Return whether a tier has collapsed all discovered states to one cell."""
+
         if self._tower_backend == "partition" and self._partition_tower is not None:
             if tier_index < 0 or tier_index >= len(self._partition_tower.state_layers):
                 return False
@@ -274,6 +311,8 @@ class TowerRuntime:
         return tier_is_point(self._quotient_tiers[tier_index])
 
     def tower_is_fully_propagated(self) -> bool:
+        """Return whether selected contractions are trivial at the deepest tier."""
+
         if self._tower_backend == "partition" and self._partition_tower is not None:
             deepest = self.current_deepest_tier()
             if deepest is None:
@@ -289,10 +328,14 @@ class TowerRuntime:
 
     @property
     def partition_tower(self) -> PartitionTower | None:
+        """Return the live partition tower when using the partition backend."""
+
         return self._partition_tower
 
     @property
     def last_tower_update_result(self) -> TowerUpdateResult | None:
+        """Return the most recent partition-tower update result, if present."""
+
         return self._last_tower_update_result
 
     def _refresh_dynamic_tower(self, current_base_state: State | None) -> None:
@@ -439,7 +482,7 @@ class TowerRuntime:
 
 @dataclass(frozen=True, slots=True)
 class ExploitExploreStepResult:
-    """One control-loop result for exploit/explore runtime."""
+    """One active-tier control-loop result for exploit/explore runtime."""
 
     decision: ControlAction
     active_tier_state: ActiveTierState
@@ -449,7 +492,12 @@ class ExploitExploreStepResult:
 
 
 class ExploitExploreTowerRuntime:
-    """Single-active-tier exploit/explore controller runtime."""
+    """Single-active-tier exploit/explore controller runtime.
+
+    This runtime is intentionally small: it wires a controller, learner,
+    executor, frozen lower-tier contexts, and active-tier movement functions into
+    one step function. It does not own model architecture or training storage.
+    """
 
     def __init__(
         self,
@@ -463,6 +511,8 @@ class ExploitExploreTowerRuntime:
         move_down: Callable[[ActiveTierState], ActiveTierState],
         move_up: Callable[[ActiveTierState], ActiveTierState],
     ) -> None:
+        """Initialize the controller runtime and empty signal/metric state."""
+
         self._active_tier_state = active_tier_state
         self._tier_configs = tier_configs
         self._controller = controller
@@ -476,17 +526,25 @@ class ExploitExploreTowerRuntime:
 
     @property
     def active_tier_state(self) -> ActiveTierState:
+        """Return the current active tier and tier-local state."""
+
         return self._active_tier_state
 
     @property
     def metrics(self) -> TierControlMetrics:
+        """Return accumulated active-tier control metrics."""
+
         return self._metrics
 
     def signal_state(self, active_tier_state: ActiveTierState | None = None) -> TierSignalState:
+        """Return the mutable signal state for an active tier."""
+
         state = self._active_tier_state if active_tier_state is None else active_tier_state
         return self._signals.setdefault(state.active_tier, TierSignalState())
 
     def step(self) -> ExploitExploreStepResult:
+        """Run one controller decision and apply its tier/training effect."""
+
         active_tier_state = self._active_tier_state
         signal = self.signal_state(active_tier_state)
         config = self._tier_configs[active_tier_state.active_tier]

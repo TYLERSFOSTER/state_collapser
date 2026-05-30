@@ -26,6 +26,8 @@ from state_collapser.tower.snapshot import LiveRuntimeView
 
 @dataclass(frozen=True, slots=True)
 class ParallelogramEnvRuntimeReset:
+    """Combined environment and tower snapshot returned from reset."""
+
     observation: object
     info: dict[str, object]
     runtime_snapshot: LiveRuntimeView
@@ -33,6 +35,8 @@ class ParallelogramEnvRuntimeReset:
 
 @dataclass(frozen=True, slots=True)
 class ParallelogramEnvRuntimeStep:
+    """Combined environment and tower snapshot returned from one step."""
+
     observation: object
     reward: float
     terminated: bool
@@ -42,13 +46,13 @@ class ParallelogramEnvRuntimeStep:
 
 
 def parallelogram_state_to_core_state(state: ParallelogramState) -> State:
-    """Translate env state into the package core state surface."""
+    """Translate a parallelogram environment state into a core graph state."""
 
     return State(payload=state, identity=("parallelogram-state", state))
 
 
 def action_index_to_primitive_action(action: int) -> PrimitiveAction:
-    """Translate a discrete env action index into a core primitive action."""
+    """Translate a parallelogram action index into a primitive action."""
 
     return PrimitiveAction(
         payload=("parallelogram-action", int(action)),
@@ -57,7 +61,7 @@ def action_index_to_primitive_action(action: int) -> PrimitiveAction:
 
 
 def primitive_action_to_action_index(action: PrimitiveAction) -> int:
-    """Translate a core primitive action back into a discrete env action index."""
+    """Translate a primitive action back into a parallelogram action index."""
 
     payload = cast(tuple[str, int], action.payload)
     tag, index = payload
@@ -97,12 +101,16 @@ def parallelogram_edge_labels(
 
 
 class ParallelogramHiddenGraph(HiddenGraph):
-    """Hidden-graph binding for ParallelogramSingularityEnv semantics."""
+    """Hidden-graph binding for parallelogram-singularity transition semantics."""
 
     def is_valid_state(self, state: State) -> bool:
+        """Return whether a core state wraps a parallelogram state."""
+
         return isinstance(state.payload, ParallelogramState)
 
     def is_valid_action(self, action: PrimitiveAction) -> bool:
+        """Return whether a primitive action wraps a valid action index."""
+
         try:
             index = primitive_action_to_action_index(action)
         except ValueError:
@@ -110,6 +118,8 @@ class ParallelogramHiddenGraph(HiddenGraph):
         return 0 <= index < ACTION_COUNT
 
     def apply_action(self, state: State, action: PrimitiveAction) -> State | None:
+        """Apply one primitive action through the parallelogram model."""
+
         payload = state.payload
         if not isinstance(payload, ParallelogramState):
             return None
@@ -118,12 +128,18 @@ class ParallelogramHiddenGraph(HiddenGraph):
         return parallelogram_state_to_core_state(transition.next_state)
 
     def is_valid_edge(self, edge: BaseEdge) -> bool:
+        """Return whether an edge matches the deterministic transition model."""
+
         return self.apply_action(edge.source, edge.action) == edge.target
 
     def out_actions(self, state: State) -> Iterable[PrimitiveAction]:
+        """Return all primitive actions available from a valid state."""
+
         return tuple(action_index_to_primitive_action(index) for index in range(ACTION_COUNT))
 
     def out_neighbors(self, state: State) -> Iterable[State]:
+        """Return all deterministic successor states from a state."""
+
         return tuple(
             target
             for index in range(ACTION_COUNT)
@@ -132,6 +148,8 @@ class ParallelogramHiddenGraph(HiddenGraph):
         )
 
     def out_edges(self, state: State) -> Iterable[BaseEdge]:
+        """Return all deterministic outgoing base edges from a state."""
+
         edges: list[BaseEdge] = []
         for index in range(ACTION_COUNT):
             action = action_index_to_primitive_action(index)
@@ -177,7 +195,7 @@ def semantic_parallelogram_schema() -> ContractionSchema:
 
 
 class ParallelogramSingularityEnvRuntime:
-    """Package-facing env runtime that couples the env to TowerRuntime."""
+    """Couple `ParallelogramSingularityEnv` to `TowerRuntime`."""
 
     def __init__(
         self,
@@ -185,6 +203,8 @@ class ParallelogramSingularityEnvRuntime:
         contraction_policy: ContractionPolicy | None = None,
         contraction_schema: ContractionSchema | None = None,
     ) -> None:
+        """Create the environment runtime and its package tower runtime."""
+
         self.env = env
         self.hidden_graph = ParallelogramHiddenGraph()
         self._tower_runtime = TowerRuntime(
@@ -210,15 +230,21 @@ class ParallelogramSingularityEnvRuntime:
 
     @property
     def quotient_tiers(self) -> tuple[object, ...]:
+        """Return compatibility quotient-tier readouts from the tower runtime."""
+
         return self._tower_runtime.quotient_tiers
 
     @property
     def tower_runtime(self) -> TowerRuntime:
+        """Return the underlying package-owned tower runtime."""
+
         return self._tower_runtime
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, object] | None = None
     ) -> ParallelogramEnvRuntimeReset:
+        """Reset the environment and initialize the tower at the start state."""
+
         observation, info = self.env.reset(seed=seed, options=options)
         initial_core_state = parallelogram_state_to_core_state(self.env.state)
         runtime_snapshot = self._tower_runtime.reset(initial_state=initial_core_state)
@@ -229,6 +255,8 @@ class ParallelogramSingularityEnvRuntime:
         )
 
     def step(self, action: int) -> ParallelogramEnvRuntimeStep:
+        """Step the environment and update the tower with the realized action."""
+
         observation, reward, terminated, truncated, info = self.env.step(action)
         runtime_snapshot = self._tower_runtime.step(action_index_to_primitive_action(action))
         return ParallelogramEnvRuntimeStep(

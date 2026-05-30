@@ -25,6 +25,8 @@ class LabelContractionPolicy:
     labels: frozenset[Hashable]
 
     def select(self, local_star: LocalStar) -> EdgeSelection:
+        """Select outgoing edges whose edge/action labels match this policy."""
+
         selected = tuple(
             edge
             for edge in local_star.outgoing_edges
@@ -41,6 +43,8 @@ class SeededRandomContractionPolicy:
     sample_size: int = 1
 
     def select(self, local_star: LocalStar) -> EdgeSelection:
+        """Select a seeded random subset of outgoing local-star edges."""
+
         edges = list(local_star.outgoing_edges)
         if not edges:
             return EdgeSelection()

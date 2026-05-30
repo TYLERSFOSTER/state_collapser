@@ -18,7 +18,7 @@ from state_collapser.training import (
 
 @dataclass(frozen=True, slots=True)
 class TowerTrainingConfig:
-    """Configuration for a minimal tower-training run on RlCounterpointEnv."""
+    """Configuration for the counterpoint tower-aware tabular loop."""
 
     episodes: int = 10
     max_steps_per_episode: int = 16
@@ -30,7 +30,7 @@ class TowerTrainingConfig:
 
 @dataclass(frozen=True, slots=True)
 class TowerTrainingEpisodeSummary:
-    """Summary of one tower-training episode."""
+    """Summary of one counterpoint tower-training episode."""
 
     episode_index: int
     total_reward: float
@@ -40,7 +40,7 @@ class TowerTrainingEpisodeSummary:
 
 @dataclass(frozen=True, slots=True)
 class TowerTrainingResult:
-    """Structured result of a tower-training run."""
+    """Structured result of a counterpoint tower-training run."""
 
     config: TowerTrainingConfig
     q_table: dict[tuple[object | None, ...], dict[int, float]]
@@ -48,7 +48,7 @@ class TowerTrainingResult:
 
 
 def tower_state_key(snapshot: LiveRuntimeView) -> tuple[object | None, ...]:
-    """Return the tower-position key used by the first tower-aware learner."""
+    """Return the tower-position key used by the counterpoint learner."""
 
     return tower_position_key(snapshot)
 
@@ -60,7 +60,7 @@ def run_tower_training(
     contraction_schema: ContractionSchema | None = None,
     config: TowerTrainingConfig | None = None,
 ) -> TowerTrainingResult:
-    """Run a minimal but real tower-aware training loop on RlCounterpointEnv."""
+    """Run the counterpoint tower-aware tabular training loop."""
 
     training_config = TowerTrainingConfig() if config is None else config
     runtime = RlCounterpointEnvRuntime(

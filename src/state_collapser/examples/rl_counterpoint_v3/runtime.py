@@ -27,7 +27,7 @@ from state_collapser.tower.snapshot import LiveRuntimeView
 
 @dataclass(frozen=True, slots=True)
 class RlCounterpointEnvRuntimeReset:
-    """Combined env/runtime result for adapter reset."""
+    """Combined environment and tower snapshot returned from reset."""
 
     observation: object
     info: dict[str, object]
@@ -36,7 +36,7 @@ class RlCounterpointEnvRuntimeReset:
 
 @dataclass(frozen=True, slots=True)
 class RlCounterpointEnvRuntimeStep:
-    """Combined env/runtime result for adapter step."""
+    """Combined environment and tower snapshot returned from one step."""
 
     observation: object
     reward: float
@@ -47,13 +47,13 @@ class RlCounterpointEnvRuntimeStep:
 
 
 def rl_counterpoint_state_to_core_state(state: RlCounterpointState) -> State:
-    """Translate env state into the package core state surface."""
+    """Translate a counterpoint environment state into a core graph state."""
 
     return State(payload=state, identity=("rl-counterpoint-v3-state", state))
 
 
 def action_index_to_primitive_action(action: int) -> PrimitiveAction:
-    """Translate a discrete env action index into a core primitive action."""
+    """Translate a counterpoint action index into a primitive action."""
 
     return PrimitiveAction(
         payload=("rl-counterpoint-v3-action", int(action)),
@@ -62,7 +62,7 @@ def action_index_to_primitive_action(action: int) -> PrimitiveAction:
 
 
 def primitive_action_to_action_index(action: PrimitiveAction) -> int:
-    """Translate a core primitive action back into a discrete env action index."""
+    """Translate a primitive action back into a counterpoint action index."""
 
     payload = cast(tuple[str, int], action.payload)
     tag, index = payload
@@ -110,18 +110,24 @@ def rl_counterpoint_edge_labels(
 
 
 class RlCounterpointHiddenGraph(HiddenGraph):
-    """Hidden-graph binding for RlCounterpointEnv semantics."""
+    """Hidden-graph binding for counterpoint transition semantics."""
 
     def __init__(self, spec: RlCounterpointGraphSpec) -> None:
+        """Cache the graph spec, valid states, and action count."""
+
         self.spec = spec
         self._valid_states = frozenset(all_valid_states(spec))
         self._action_count = (2 * self.spec.max_step_size + 1) ** 3 - 1
 
     def is_valid_state(self, state: State) -> bool:
+        """Return whether a core state wraps a valid counterpoint state."""
+
         payload = state.payload
         return isinstance(payload, RlCounterpointState) and payload in self._valid_states
 
     def is_valid_action(self, action: PrimitiveAction) -> bool:
+        """Return whether a primitive action wraps a valid action index."""
+
         try:
             index = primitive_action_to_action_index(action)
         except ValueError:
@@ -130,13 +136,19 @@ class RlCounterpointHiddenGraph(HiddenGraph):
 
     @property
     def _action_space_indices(self) -> range:
+        """Return valid primitive action indices for internal validation."""
+
         return range(self.action_count)
 
     @property
     def action_count(self) -> int:
+        """Return the number of nonzero step-delta actions."""
+
         return self._action_count
 
     def apply_action(self, state: State, action: PrimitiveAction) -> State | None:
+        """Apply one primitive action through the counterpoint transition model."""
+
         payload = state.payload
         if not isinstance(payload, RlCounterpointState):
             return None
@@ -145,15 +157,21 @@ class RlCounterpointHiddenGraph(HiddenGraph):
         return rl_counterpoint_state_to_core_state(transition.next_state)
 
     def is_valid_edge(self, edge: BaseEdge) -> bool:
+        """Return whether an edge matches the deterministic transition model."""
+
         return self.apply_action(edge.source, edge.action) == edge.target
 
     def out_actions(self, state: State) -> Iterable[PrimitiveAction]:
+        """Return all primitive actions available from a valid state."""
+
         return tuple(
             action_index_to_primitive_action(index)
             for index in self._action_space_indices
         )
 
     def out_neighbors(self, state: State) -> Iterable[State]:
+        """Return all deterministic successor states from a state."""
+
         return tuple(
             target
             for index in self._action_space_indices
@@ -167,6 +185,8 @@ class RlCounterpointHiddenGraph(HiddenGraph):
         )
 
     def out_edges(self, state: State) -> Iterable[BaseEdge]:
+        """Return all deterministic outgoing base edges from a state."""
+
         edges: list[BaseEdge] = []
         for index in self._action_space_indices:
             action = action_index_to_primitive_action(index)
@@ -217,7 +237,7 @@ def semantic_rl_counterpoint_v3_schema() -> ContractionSchema:
 
 
 class RlCounterpointEnvRuntime:
-    """Package-facing env runtime that couples RlCounterpointEnv to TowerRuntime."""
+    """Couple `RlCounterpointEnv` to `TowerRuntime` for examples and tests."""
 
     def __init__(
         self,
@@ -225,6 +245,8 @@ class RlCounterpointEnvRuntime:
         contraction_policy: ContractionPolicy | None = None,
         contraction_schema: ContractionSchema | None = None,
     ) -> None:
+        """Create the environment runtime and its package tower runtime."""
+
         self.env = env
         self.hidden_graph = RlCounterpointHiddenGraph(env.graph_spec)
         self._tower_runtime = TowerRuntime(
@@ -256,15 +278,21 @@ class RlCounterpointEnvRuntime:
 
     @property
     def quotient_tiers(self) -> tuple[object, ...]:
+        """Return compatibility quotient-tier readouts from the tower runtime."""
+
         return self._tower_runtime.quotient_tiers
 
     @property
     def tower_runtime(self) -> TowerRuntime:
+        """Return the underlying package-owned tower runtime."""
+
         return self._tower_runtime
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, object] | None = None
     ) -> RlCounterpointEnvRuntimeReset:
+        """Reset the environment and initialize the tower at the start state."""
+
         observation, info = self.env.reset(seed=seed, options=options)
         initial_core_state = rl_counterpoint_state_to_core_state(self.env.state)
         runtime_snapshot = self._tower_runtime.reset(initial_state=initial_core_state)
@@ -275,6 +303,8 @@ class RlCounterpointEnvRuntime:
         )
 
     def step(self, action: int) -> RlCounterpointEnvRuntimeStep:
+        """Step the environment and update the tower with the realized action."""
+
         observation, reward, terminated, truncated, info = self.env.step(action)
         runtime_snapshot = self._tower_runtime.step(action_index_to_primitive_action(action))
         return RlCounterpointEnvRuntimeStep(

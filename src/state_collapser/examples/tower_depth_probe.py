@@ -61,23 +61,31 @@ class ProbeTowerRuntimeHandle(Protocol):
     """Minimal tower-runtime handle required by the probe utility."""
 
     @property
-    def quotient_tiers(self) -> tuple[object, ...]: ...
+    def quotient_tiers(self) -> tuple[object, ...]:
+        """Return currently exposed quotient-tier readouts."""
+        ...
 
 
 class ProbeRuntime(Protocol):
     """Shared runtime surface used by the tower-depth probe."""
 
     @property
-    def tower_runtime(self) -> ProbeTowerRuntimeHandle: ...
+    def tower_runtime(self) -> ProbeTowerRuntimeHandle:
+        """Return the underlying tower runtime handle."""
+        ...
 
     def reset(
         self,
         *,
         seed: int | None = None,
         options: dict[str, object] | None = None,
-    ) -> Any: ...
+    ) -> Any:
+        """Reset the probed environment/runtime pair."""
+        ...
 
-    def step(self, action: int) -> Any: ...
+    def step(self, action: int) -> Any:
+        """Advance one action in the probed environment/runtime pair."""
+        ...
 
 
 @dataclass(frozen=True, slots=True)

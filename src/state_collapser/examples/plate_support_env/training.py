@@ -27,7 +27,7 @@ from state_collapser.tower.snapshot import LiveRuntimeView
 
 @dataclass(frozen=True, slots=True)
 class TowerTrainingConfig:
-    """Configuration for a minimal tower-training run on PlateSupportEnv."""
+    """Configuration for the plate-support tower-aware tabular loop."""
 
     episodes: int = 10
     max_steps_per_episode: int = 50
@@ -39,7 +39,7 @@ class TowerTrainingConfig:
 
 @dataclass(frozen=True, slots=True)
 class TowerTrainingEpisodeSummary:
-    """Summary of one tower-training episode."""
+    """Summary of one plate-support tower-training episode."""
 
     episode_index: int
     total_reward: float
@@ -49,7 +49,7 @@ class TowerTrainingEpisodeSummary:
 
 @dataclass(frozen=True, slots=True)
 class TowerTrainingResult:
-    """Structured result of a tower-training run."""
+    """Structured result of a plate-support tower-training run."""
 
     config: TowerTrainingConfig
     q_table: dict[tuple[object | None, ...], dict[int, float]]
@@ -58,7 +58,7 @@ class TowerTrainingResult:
 
 @dataclass(frozen=True, slots=True)
 class ExploitExploreTrainingConfig:
-    """Configuration for the first exploit/explore training path."""
+    """Configuration for the plate-support exploit/explore training path."""
 
     episodes: int = 5
     max_control_steps_per_episode: int = 20
@@ -69,7 +69,7 @@ class ExploitExploreTrainingConfig:
 
 @dataclass(frozen=True, slots=True)
 class ExploitExploreEpisodeSummary:
-    """Summary of one exploit/explore training episode."""
+    """Summary of one plate-support exploit/explore training episode."""
 
     episode_index: int
     total_reward: float
@@ -81,7 +81,7 @@ class ExploitExploreEpisodeSummary:
 
 @dataclass(frozen=True, slots=True)
 class ExploitExploreTrainingResult:
-    """Structured result of an exploit/explore training run."""
+    """Structured result of a plate-support exploit/explore training run."""
 
     config: ExploitExploreTrainingConfig
     q_table: dict[tuple[int, object | None, int | str | None], dict[int, float]]
@@ -90,7 +90,13 @@ class ExploitExploreTrainingResult:
 
 @dataclass(slots=True)
 class PlateSupportTierLearner:
-    """Simple tabular learner for the first exploit/explore reference controller."""
+    """Simple tabular learner for the exploit/explore reference controller.
+
+    The learner is intentionally small and inspectable. It demonstrates the
+    freeze/lift control surface with tabular Q-values keyed by active tier,
+    tier-local state, and frozen-context version; it is not a package policy
+    model family.
+    """
 
     alpha: float = 0.5
     gamma: float = 0.95
@@ -102,6 +108,8 @@ class PlateSupportTierLearner:
     _rng: random.Random = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
+        """Initialize deterministic exploration state after dataclass creation."""
+
         self._rng = random.Random(self.seed)
 
     def _key(
@@ -122,6 +130,8 @@ class PlateSupportTierLearner:
         return self.q_table[key]
 
     def behavior_action(self, state: object | None, *, mode: str) -> object:
+        """Choose an action under the requested exploit or explore mode."""
+
         # The first release keeps action choice simple and inspectable.
         matching_rows = [key for key in self.q_table if key[1] == state]
         if mode == "explore" or not matching_rows:
@@ -137,15 +147,21 @@ class PlateSupportTierLearner:
         *,
         frozen_context: FrozenLowerContext,
     ) -> LearnerUpdateSummary:
+        """Record a transition and apply the online tabular update."""
+
         del frozen_context
         self.replay.append(transition)
         td_error = self._update_from_transition(transition)
         return LearnerUpdateSummary(td_error=abs(td_error), success=transition.success)
 
     def should_train(self, event_index: int) -> bool:
+        """Return whether the controller should request a replay-style train step."""
+
         return bool(self.replay) and event_index > 0 and event_index % 3 == 0
 
     def train(self, *, frozen_context: FrozenLowerContext) -> LearnerUpdateSummary:
+        """Train from the latest replay item under a frozen lower-tier context."""
+
         if not self.replay:
             return LearnerUpdateSummary(td_error=0.0, success=True)
         transition = self.replay[-1]
@@ -184,7 +200,7 @@ class PlateSupportTierLearner:
 
 
 def tower_state_key(snapshot: LiveRuntimeView) -> tuple[object | None, ...]:
-    """Return the tower-position key used by the first tower-aware learner."""
+    """Return the tower-position key used by the plate-support tabular learner."""
 
     return shared_tower_state_key(snapshot)
 
@@ -196,7 +212,7 @@ def run_tower_training(
     contraction_schema: ContractionSchema | None = None,
     config: TowerTrainingConfig | None = None,
 ) -> TowerTrainingResult:
-    """Run a minimal but real tower-aware training loop on PlateSupportEnv."""
+    """Run the plate-support tower-aware tabular training loop."""
 
     training_config = TowerTrainingConfig() if config is None else config
     runtime = PlateSupportEnvRuntime(
@@ -232,7 +248,7 @@ def run_exploit_explore_training(
     contraction_policy: ContractionPolicy | None = None,
     config: ExploitExploreTrainingConfig | None = None,
 ) -> ExploitExploreTrainingResult:
-    """Run the first exploit/explore reference controller on PlateSupportEnv."""
+    """Run the plate-support exploit/explore reference controller."""
 
     training_config = ExploitExploreTrainingConfig() if config is None else config
     learner = PlateSupportTierLearner(

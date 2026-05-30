@@ -30,10 +30,14 @@ from state_collapser.training import (
 
 
 def _state(name: str) -> State:
+    """Build a named state with identity suitable for registry reuse."""
+
     return State(payload=(name,), identity=name)
 
 
 def _edge(source: State, target: State, label: str) -> BaseEdge:
+    """Build a labeled edge for a small partition-tower fixture."""
+
     return BaseEdge(
         source=source,
         action=PrimitiveAction(
@@ -47,11 +51,17 @@ def _edge(source: State, target: State, label: str) -> BaseEdge:
 
 
 class _HiddenGraph:
+    """Minimal hidden graph stub consumed by `VistaGraph` in these tests."""
+
     def __init__(self, edges: tuple[BaseEdge, ...]) -> None:
+        """Store fixture edges on the surface expected by `VistaGraph`."""
+
         self.edges = edges
 
 
 def _fixture() -> tuple[PartitionTower, State, tuple[object, ...], LiveRuntimeView]:
+    """Build a live runtime snapshot with a nontrivial partition tower."""
+
     start = _state("start")
     left = _state("left")
     right = _state("right")
@@ -85,6 +95,8 @@ def _fixture() -> tuple[PartitionTower, State, tuple[object, ...], LiveRuntimeVi
 
 
 def _config(*, strict: bool = True) -> LinearizationConfig:
+    """Return a first-scope CPU Torch linearization config for records."""
+
     return LinearizationConfig(
         linearization_state=LinearizationState.PRESENT_ENABLED,
         numeric_backend=NumericBackend.TORCH,
@@ -96,6 +108,8 @@ def _config(*, strict: bool = True) -> LinearizationConfig:
 
 
 def test_linearizes_action_selection_input_with_masks_and_stage_context() -> None:
+    """Linearize masks, tower positions, and fiber-stage metadata together."""
+
     tower, _start, action_vocabulary, snapshot = _fixture()
     registry = EncodingRegistry.from_tower(tower)
     context = FiberStageContext(
@@ -131,6 +145,8 @@ def test_linearizes_action_selection_input_with_masks_and_stage_context() -> Non
 
 
 def test_unsupported_observation_fails_strict_and_sidecars_non_strict() -> None:
+    """Keep strict observation failures while preserving non-strict sidecars."""
+
     tower, _start, _action_vocabulary, snapshot = _fixture()
     registry = EncodingRegistry.from_tower(tower)
     action_input = build_action_selection_input(
@@ -153,6 +169,8 @@ def test_unsupported_observation_fails_strict_and_sidecars_non_strict() -> None:
 
 
 def test_linearizes_training_transition_and_resolves_action_cell_index() -> None:
+    """Resolve chosen action cells against the recorded fiber vocabulary."""
+
     tower, _start, action_vocabulary, snapshot = _fixture()
     registry = EncodingRegistry.from_tower(tower)
     action_input = build_action_selection_input(

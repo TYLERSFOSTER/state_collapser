@@ -16,10 +16,14 @@ from state_collapser.tower.partition.tower import build_partition_tower_full
 
 
 def _state(index: int) -> State:
+    """Build a stable graph node for HGraphML-shaped readout tests."""
+
     return State(payload=("node", index), identity=("node", index))
 
 
 def _edge(index: int, source: State, target: State, label: str) -> BaseEdge:
+    """Build a stable graph edge whose label participates in schema blocks."""
+
     return BaseEdge(
         source=source,
         action=PrimitiveAction(
@@ -36,6 +40,8 @@ def _node_fibers_by_tier(
     tower: PartitionTower,
     states: tuple[State, ...],
 ) -> tuple[tuple[tuple[int, ...], ...], ...]:
+    """Return node-fiber memberships by tier using fixture node indices."""
+
     index_by_state = {state: index for index, state in enumerate(states)}
     fibers_by_tier: list[tuple[tuple[int, ...], ...]] = []
 
@@ -61,6 +67,8 @@ def _edge_fibers_by_coarse_endpoints(
     states: tuple[State, ...],
     edges: tuple[BaseEdge, ...],
 ) -> dict[tuple[tuple[int, ...], tuple[int, ...]], tuple[int, ...]]:
+    """Group fine edges by coarse endpoints in a tier readout."""
+
     index_by_state = {state: index for index, state in enumerate(states)}
     index_by_edge = {edge: index for index, edge in enumerate(edges)}
     state_layer = tower.state_layers[tier]

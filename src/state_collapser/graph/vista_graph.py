@@ -13,6 +13,8 @@ class VistaGraph:
     """Explored graph plus maintained one-hop visible fringe."""
 
     def __init__(self, hidden_graph: HiddenGraph, explored_graph: ExploredGraph) -> None:
+        """Bind hidden/explored graphs and initialize empty vista caches."""
+
         self._hidden_graph = hidden_graph
         self._explored_graph = explored_graph
         self._vista_edge_cache: dict[State, tuple[BaseEdge, ...]] = {}

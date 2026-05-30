@@ -23,32 +23,32 @@ class LoopPolicyName(StrEnum):
 
 @dataclass(frozen=True, slots=True)
 class LoopPolicy:
-    """Configuration for internal-edge handling."""
+    """Configuration for handling edges that become internal after contraction."""
 
     name: LoopPolicyName = LoopPolicyName.DROP_INTERNAL
 
     @classmethod
     def drop_internal(cls) -> LoopPolicy:
-        """Return the default training-friendly loop policy."""
+        """Use internal edges only as diagnostics, not as live actions."""
 
         return cls(LoopPolicyName.DROP_INTERNAL)
 
     @classmethod
     def aggregate_internal(cls) -> LoopPolicy:
-        """Return a policy that records internal edges for residual aggregation."""
+        """Record internal edges so residual reward/value aggregation can use them."""
 
         return cls(LoopPolicyName.AGGREGATE_INTERNAL)
 
     @classmethod
     def formal_stutter(cls) -> LoopPolicy:
-        """Return a policy that records internal edges as formal stutters."""
+        """Record internal edges as formal stutter/self-loop structure."""
 
         return cls(LoopPolicyName.FORMAL_STUTTER)
 
 
 @dataclass(frozen=True, slots=True)
 class InternalEdgeRecord:
-    """Record that an edge became internal at a tier."""
+    """Record that a base edge became internal to a state cell at a tier."""
 
     edge_id: EdgeId
     tier: int
@@ -65,7 +65,7 @@ def record_internal_edge(
     loop_policy: LoopPolicy,
     reward_contributor: float | None = None,
 ) -> InternalEdgeRecord:
-    """Create an internal-edge record under the selected policy."""
+    """Create an internal-edge record under the selected loop policy."""
 
     return InternalEdgeRecord(
         edge_id=edge_id,

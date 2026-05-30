@@ -56,9 +56,13 @@ class StageRuntimeLike(Protocol):
         *,
         seed: int | None = None,
         options: dict[str, object] | None = None,
-    ) -> StageRuntimeResetLike: ...
+    ) -> StageRuntimeResetLike:
+        """Reset the stage runtime and return reset/snapshot data."""
+        ...
 
-    def step(self, action: object) -> StageRuntimeStepLike: ...
+    def step(self, action: object) -> StageRuntimeStepLike:
+        """Advance one action and return step/snapshot data."""
+        ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,6 +94,8 @@ class FiberConditionedStage:
     _action_vocabulary: tuple[ActionCellId, ...] = field(default=(), init=False, repr=False)
 
     def __post_init__(self) -> None:
+        """Validate stage/fiber/frozen-behavior alignment and copy metadata."""
+
         if self.coarse_tier != self.fine_tier + 1:
             raise ValueError("FiberConditionedStage requires coarse_tier == fine_tier + 1.")
         if self.path_fiber.tower is not self.tower:

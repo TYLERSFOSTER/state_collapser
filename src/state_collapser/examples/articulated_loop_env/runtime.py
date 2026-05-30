@@ -26,7 +26,7 @@ from state_collapser.tower.snapshot import LiveRuntimeView
 
 @dataclass(frozen=True, slots=True)
 class ArticulatedLoopEnvRuntimeReset:
-    """Combined env/runtime result for adapter reset."""
+    """Combined environment and tower snapshot returned from reset."""
 
     observation: object
     info: dict[str, object]
@@ -35,7 +35,7 @@ class ArticulatedLoopEnvRuntimeReset:
 
 @dataclass(frozen=True, slots=True)
 class ArticulatedLoopEnvRuntimeStep:
-    """Combined env/runtime result for adapter step."""
+    """Combined environment and tower snapshot returned from one step."""
 
     observation: object
     reward: float
@@ -46,13 +46,13 @@ class ArticulatedLoopEnvRuntimeStep:
 
 
 def articulated_loop_state_to_core_state(state: ArticulatedLoopState) -> State:
-    """Translate env state into the package core state surface."""
+    """Translate an articulated-loop environment state into a core graph state."""
 
     return State(payload=state, identity=("articulated-loop-state", state))
 
 
 def action_index_to_primitive_action(action: int) -> PrimitiveAction:
-    """Translate a discrete env action index into a core primitive action."""
+    """Translate an articulated-loop action index into a primitive action."""
 
     return PrimitiveAction(
         payload=("articulated-loop-action", int(action)),
@@ -61,7 +61,7 @@ def action_index_to_primitive_action(action: int) -> PrimitiveAction:
 
 
 def primitive_action_to_action_index(action: PrimitiveAction) -> int:
-    """Translate a core primitive action back into a discrete env action index."""
+    """Translate a primitive action back into an articulated-loop action index."""
 
     payload = cast(tuple[str, int], action.payload)
     tag, index = payload
@@ -88,13 +88,17 @@ def articulated_loop_edge_labels(action_index: int) -> tuple[Hashable, ...]:
 
 
 class ArticulatedLoopHiddenGraph(HiddenGraph):
-    """Hidden-graph binding for ArticulatedLoopEnv semantics."""
+    """Hidden-graph binding for articulated-loop transition semantics."""
 
     def is_valid_state(self, state: State) -> bool:
+        """Return whether a core state wraps a valid articulated-loop state."""
+
         payload = state.payload
         return isinstance(payload, ArticulatedLoopState) and payload in set(all_valid_states())
 
     def is_valid_action(self, action: PrimitiveAction) -> bool:
+        """Return whether a primitive action wraps a valid action index."""
+
         try:
             index = primitive_action_to_action_index(action)
         except ValueError:
@@ -102,6 +106,8 @@ class ArticulatedLoopHiddenGraph(HiddenGraph):
         return 0 <= index < ACTION_COUNT
 
     def apply_action(self, state: State, action: PrimitiveAction) -> State | None:
+        """Apply one primitive action through the articulated-loop model."""
+
         payload = state.payload
         if not isinstance(payload, ArticulatedLoopState):
             return None
@@ -110,12 +116,18 @@ class ArticulatedLoopHiddenGraph(HiddenGraph):
         return articulated_loop_state_to_core_state(transition.next_state)
 
     def is_valid_edge(self, edge: BaseEdge) -> bool:
+        """Return whether an edge matches the deterministic transition model."""
+
         return self.apply_action(edge.source, edge.action) == edge.target
 
     def out_actions(self, state: State) -> Iterable[PrimitiveAction]:
+        """Return all primitive actions available from a valid state."""
+
         return tuple(action_index_to_primitive_action(index) for index in range(ACTION_COUNT))
 
     def out_neighbors(self, state: State) -> Iterable[State]:
+        """Return all deterministic successor states from a state."""
+
         return tuple(
             target
             for index in range(ACTION_COUNT)
@@ -124,6 +136,8 @@ class ArticulatedLoopHiddenGraph(HiddenGraph):
         )
 
     def out_edges(self, state: State) -> Iterable[BaseEdge]:
+        """Return all deterministic outgoing base edges from a state."""
+
         edges: list[BaseEdge] = []
         for index in range(ACTION_COUNT):
             action = action_index_to_primitive_action(index)
@@ -162,7 +176,7 @@ def semantic_articulated_loop_schema() -> ContractionSchema:
 
 
 class ArticulatedLoopEnvRuntime:
-    """Package-facing env runtime that couples ArticulatedLoopEnv to TowerRuntime."""
+    """Couple `ArticulatedLoopEnv` to `TowerRuntime` for examples and tests."""
 
     def __init__(
         self,
@@ -170,6 +184,8 @@ class ArticulatedLoopEnvRuntime:
         contraction_policy: ContractionPolicy | None = None,
         contraction_schema: ContractionSchema | None = None,
     ) -> None:
+        """Create the environment runtime and its package tower runtime."""
+
         self.env = env
         self.hidden_graph = ArticulatedLoopHiddenGraph()
         self._tower_runtime = TowerRuntime(
@@ -195,15 +211,21 @@ class ArticulatedLoopEnvRuntime:
 
     @property
     def quotient_tiers(self) -> tuple[object, ...]:
+        """Return compatibility quotient-tier readouts from the tower runtime."""
+
         return self._tower_runtime.quotient_tiers
 
     @property
     def tower_runtime(self) -> TowerRuntime:
+        """Return the underlying package-owned tower runtime."""
+
         return self._tower_runtime
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, object] | None = None
     ) -> ArticulatedLoopEnvRuntimeReset:
+        """Reset the environment and initialize the tower at the start state."""
+
         observation, info = self.env.reset(seed=seed, options=options)
         initial_core_state = articulated_loop_state_to_core_state(self.env.state)
         runtime_snapshot = self._tower_runtime.reset(initial_state=initial_core_state)
@@ -214,6 +236,8 @@ class ArticulatedLoopEnvRuntime:
         )
 
     def step(self, action: int) -> ArticulatedLoopEnvRuntimeStep:
+        """Step the environment and update the tower with the realized action."""
+
         observation, reward, terminated, truncated, info = self.env.step(action)
         runtime_snapshot = self._tower_runtime.step(action_index_to_primitive_action(action))
         return ArticulatedLoopEnvRuntimeStep(

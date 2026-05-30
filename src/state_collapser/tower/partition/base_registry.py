@@ -1,4 +1,10 @@
-"""Base graph registry for partition-tower ids and lookups."""
+"""Base graph registry for partition-tower ids and lookups.
+
+The registry is the immutable-base side of the tower runtime: states, edges, and
+primitive action identities receive stable ids once and partition layers point
+back to those ids. This keeps tier updates local to partition tables instead of
+copying graph objects through every quotient tier.
+"""
 
 from __future__ import annotations
 
@@ -13,7 +19,7 @@ from state_collapser.tower.partition.ids import ActionId, EdgeId, IdAllocator, S
 
 @dataclass(frozen=True, slots=True)
 class RegistryDelta:
-    """New/known ids produced by one registry update."""
+    """New and previously known ids produced by one registry update."""
 
     new_state_ids: tuple[StateId, ...] = ()
     known_state_ids: tuple[StateId, ...] = ()
@@ -22,9 +28,17 @@ class RegistryDelta:
 
 
 class BaseGraphRegistry:
-    """Stable id registry for the discovered base graph."""
+    """Stable id registry for the currently discovered base graph.
+
+    The registry owns base-state ids, base-edge ids, primitive-action ids, and
+    source/target/outgoing/incoming lookup tables. Partition layers use these
+    ids as their stable substrate, so registering an existing object is
+    idempotent and never changes prior layer semantics.
+    """
 
     def __init__(self) -> None:
+        """Initialize empty id allocators and lookup tables for a base graph."""
+
         self._state_allocator = IdAllocator()
         self._edge_allocator = IdAllocator()
         self._action_allocator = IdAllocator()
@@ -43,7 +57,7 @@ class BaseGraphRegistry:
         self.incoming_edge_ids_by_state_id: dict[StateId, dict[EdgeId, None]] = {}
 
     def register_state(self, state: State) -> StateId:
-        """Register a state and return its stable id."""
+        """Register a state idempotently and return its stable id."""
 
         existing = self.state_id_by_state.get(state)
         if existing is not None:
@@ -56,12 +70,12 @@ class BaseGraphRegistry:
         return state_id
 
     def register_states(self, states: Iterable[State]) -> tuple[StateId, ...]:
-        """Register states and return their ids in input order."""
+        """Register states and return their stable ids in input order."""
 
         return tuple(self.register_state(state) for state in states)
 
     def register_edge(self, edge: BaseEdge) -> EdgeId:
-        """Register an edge and return its stable id."""
+        """Register an edge idempotently and update graph adjacency indexes."""
 
         existing = self.edge_id_by_edge.get(edge)
         if existing is not None:
@@ -85,7 +99,7 @@ class BaseGraphRegistry:
         return edge_id
 
     def register_edges(self, edges: Iterable[BaseEdge]) -> tuple[EdgeId, ...]:
-        """Register edges and return their ids in input order."""
+        """Register edges and return their stable ids in input order."""
 
         return tuple(self.register_edge(edge) for edge in edges)
 
@@ -94,7 +108,7 @@ class BaseGraphRegistry:
         states: Iterable[State],
         edges: Iterable[BaseEdge],
     ) -> RegistryDelta:
-        """Register graph data and report which ids were new versus known."""
+        """Register a discovered graph delta and classify new versus known ids."""
 
         new_state_ids: list[StateId] = []
         known_state_ids: list[StateId] = []
@@ -125,37 +139,37 @@ class BaseGraphRegistry:
         )
 
     def state_for_id(self, state_id: StateId) -> State:
-        """Return the state for an id."""
+        """Return the base state for a registry-local state id."""
 
         return self.state_by_id[state_id]
 
     def edge_for_id(self, edge_id: EdgeId) -> BaseEdge:
-        """Return the edge for an id."""
+        """Return the base edge for a registry-local edge id."""
 
         return self.edge_by_id[edge_id]
 
     def source_state_id(self, edge_id: EdgeId) -> StateId:
-        """Return the source state id for an edge id."""
+        """Return the source state id for a base-edge id."""
 
         return self.source_by_edge_id[edge_id]
 
     def target_state_id(self, edge_id: EdgeId) -> StateId:
-        """Return the target state id for an edge id."""
+        """Return the target state id for a base-edge id."""
 
         return self.target_by_edge_id[edge_id]
 
     def action_for_edge_id(self, edge_id: EdgeId) -> PrimitiveAction:
-        """Return the primitive action for an edge id."""
+        """Return the primitive action carried by a base-edge id."""
 
         return self.action_by_edge_id[edge_id]
 
     def action_id_for_edge_id(self, edge_id: EdgeId) -> ActionId:
-        """Return the primitive action id for an edge id."""
+        """Return the stable primitive-action id carried by a base-edge id."""
 
         return self.action_id_by_edge_id[edge_id]
 
     def labels_for_edge_id(self, edge_id: EdgeId) -> tuple[Hashable, ...]:
-        """Return combined edge/action labels for an edge id."""
+        """Return combined edge and primitive-action labels for an edge id."""
 
         return self.labels_by_edge_id[edge_id]
 
@@ -171,13 +185,13 @@ class BaseGraphRegistry:
 
     @property
     def state_ids(self) -> tuple[StateId, ...]:
-        """Return all registered state ids in registry order."""
+        """Return all registered state ids in registry allocation order."""
 
         return tuple(self.state_by_id.keys())
 
     @property
     def edge_ids(self) -> tuple[EdgeId, ...]:
-        """Return all registered edge ids in registry order."""
+        """Return all registered edge ids in registry allocation order."""
 
         return tuple(self.edge_by_id.keys())
 

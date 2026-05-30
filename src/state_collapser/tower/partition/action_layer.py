@@ -1,8 +1,10 @@
-"""Action-side partition layer for the partition tower.
+"""Action-side partition table for one tier of the partition tower.
 
 An action collection is storage-level outgoing edge data attached to a state
 cell. An action cell is decision-level data: a selectable abstract action class
-inside one outgoing collection.
+inside one outgoing collection. The layer keeps these separate so state-cell
+coarsening can update outgoing data without forcing callers to rebuild quotient
+graphs from scratch.
 """
 
 from __future__ import annotations
@@ -26,7 +28,12 @@ from state_collapser.tower.partition.state_layer import StatePartitionLayer
 
 @dataclass(frozen=True, slots=True)
 class ActionCollectionMergeResult:
-    """Result of coalescing outgoing action collections."""
+    """Result of coalescing outgoing-action collections after a state merge.
+
+    `internal_edges` records edges that became loops inside the merged state
+    cell and were removed from the live outgoing decision surface according to
+    the active loop policy.
+    """
 
     action_collection_id: ActionCollectionId
     merged_from: tuple[ActionCollectionId, ...]
@@ -35,7 +42,13 @@ class ActionCollectionMergeResult:
 
 @dataclass(slots=True)
 class ActionPartitionLayer:
-    """Action-side partition layer at one tower tier."""
+    """Action partition table aligned with a state partition tier.
+
+    Each state cell points to one outgoing-action collection. Each collection is
+    then partitioned into action cells by source cell, target cell, and primitive
+    action identity. Dirty collections mark the small part of the table that
+    must be rebuilt after state-cell merges or target-cell changes.
+    """
 
     tier_index: int
     outgoing_collection_by_state_cell: dict[StateCellId, ActionCollectionId] = field(
@@ -75,7 +88,7 @@ class ActionPartitionLayer:
         state_layer: StatePartitionLayer,
         registry: BaseGraphRegistry,
     ) -> ActionPartitionLayer:
-        """Initialize outgoing collections from registry outgoing buckets."""
+        """Initialize tier-0 outgoing collections from base graph buckets."""
 
         layer = cls(tier_index=tier)
         for state_cell_id in state_layer.all_cell_ids():
@@ -99,7 +112,12 @@ class ActionPartitionLayer:
         tier: int,
         loop_policy: LoopPolicy,
     ) -> ActionPartitionLayer:
-        """Create a new action layer initialized from previous outgoing data."""
+        """Create a new tier by carrying forward previous outgoing data.
+
+        Previous live outgoing edges and already-internal edges are inherited
+        into the new state partition. Action cells are rebuilt lazily through the
+        dirty-collection mechanism.
+        """
 
         layer = cls(tier_index=tier)
         for state_cell_id in new_state_layer.all_cell_ids():
@@ -134,7 +152,7 @@ class ActionPartitionLayer:
         return layer
 
     def outgoing_collection(self, state_cell_id: StateCellId) -> ActionCollectionId:
-        """Return the outgoing collection for a state cell."""
+        """Return the outgoing-action collection attached to a state cell."""
 
         return self.outgoing_collection_by_state_cell[state_cell_id]
 
@@ -142,7 +160,7 @@ class ActionPartitionLayer:
         self,
         state_cell_id: StateCellId,
     ) -> ActionCollectionId:
-        """Ensure a state cell has an outgoing collection."""
+        """Create an empty outgoing collection for a state cell if needed."""
 
         existing = self.outgoing_collection_by_state_cell.get(state_cell_id)
         if existing is not None:
@@ -158,7 +176,7 @@ class ActionPartitionLayer:
         edge_id: EdgeId,
         source_cell_id: StateCellId,
     ) -> ActionCollectionId:
-        """Insert an edge into the outgoing collection of its source cell."""
+        """Insert a newly discovered edge into its source-cell collection."""
 
         collection_id = self.ensure_outgoing_collection(source_cell_id)
         self.edge_ids_by_collection.setdefault(collection_id, {})[edge_id] = None
@@ -169,12 +187,12 @@ class ActionPartitionLayer:
         self,
         collection_id: ActionCollectionId,
     ) -> tuple[EdgeId, ...]:
-        """Return live edge ids for an outgoing collection."""
+        """Return live non-internal edge ids for an outgoing collection."""
 
         return tuple(sorted(self.edge_ids_by_collection.get(collection_id, {})))
 
     def internal_edge_ids(self, state_cell_id: StateCellId) -> tuple[EdgeId, ...]:
-        """Return internal edge ids recorded for a state cell."""
+        """Return edge ids recorded as loops internal to a state cell."""
 
         return tuple(sorted(self.internal_edge_ids_by_state_cell.get(state_cell_id, {})))
 
@@ -187,7 +205,12 @@ class ActionPartitionLayer:
         registry: BaseGraphRegistry,
         loop_policy: LoopPolicy,
     ) -> ActionCollectionMergeResult:
-        """Merge outgoing action collections and remove newly internal edges."""
+        """Merge outgoing collections and remove edges now internal to the cell.
+
+        This is the action-side counterpart of state-cell coalescence. The live
+        outgoing set becomes the union of predecessor outgoing sets minus edges
+        whose source and target now lie in the merged state cell.
+        """
 
         candidate_edge_ids: dict[EdgeId, None] = {}
         for edge_id in self.edge_ids_for_collection(left_collection_id):
@@ -246,7 +269,12 @@ class ActionPartitionLayer:
         state_layer: StatePartitionLayer,
         registry: BaseGraphRegistry,
     ) -> tuple[ActionCellId, ...]:
-        """Rebuild decision-level action cells for one outgoing collection."""
+        """Rebuild decision-level action cells for one dirty collection.
+
+        Edges are grouped by source cell, target cell, and primitive action
+        identity. This makes every representative state in a coset see the same
+        abstract outgoing decision surface.
+        """
 
         for action_cell_id in self.action_cell_ids_by_collection.get(collection_id, ()):
             self.edge_ids_by_action_cell.pop(action_cell_id, None)
@@ -282,17 +310,17 @@ class ActionPartitionLayer:
         self,
         collection_id: ActionCollectionId,
     ) -> tuple[ActionCellId, ...]:
-        """Return action-cell ids for an outgoing collection."""
+        """Return action-cell ids exposed by an outgoing collection."""
 
         return self.action_cell_ids_by_collection.get(collection_id, ())
 
     def edge_ids_for_action_cell(self, action_cell_id: ActionCellId) -> tuple[EdgeId, ...]:
-        """Return edge ids represented by a decision-level action cell."""
+        """Return primitive edge ids represented by an action cell."""
 
         return tuple(sorted(self.edge_ids_by_action_cell[action_cell_id]))
 
     def representative_edge_ids(self, action_cell_id: ActionCellId) -> tuple[EdgeId, ...]:
-        """Return deterministic representative edge ids for an action cell."""
+        """Return deterministic primitive representatives for an action cell."""
 
         return self.edge_ids_for_action_cell(action_cell_id)
 

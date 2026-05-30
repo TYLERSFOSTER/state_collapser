@@ -35,6 +35,8 @@ from PIL import Image
 
 
 def parse_color(s: str) -> tuple[int, ...]:
+    """Parse a CLI color argument as RGB or RGBA channel values."""
+
     s = s.strip()
 
     if s.startswith("#"):
@@ -60,6 +62,8 @@ def parse_color(s: str) -> tuple[int, ...]:
 
 
 def to_rgba(color: tuple[int, ...]) -> tuple[int, int, int, int]:
+    """Normalize a parsed RGB or RGBA color tuple to RGBA form."""
+
     if len(color) == 3:
         r, g, b = color
         return r, g, b, 255
@@ -73,6 +77,8 @@ def rgb_within_delta(
     target: tuple[int, int, int, int],
     delta: int,
 ) -> bool:
+    """Return whether a pixel is within RGB tolerance of the target color."""
+
     return (
         abs(pixel[0] - target[0]) <= delta
         and abs(pixel[1] - target[1]) <= delta
@@ -81,6 +87,8 @@ def rgb_within_delta(
 
 
 def ensure_png_output_path(output_path: str) -> Path:
+    """Return an output path that will write a PNG artifact."""
+
     path = Path(output_path)
 
     if path.suffix.lower() != ".png":
@@ -96,6 +104,8 @@ def replace_color_range(
     new_color: tuple[int, ...],
     delta: int,
 ) -> None:
+    """Replace matching pixels in an image and save the result as a PNG file."""
+
     if delta < 0 or delta > 255:
         raise ValueError("--delta must be between 0 and 255")
 
@@ -130,6 +140,8 @@ def replace_color_range(
 
 
 def main() -> None:
+    """Parse image paths/colors, rewrite matching pixels, and save a PNG."""
+
     parser = argparse.ArgumentParser(
         description="Replace pixels within an RGB delta range and save as PNG."
     )

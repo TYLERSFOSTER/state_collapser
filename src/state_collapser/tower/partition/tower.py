@@ -1,4 +1,10 @@
-"""Persistent nested state/action partition tower."""
+"""Persistent nested state/action partition tower.
+
+The partition tower is the runtime version of the paper's nested coset picture.
+It keeps the discovered base graph fixed in a registry and represents each tier
+as state/action partition tables over that base graph rather than repeatedly
+rebuilding quotient graphs from scratch.
+"""
 
 from __future__ import annotations
 
@@ -41,7 +47,15 @@ if TYPE_CHECKING:
 
 @dataclass(slots=True)
 class PartitionTower:
-    """Persistent nested state/action partition tower."""
+    """Maintain nested state/action partitions over a discovered base graph.
+
+    `PartitionTower` owns the package's Young-diagram-style runtime structure:
+    base states and edges live in `BaseGraphRegistry`, state layers coarsen
+    state cells tier by tier, and action layers keep outgoing-action collections
+    aligned with those state cells. Incremental updates register only new graph
+    data, schedule new edges through the contraction schema, and propagate the
+    resulting merges through the existing partition tables.
+    """
 
     schema: ContractionSchema = field(default_factory=NoContractionSchema)
     loop_policy: LoopPolicy = field(default_factory=LoopPolicy.drop_internal)
@@ -56,6 +70,8 @@ class PartitionTower:
     last_update_result: TowerUpdateResult | None = None
 
     def __post_init__(self) -> None:
+        """Create the persistent schema-assignment cache owned by this tower."""
+
         self.schema_assignment_store = SchemaAssignmentStore(self.schema)
 
     def initialize(
@@ -65,7 +81,13 @@ class PartitionTower:
         initial_edges: Iterable[BaseEdge],
         current_state: State | None,
     ) -> TowerUpdateResult:
-        """Initialize the tower from discovered base graph data."""
+        """Initialize all tower tiers from discovered base graph data.
+
+        Initialization registers the base graph, creates tier-0 singleton state
+        cells and outgoing-action collections, then applies the schema's ordered
+        contraction blocks to produce coarser tiers. This is the full-build path;
+        later exploration should prefer `update_with_delta`.
+        """
 
         delta = self.registry.register_delta(initial_states, initial_edges)
         assignments = self.schema_assignment_store.assign_edges(
@@ -149,7 +171,7 @@ class PartitionTower:
         return result
 
     def current_state_cell(self, tier: int, state: State) -> StateCellId | None:
-        """Return the state cell containing a base state at a tier."""
+        """Return the tier cell containing a base state, or `None` if unavailable."""
 
         if tier < 0 or tier >= len(self.state_layers):
             return None
@@ -162,7 +184,7 @@ class PartitionTower:
         self,
         current_state: State | None,
     ) -> tuple[StateCellId | None, ...]:
-        """Return the current state-cell position at every tier."""
+        """Return the active base state's nested address across all tiers."""
 
         if current_state is None:
             return tuple(None for _ in self.state_layers)
@@ -176,7 +198,7 @@ class PartitionTower:
         tier: int,
         state_cell_id: StateCellId,
     ) -> tuple[State, ...]:
-        """Return base states contained in a state cell."""
+        """Return base states contained in a state cell at one tier."""
 
         if tier < 0 or tier >= len(self.state_layers):
             return ()
@@ -191,7 +213,7 @@ class PartitionTower:
         tier: int,
         state_cell_id: StateCellId,
     ) -> tuple[ActionCellId, ...]:
-        """Return decision-level action cells available from a state cell."""
+        """Return abstract decision actions available from a state cell."""
 
         if tier < 0 or tier >= len(self.action_layers):
             return ()
@@ -204,7 +226,7 @@ class PartitionTower:
         tier: int,
         action_cell_id: ActionCellId,
     ) -> tuple[BaseEdge, ...]:
-        """Return base edges represented by a decision-level action cell."""
+        """Return base edges represented by a tier-level action cell."""
 
         if tier < 0 or tier >= len(self.action_layers):
             return ()
@@ -219,7 +241,7 @@ class PartitionTower:
         tier: int,
         edge: BaseEdge,
     ) -> ActionCellId | None:
-        """Return the action cell containing a concrete edge at a tier."""
+        """Return the tier action cell containing a concrete base edge."""
 
         if tier < 0 or tier >= len(self.action_layers):
             return None
@@ -237,7 +259,7 @@ class PartitionTower:
         tier: int,
         action_cell_id: ActionCellId,
     ) -> tuple[BaseEdge, ...]:
-        """Return deterministic representative base edges for an action cell."""
+        """Return deterministic primitive representatives for an abstract action."""
 
         if tier < 0 or tier >= len(self.action_layers):
             return ()
@@ -252,7 +274,7 @@ class PartitionTower:
         tier: int,
         state_cell_id: StateCellId,
     ) -> tuple[BaseEdge, ...]:
-        """Return base edges that are internal to a state cell at a tier."""
+        """Return base edges that became loops inside a state cell at a tier."""
 
         if tier < 0 or tier >= len(self.action_layers):
             return ()
@@ -268,7 +290,13 @@ class PartitionTower:
         action_cell_id: ActionCellId,
         current_base_state: State,
     ) -> tuple[BaseEdge, ...]:
-        """Return primitive edges that can realize an abstract action cell."""
+        """Return primitive edges that can realize an abstract action.
+
+        If the current base representative has directly executable edges inside
+        the action cell, those are preferred. Otherwise the method returns the
+        deterministic representative set so a controller can still reason about
+        the action at the quotient tier.
+        """
 
         representatives = self.representative_edges(tier, action_cell_id)
         directly_executable = tuple(
@@ -281,7 +309,12 @@ class PartitionTower:
         tier: int,
         cell_id: StateCellId | ActionCollectionId | ActionCellId,
     ) -> tuple[StateCellId | ActionCollectionId | ActionCellId, ...]:
-        """Return adjacent lower-tier cells refining a tier cell when available."""
+        """Return lower-tier cells that refine a state/action cell.
+
+        This is the runtime query behind freeze-at-coarse-tier and lift-to-fine
+        behavior: controllers can inspect which finer cells sit under a coarser
+        state cell, outgoing-action collection, or action cell.
+        """
 
         if tier <= 0:
             return ()
@@ -301,7 +334,13 @@ class PartitionTower:
         current_state: State | None,
         build_morphism: bool = False,
     ) -> TowerUpdateResult:
-        """Incrementally update the tower with newly discovered graph data."""
+        """Incrementally update partitions after exploration discovers new data.
+
+        Only new states and edges are registered. New edges are inserted into
+        existing action collections, assigned to schema blocks, and contracted
+        from their scheduled tier downward. When requested, the update also
+        records a tower morphism from old cells to their post-update images.
+        """
 
         morphism_domain = self._capture_morphism_domain() if build_morphism else None
         delta = self.registry.register_delta(delta_states, delta_edges)
@@ -391,7 +430,7 @@ class PartitionTower:
         edges: Iterable[BaseEdge],
         current_state: State | None,
     ) -> TowerUpdateResult:
-        """Build a full partition tower using the initialization semantics."""
+        """Rebuild the full tower through the initialization semantics."""
 
         return self.initialize(
             initial_states=states,
@@ -400,7 +439,7 @@ class PartitionTower:
         )
 
     def to_quotient_tier_views(self) -> tuple[QuotientTierView, ...]:
-        """Return compatibility quotient-tier views."""
+        """Return quotient-style readout views for compatibility surfaces."""
 
         from state_collapser.tower.partition.readout import to_quotient_tier_views
 
@@ -716,7 +755,12 @@ def build_partition_tower_full(
     loop_policy: LoopPolicy | None = None,
     reward_aggregator: RewardAggregator | None = None,
 ) -> PartitionTower:
-    """Build a full partition tower from complete discovered graph data."""
+    """Build a complete partition tower from discovered graph data.
+
+    This convenience wrapper exists for tests and callers that already have a
+    complete graph snapshot. Runtime exploration should normally construct a
+    `PartitionTower` once and call `update_with_delta` as new vistas appear.
+    """
 
     tower = PartitionTower(
         schema=NoContractionSchema() if schema is None else schema,

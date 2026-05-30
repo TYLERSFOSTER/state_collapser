@@ -273,6 +273,8 @@ class ArticulatedLoopEnv(gymnasium.Env[np.ndarray, int]):
     metadata = {"render_modes": []}
 
     def __init__(self) -> None:
+        """Initialize spaces, start state, and episode step counter."""
+
         super().__init__()
         self.action_space = gymnasium.spaces.Discrete(ACTION_COUNT)
         self.observation_space = gymnasium.spaces.MultiDiscrete([4, 4, 4, 2, 3])
@@ -285,6 +287,8 @@ class ArticulatedLoopEnv(gymnasium.Env[np.ndarray, int]):
         seed: int | None = None,
         options: dict[str, object] | None = None,
     ) -> tuple[np.ndarray, dict[str, object]]:
+        """Reset to the fixed start state and return observation metadata."""
+
         super().reset(seed=seed)
         del options
         self.state = START_STATE
@@ -292,6 +296,8 @@ class ArticulatedLoopEnv(gymnasium.Env[np.ndarray, int]):
         return encode_observation(self.state), {"state": self.state}
 
     def step(self, action: int) -> tuple[np.ndarray, float, bool, bool, dict[str, object]]:
+        """Apply one articulated-loop action and return Gymnasium outputs."""
+
         if isinstance(action, bool) or not self.action_space.contains(action):
             raise ValueError(f"Unsupported action index: {action}")
 

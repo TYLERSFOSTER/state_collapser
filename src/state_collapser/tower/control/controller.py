@@ -49,6 +49,8 @@ class ActiveTierController:
         frozen_context: FrozenLowerContext,
         training_due: bool,
     ) -> ControllerDecision:
+        """Choose the next exploit/explore/train/lift/descend control action."""
+
         del frozen_context  # first-release controller gates on explicit signals/config only
 
         pressure = exploration_pressure(signal, config)

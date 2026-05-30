@@ -16,6 +16,8 @@ from state_collapser.training.torch import TorchDecisionBatch, TorchTransitionBa
 
 
 def _config(device_kind: TensorDeviceKind = TensorDeviceKind.CPU) -> LinearizationConfig:
+    """Return an enabled Torch config for decision/transition batch tests."""
+
     return LinearizationConfig(
         linearization_state=LinearizationState.PRESENT_ENABLED,
         numeric_backend=NumericBackend.TORCH,
@@ -25,6 +27,8 @@ def _config(device_kind: TensorDeviceKind = TensorDeviceKind.CPU) -> Linearizati
 
 
 def _record() -> LinearizedActionSelectionInput:
+    """Return a fixed-width linearized record with metadata sidecar content."""
+
     return LinearizedActionSelectionInput(
         observation_features=(1.0, 2.0),
         current_base_state_id=0,
@@ -46,6 +50,8 @@ def _record() -> LinearizedActionSelectionInput:
 
 @pytest.mark.requires_torch
 def test_torch_decision_batch_preserves_masks_and_metadata() -> None:
+    """Convert decision records without losing masks or sidecar metadata."""
+
     torch = pytest.importorskip("torch")
 
     batch = TorchDecisionBatch.from_linearized([_record()], config=_config())
@@ -58,6 +64,8 @@ def test_torch_decision_batch_preserves_masks_and_metadata() -> None:
 
 @pytest.mark.requires_torch
 def test_torch_transition_batch_converts_transition_fields() -> None:
+    """Convert transition records into tensors and preserve bootstrap fields."""
+
     pytest.importorskip("torch")
 
     record = _record()
@@ -85,6 +93,8 @@ def test_torch_transition_batch_converts_transition_fields() -> None:
 
 @pytest.mark.requires_torch
 def test_cuda_config_requires_cuda_availability() -> None:
+    """Require CUDA configs to fail explicitly when CUDA is unavailable."""
+
     torch = pytest.importorskip("torch")
 
     if torch.cuda.is_available():

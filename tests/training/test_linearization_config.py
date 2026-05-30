@@ -15,6 +15,8 @@ from state_collapser.training import (
 
 
 def test_linearization_mode_values_are_stable() -> None:
+    """Lock enum spellings used by benchmark labels and artifact manifests."""
+
     assert LinearizationState.ABSENT.value == "ABSENT"
     assert LinearizationState.PRESENT_DISABLED.value == "PRESENT_DISABLED"
     assert LinearizationState.PRESENT_ENABLED.value == "PRESENT_ENABLED"
@@ -27,6 +29,8 @@ def test_linearization_mode_values_are_stable() -> None:
 
 
 def test_config_serializes_and_derives_benchmark_labels() -> None:
+    """Require configs to round-trip while preserving derived benchmark labels."""
+
     config = LinearizationConfig(
         linearization_state=LinearizationState.PRESENT_DISABLED,
         numeric_backend=NumericBackend.NUMPY,
@@ -43,6 +47,8 @@ def test_config_serializes_and_derives_benchmark_labels() -> None:
 
 
 def test_config_rejects_inconsistent_modes() -> None:
+    """Reject mode combinations that would blur numeric and device boundaries."""
+
     with pytest.raises(ValueError, match="ABSENT"):
         LinearizationConfig(
             linearization_state=LinearizationState.ABSENT,
@@ -66,6 +72,8 @@ def test_config_rejects_inconsistent_modes() -> None:
 
 
 def test_report_serializes_artifact_safe_mode_data() -> None:
+    """Require reports to expose benchmark-safe metadata without tensor records."""
+
     config = LinearizationConfig(
         linearization_state=LinearizationState.PRESENT_DISABLED,
         numeric_backend=NumericBackend.TORCH,
@@ -85,4 +93,6 @@ def test_report_serializes_artifact_safe_mode_data() -> None:
 
 
 def test_backend_independent_module_does_not_bind_torch_symbol() -> None:
+    """Keep the linearization module free of eager Torch imports."""
+
     assert "torch" not in vars(linearization)

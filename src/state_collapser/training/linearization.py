@@ -37,7 +37,12 @@ JsonDict = dict[str, object]
 
 
 class LinearizationState(StrEnum):
-    """Whether a tensor-capable conversion boundary is present and active."""
+    """Lifecycle state for the optional numeric conversion boundary.
+
+    The three states are intentionally separate from backend choice. A caller
+    can record that tensorization support was absent, present but disabled for a
+    control-flow baseline, or present and enabled for benchmark/training runs.
+    """
 
     ABSENT = "ABSENT"
     PRESENT_DISABLED = "PRESENT_DISABLED"
@@ -45,7 +50,13 @@ class LinearizationState(StrEnum):
 
 
 class NumericBackend(StrEnum):
-    """Numeric backend used by the conversion boundary."""
+    """Numeric array backend requested by linearization.
+
+    `NONE` means the object-native package path is being measured or executed.
+    NumPy is the backend-independent numeric layer; Torch is the optional model
+    backend and should not be required by package users who only need tower
+    construction or HGraphML-compatible encodings.
+    """
 
     NONE = "NONE"
     NUMPY = "NUMPY"
@@ -53,7 +64,12 @@ class NumericBackend(StrEnum):
 
 
 class TensorDeviceKind(StrEnum):
-    """Tensor device family requested by the conversion boundary."""
+    """Device family requested after records have been linearized.
+
+    Device selection is kept separate from backend selection so benchmark labels
+    can distinguish control-flow, CPU tensor, and CUDA tensor regimes without
+    overloading a single mode flag.
+    """
 
     NONE = "NONE"
     CPU = "CPU"
@@ -62,14 +78,20 @@ class TensorDeviceKind(StrEnum):
 
 @dataclass(frozen=True, slots=True)
 class BackendAvailability:
-    """Local optional-backend availability report."""
+    """Serializable report about an optional numeric backend on this machine.
+
+    Availability is checked lazily so importing `state_collapser.training` does
+    not import NumPy or Torch. Reports are intended for manifests, benchmarks,
+    and diagnostics where missing optional dependencies should be visible but
+    not fatal unless a conversion path actually needs them.
+    """
 
     available: bool
     version: str | None = None
     cuda_available: bool = False
 
     def to_dict(self) -> JsonDict:
-        """Return a JSON-safe dictionary."""
+        """Serialize backend availability for manifests and benchmark artifacts."""
 
         return {
             "available": self.available,
@@ -80,7 +102,15 @@ class BackendAvailability:
 
 @dataclass(frozen=True, slots=True)
 class LinearizationConfig:
-    """Configuration for semantic-to-numeric conversion."""
+    """Configuration for converting semantic training objects into numbers.
+
+    This object describes the boundary between object-native `state_collapser`
+    runtime structures and numeric records that can feed benchmarks or learners.
+    It does not select a model architecture, own replay storage, or imply that
+    Torch is installed. The orthogonal state/backend/device fields are kept
+    explicit so benchmark artifacts can say whether tensorization was absent,
+    available-but-disabled, or actively used on CPU/CUDA.
+    """
 
     linearization_state: LinearizationState
     numeric_backend: NumericBackend
@@ -96,17 +126,23 @@ class LinearizationConfig:
     debug_export_records: bool = False
 
     def __post_init__(self) -> None:
+        """Validate cross-field invariants immediately after dataclass creation."""
+
         _validate_config(self)
 
     @property
     def enabled(self) -> bool:
-        """Return whether conversion is meant to produce records."""
+        """Return whether this config authorizes actual numeric record creation."""
 
         return self.linearization_state == LinearizationState.PRESENT_ENABLED
 
     @property
     def derived_benchmark_label(self) -> str:
-        """Return the benchmark label derived from orthogonal mode fields."""
+        """Derive the canonical benchmark label from state/backend/device fields.
+
+        Labels are intentionally derived rather than separately configured so
+        manifests cannot drift from the actual execution mode being measured.
+        """
 
         if (
             self.linearization_state == LinearizationState.ABSENT
@@ -131,7 +167,7 @@ class LinearizationConfig:
         raise ValueError("No benchmark label is defined for this linearization config.")
 
     def to_dict(self) -> JsonDict:
-        """Return a JSON-safe dictionary."""
+        """Serialize the configuration exactly as it should appear in artifacts."""
 
         return {
             "linearization_state": self.linearization_state.value,
@@ -151,7 +187,7 @@ class LinearizationConfig:
 
     @classmethod
     def from_dict(cls, data: Mapping[str, object]) -> LinearizationConfig:
-        """Build a config from a dictionary produced by `to_dict`."""
+        """Rebuild a config from a manifest payload produced by `to_dict`."""
 
         return cls(
             linearization_state=LinearizationState(str(data["linearization_state"])),
@@ -171,7 +207,14 @@ class LinearizationConfig:
 
 @dataclass(frozen=True, slots=True)
 class LinearizationReport:
-    """Benchmark-visible report for the tensorization boundary."""
+    """Benchmark-visible report for one linearization boundary.
+
+    Reports capture what numeric path was requested, which optional backends
+    were available, what schema/tower vocabulary was used, and how many records
+    were converted. They are lightweight manifest payloads, not replay logs:
+    individual linearized records are exported only when explicit debug export
+    is requested.
+    """
 
     linearization_state: LinearizationState
     numeric_backend: NumericBackend
@@ -197,7 +240,7 @@ class LinearizationReport:
     metadata: Mapping[str, object] = field(default_factory=dict)
 
     def to_dict(self) -> JsonDict:
-        """Return a JSON-safe dictionary."""
+        """Serialize the report for experiment manifests and benchmark artifacts."""
 
         return {
             "linearization_state": self.linearization_state.value,
@@ -227,7 +270,14 @@ class LinearizationReport:
 
 @dataclass(slots=True)
 class EncodingRegistry:
-    """Stable numeric vocabulary for tower, fiber, and training identities."""
+    """Stable numeric vocabulary for tower, fiber, and training identities.
+
+    The registry is deliberately more general than an RL observation encoder.
+    It assigns stable integer ids to states, edges, state cells, action cells,
+    tiers, fiber context, and labels so both RL training records and downstream
+    graph-message-passing users such as HGraphML can share the same tower
+    vocabulary without depending on Torch or RL-specific transition objects.
+    """
 
     state_id_by_state: dict[State, int] = field(default_factory=dict)
     edge_id_by_edge: dict[BaseEdge, int] = field(default_factory=dict)
@@ -250,7 +300,12 @@ class EncodingRegistry:
 
     @classmethod
     def from_tower(cls, tower: PartitionTower) -> EncodingRegistry:
-        """Build a registry from a partition tower without RL-specific objects."""
+        """Seed a registry from tower structure without RL-specific inputs.
+
+        This is the HGraphML-compatible entry point: it captures base ids,
+        partition-cell ids, action-cell ids, and tier ids from the tower itself
+        before any learner-specific records are introduced.
+        """
 
         registry = cls()
         for state, state_id in tower.registry.state_id_by_state.items():
@@ -283,12 +338,12 @@ class EncodingRegistry:
 
     @property
     def registry_id(self) -> str:
-        """Return a deterministic fingerprint for the current vocabulary."""
+        """Return a deterministic fingerprint for the current vocabulary state."""
 
         return _fingerprint(self.summary())
 
     def encode_state(self, state: object | None) -> int | None:
-        """Return the numeric id for a base state if known."""
+        """Encode a base state, returning `None` for absent or unknown values."""
 
         if state is None:
             return None
@@ -297,7 +352,7 @@ class EncodingRegistry:
         return None
 
     def encode_edge(self, edge: object | None) -> int | None:
-        """Return the numeric id for a base edge if known."""
+        """Encode a base edge, returning `None` for absent or unknown values."""
 
         if edge is None:
             return None
@@ -306,7 +361,7 @@ class EncodingRegistry:
         return None
 
     def encode_state_cell(self, cell: object | None) -> int | None:
-        """Return the numeric id for a state cell if known."""
+        """Encode a state partition cell using its stable tower cell identity."""
 
         if cell is None:
             return None
@@ -315,7 +370,7 @@ class EncodingRegistry:
         return None
 
     def encode_action_collection(self, collection: object | None) -> int | None:
-        """Return the numeric id for an action collection if known."""
+        """Encode the outgoing-action collection attached to a state cell."""
 
         if collection is None:
             return None
@@ -327,7 +382,7 @@ class EncodingRegistry:
         return None
 
     def encode_action_cell(self, cell: object | None) -> int | None:
-        """Return the numeric id for an action cell if known."""
+        """Encode an action partition cell inside an outgoing-action collection."""
 
         if cell is None:
             return None
@@ -336,7 +391,7 @@ class EncodingRegistry:
         return None
 
     def encode_tier(self, tier: int | None) -> int | None:
-        """Return a stable id for a tower tier."""
+        """Encode a tower tier while preserving the tier number as its id."""
 
         if tier is None:
             return None
@@ -350,7 +405,12 @@ class EncodingRegistry:
         self,
         stage_context: FiberStageContext | None,
     ) -> tuple[int | None, int | None, int | None]:
-        """Encode stage, fiber, and frozen-behavior identities."""
+        """Encode fiber-conditioned training context into stable ids.
+
+        The returned tuple captures stage, fiber, and frozen-behavior identity.
+        Fine and coarse tier ids are also registered so later batches can refer
+        to the same tier vocabulary.
+        """
 
         if stage_context is None:
             return None, None, None
@@ -374,7 +434,7 @@ class EncodingRegistry:
         self,
         departure: FiberDeparture | None,
     ) -> int | None:
-        """Encode a fiber-departure reason."""
+        """Encode why control left a fiber-conditioned training stage."""
 
         if departure is None:
             return None
@@ -386,7 +446,7 @@ class EncodingRegistry:
         return next_id
 
     def encode_label(self, namespace: str, value: object | None) -> int | None:
-        """Encode a small metadata label in a caller-provided namespace."""
+        """Encode a caller-owned categorical label under a stable namespace."""
 
         if value is None:
             return None
@@ -399,7 +459,7 @@ class EncodingRegistry:
         return next_id
 
     def summary(self) -> JsonDict:
-        """Return a serializable vocabulary summary."""
+        """Return the serializable vocabulary summary used for fingerprints."""
 
         return {
             "state_ids": sorted(self.state_id_by_state.values()),
@@ -437,7 +497,7 @@ class EncodingRegistry:
         }
 
     def to_dict(self) -> JsonDict:
-        """Return a JSON-safe dictionary."""
+        """Serialize registry identity and vocabulary summary for artifacts."""
 
         return {
             "registry_id": self.registry_id,
@@ -455,7 +515,13 @@ class EncodingRegistry:
 
 @dataclass(frozen=True, slots=True)
 class LinearizedActionSelectionInput:
-    """Backend-independent numeric record for action selection."""
+    """Backend-independent numeric view of one action-selection input.
+
+    This record is the package-native handoff between semantic runtime objects
+    and numeric learners. It stores fixed-width/padded fields where the first
+    tensorization pass supports them and keeps ragged or diagnostic information
+    in metadata sidecars rather than forcing a Torch-specific representation.
+    """
 
     observation_features: tuple[float, ...]
     current_base_state_id: int | None
@@ -474,7 +540,7 @@ class LinearizedActionSelectionInput:
     metadata: Mapping[str, object] = field(default_factory=dict)
 
     def to_dict(self) -> JsonDict:
-        """Return a JSON-safe dictionary."""
+        """Serialize the record for optional debug export or artifact samples."""
 
         return {
             "observation_features": list(self.observation_features),
@@ -497,7 +563,13 @@ class LinearizedActionSelectionInput:
 
 @dataclass(frozen=True, slots=True)
 class LinearizedTrainingTransition:
-    """Backend-independent numeric record for one training transition."""
+    """Backend-independent numeric record for one training transition.
+
+    The transition preserves source/target decision inputs, chosen action,
+    reward, termination flags, and bootstrap semantics without requiring a replay
+    buffer or Torch tensors. Learner-specific batching is a later conversion
+    layer.
+    """
 
     source: LinearizedActionSelectionInput
     target: LinearizedActionSelectionInput
@@ -510,7 +582,7 @@ class LinearizedTrainingTransition:
     metadata: Mapping[str, object] = field(default_factory=dict)
 
     def to_dict(self) -> JsonDict:
-        """Return a JSON-safe dictionary."""
+        """Serialize the transition for optional debug export or artifacts."""
 
         return {
             "source": self.source.to_dict(),
@@ -527,13 +599,13 @@ class LinearizedTrainingTransition:
 
 @dataclass(frozen=True, slots=True)
 class ConversionTiming:
-    """Small explicit conversion timing payload."""
+    """Timing payload for a materialized conversion batch."""
 
     conversion_count: int
     conversion_elapsed_seconds: float
 
     def to_dict(self) -> JsonDict:
-        """Return a JSON-safe dictionary."""
+        """Serialize conversion count and elapsed wall-clock seconds."""
 
         return {
             "conversion_count": self.conversion_count,
@@ -542,7 +614,7 @@ class ConversionTiming:
 
 
 def numpy_availability() -> BackendAvailability:
-    """Return NumPy availability without requiring NumPy at module import time."""
+    """Check NumPy availability without importing it during module import."""
 
     if importlib.util.find_spec("numpy") is None:
         return BackendAvailability(available=False)
@@ -553,7 +625,7 @@ def numpy_availability() -> BackendAvailability:
 
 
 def torch_availability(*, check_cuda: bool = False) -> BackendAvailability:
-    """Return Torch availability without requiring Torch at module import time."""
+    """Check Torch availability lazily, optionally probing CUDA support."""
 
     if importlib.util.find_spec("torch") is None:
         return BackendAvailability(available=False)
@@ -582,7 +654,13 @@ def build_linearization_report(
     debug_record_exported: bool = False,
     metadata: Mapping[str, object] | None = None,
 ) -> LinearizationReport:
-    """Build the manifest/report fragment for one tensorization boundary."""
+    """Build the manifest/report fragment for one linearization boundary.
+
+    The report can be built from an explicit registry or directly from a tower.
+    Passing a tower records schema/tower fingerprints, while passing only a
+    registry records vocabulary identity without coupling the report to a live
+    runtime object.
+    """
 
     numpy_status = numpy_availability()
     torch_status = torch_availability(
@@ -634,7 +712,7 @@ def build_linearization_report(
 def time_conversions(
     conversions: Iterable[object],
 ) -> tuple[tuple[object, ...], ConversionTiming]:
-    """Materialize explicit conversions and return count/timing metadata."""
+    """Materialize conversions and return both records and timing metadata."""
 
     started = time.perf_counter()
     materialized = tuple(conversions)
@@ -651,7 +729,14 @@ def linearize_action_selection_input(
     config: LinearizationConfig,
     registry: EncodingRegistry,
 ) -> LinearizedActionSelectionInput:
-    """Convert one semantic action-selection input into a numeric record."""
+    """Convert one semantic action-selection input into a numeric record.
+
+    Strict mode requires unknown states/cells and ragged masks to be resolved
+    explicitly; non-strict mode preserves what can be represented and records
+    remaining irregularity in metadata. This keeps the conversion boundary
+    useful for benchmarks without pretending every environment is already a
+    fixed tensor problem.
+    """
 
     if config.linearization_state == LinearizationState.ABSENT:
         raise ValueError("Cannot linearize with LinearizationState.ABSENT.")
@@ -730,7 +815,7 @@ def linearize_training_transition(
     config: LinearizationConfig,
     registry: EncodingRegistry,
 ) -> LinearizedTrainingTransition:
-    """Convert one semantic training transition into a numeric record."""
+    """Convert one semantic training transition into a learner-neutral record."""
 
     source = linearize_action_selection_input(
         transition.source_input,
@@ -780,7 +865,7 @@ def linearize_training_transition(
 
 
 def export_linearized_record(record: object) -> JsonDict:
-    """Return a JSON-safe debug payload for an explicitly selected record."""
+    """Return a JSON-safe payload for explicitly selected debug records."""
 
     if hasattr(record, "to_dict"):
         value = record.to_dict()

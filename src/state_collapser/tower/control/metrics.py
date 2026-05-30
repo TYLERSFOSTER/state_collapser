@@ -16,10 +16,14 @@ class TierControlMetrics:
     mode_counts: Counter[ControlAction] = field(default_factory=Counter)
 
     def record(self, *, active_tier: int, action: ControlAction) -> None:
+        """Record one controller action taken at an active tier."""
+
         self.active_tier_counts[active_tier] += 1
         self.mode_counts[action] += 1
 
     def reset(self) -> None:
+        """Clear accumulated tier and mode counts."""
+
         self.active_tier_counts.clear()
         self.mode_counts.clear()
 

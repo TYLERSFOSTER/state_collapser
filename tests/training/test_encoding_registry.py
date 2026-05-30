@@ -11,10 +11,14 @@ from state_collapser.training import EncodingRegistry
 
 
 def _state(index: int) -> State:
+    """Build a stable test state whose identity is safe for registry lookup."""
+
     return State(payload=("node", index), identity=("node", index))
 
 
 def _edge(index: int, source: State, target: State, label: str) -> BaseEdge:
+    """Build a labeled test edge with a stable primitive-action identity."""
+
     return BaseEdge(
         source=source,
         action=PrimitiveAction(
@@ -28,6 +32,8 @@ def _edge(index: int, source: State, target: State, label: str) -> BaseEdge:
 
 
 def _tower_fixture() -> tuple[tuple[State, ...], tuple[BaseEdge, ...]]:
+    """Return a small graph that contains collapsible and message-only edges."""
+
     states = tuple(_state(index) for index in range(4))
     edges = (
         _edge(0, states[0], states[1], "collapse"),
@@ -39,6 +45,8 @@ def _tower_fixture() -> tuple[tuple[State, ...], tuple[BaseEdge, ...]]:
 
 
 def test_encoding_registry_reuses_partition_tower_ids() -> None:
+    """Require numeric encodings to reuse the partition tower's stable ids."""
+
     states, edges = _tower_fixture()
     tower = build_partition_tower_full(
         states=states,
@@ -61,6 +69,8 @@ def test_encoding_registry_reuses_partition_tower_ids() -> None:
 
 
 def test_encoding_registry_is_hgraphml_compatible_without_rl_objects() -> None:
+    """Protect the graph-ML encoding path from depending on RL records."""
+
     states, edges = _tower_fixture()
     tower = build_partition_tower_full(
         states=states,

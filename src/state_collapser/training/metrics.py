@@ -33,6 +33,8 @@ class TrainingMetrics:
     episodes: list[EpisodeMetrics] = field(default_factory=list)
 
     def on_episode_end(self, metrics: EpisodeMetrics) -> None:
+        """Append one completed episode's metrics to the in-memory history."""
+
         self.episodes.append(metrics)
 
 

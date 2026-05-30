@@ -1,4 +1,9 @@
-"""Internal-edge aggregation surface for partition towers."""
+"""Internal-edge aggregation surface for partition towers.
+
+Internal edges are base edges that became loops inside a coarsened state cell.
+They are not exposed as ordinary outgoing actions, but callers may still want a
+summary of their reward/value contribution for diagnostics or residual learning.
+"""
 
 from __future__ import annotations
 
@@ -8,7 +13,7 @@ from enum import StrEnum
 
 
 class InternalAggregationName(StrEnum):
-    """Supported internal/pre-image aggregation modes."""
+    """Supported aggregation modes for internal-edge numeric values."""
 
     SUM = "sum"
     MEAN = "mean"
@@ -17,7 +22,7 @@ class InternalAggregationName(StrEnum):
 
 @dataclass(frozen=True, slots=True)
 class InternalAggregationResult:
-    """Result of aggregating internal-edge numeric values."""
+    """Aggregated value and count for internal-edge numeric data."""
 
     name: InternalAggregationName
     value: float | None
@@ -26,20 +31,26 @@ class InternalAggregationResult:
 
 @dataclass(frozen=True, slots=True)
 class InternalEdgeAggregator:
-    """Configuration for internal-edge aggregation."""
+    """Configuration for summarizing values carried by internal edges."""
 
     name: InternalAggregationName = InternalAggregationName.SUM
 
     @classmethod
     def sum(cls) -> InternalEdgeAggregator:
+        """Aggregate internal values by summation."""
+
         return cls(InternalAggregationName.SUM)
 
     @classmethod
     def mean(cls) -> InternalEdgeAggregator:
+        """Aggregate internal values by arithmetic mean."""
+
         return cls(InternalAggregationName.MEAN)
 
     @classmethod
     def max(cls) -> InternalEdgeAggregator:
+        """Aggregate internal values by maximum."""
+
         return cls(InternalAggregationName.MAX)
 
 

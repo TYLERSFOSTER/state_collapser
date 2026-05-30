@@ -13,6 +13,8 @@ class NodeAnnotationStore:
     """Node- and tier-indexed runtime annotation store."""
 
     def __init__(self) -> None:
+        """Initialize empty label, note, payload, and outgoing-knowledge stores."""
+
         self._labels: set[Hashable] = set()
         self._notes: dict[Hashable, Hashable] = {}
         self._pushed_payloads: list[VistaPayload] = []

@@ -1,4 +1,11 @@
-"""Reward aggregation utilities for quotient action cells."""
+"""Reward aggregation utilities for quotient action cells.
+
+When a quotient action cell represents multiple fine actions, the package must
+choose how fine rewards are pushed down to the quotient surface. Mean is only
+one option; max, p-means, p-norms, softmax-style reductions, and custom
+aggregators are supported because different RL problems care about best-case,
+average-case, or risk-shaped summaries.
+"""
 
 from __future__ import annotations
 
@@ -9,7 +16,7 @@ from enum import StrEnum
 
 
 class RewardAggregationName(StrEnum):
-    """Supported quotient reward aggregation rules."""
+    """Supported direct-image aggregation rules for quotient rewards."""
 
     SUM = "sum"
     MEAN = "mean"
@@ -22,7 +29,7 @@ class RewardAggregationName(StrEnum):
 
 @dataclass(frozen=True, slots=True)
 class RewardAggregationResult:
-    """Result of aggregating fine rewards into a quotient reward."""
+    """Fine reward values and their quotient-level aggregate."""
 
     aggregator_name: str
     contributing_rewards: tuple[float, ...]
@@ -39,7 +46,7 @@ class RewardAggregator:
     custom: Callable[[tuple[float, ...]], float] | None = None
 
     def aggregate(self, values: tuple[float, ...]) -> RewardAggregationResult:
-        """Aggregate values according to this configuration."""
+        """Aggregate fine reward values according to this configuration."""
 
         return aggregate_rewards(
             values,
@@ -58,7 +65,12 @@ def aggregate_rewards(
     temperature: float = 1.0,
     custom: Callable[[tuple[float, ...]], float] | None = None,
 ) -> RewardAggregationResult:
-    """Aggregate fine rewards into one quotient-level reward."""
+    """Aggregate fine rewards into one quotient-level reward.
+
+    Empty fibers aggregate to `0.0` so callers can keep quotient readouts total.
+    Max and p-based modes are included for settings where the downstream policy
+    needs the best available fine option rather than an average over options.
+    """
 
     name = _normalize_name(aggregator)
     if not values:

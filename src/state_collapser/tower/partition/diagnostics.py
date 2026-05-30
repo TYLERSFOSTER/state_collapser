@@ -7,7 +7,12 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True, slots=True)
 class TowerUpdateDiagnostics:
-    """Counters describing one partition-tower update."""
+    """Counters describing one partition-tower update.
+
+    Diagnostics are intentionally simple manifest-friendly counters. They are
+    meant to support benchmarks and sanity checks without exposing mutable tower
+    internals as part of the public API.
+    """
 
     discovered_state_count: int = 0
     discovered_edge_count: int = 0

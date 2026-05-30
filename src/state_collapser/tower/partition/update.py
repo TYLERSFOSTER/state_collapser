@@ -1,4 +1,10 @@
-"""Update records for partition-tower maintenance."""
+"""Update records for partition-tower maintenance.
+
+These dataclasses are the audit trail for initialization and incremental tower
+updates. They describe what graph data arrived, which schema assignments were
+made, which state/action cells merged, and how old cells map into the updated
+tower when morphism capture is requested.
+"""
 
 from __future__ import annotations
 
@@ -20,7 +26,7 @@ from state_collapser.tower.partition.state_layer import StateCellMergeResult
 
 @dataclass(frozen=True, slots=True)
 class StateCellMergeRecord:
-    """Tower-level record of one state-cell merge."""
+    """Tower-level record of one state-cell merge at a specific tier."""
 
     tier: int
     result: StateCellMergeResult
@@ -28,7 +34,7 @@ class StateCellMergeRecord:
 
 @dataclass(frozen=True, slots=True)
 class ActionCollectionMergeRecord:
-    """Tower-level record of one action-collection merge."""
+    """Tower-level record of one action-collection merge at a specific tier."""
 
     tier: int
     result: ActionCollectionMergeResult
@@ -36,7 +42,12 @@ class ActionCollectionMergeRecord:
 
 @dataclass(frozen=True, slots=True)
 class TowerMorphism:
-    """Cell-image data for an update from an old tower state to a new one."""
+    """Cell-image data from a pre-update tower to a post-update tower.
+
+    Morphisms are recorded as tierwise image maps for state cells, outgoing
+    action collections, and action cells. They let downstream users relate old
+    cached decisions/readouts to the tower after exploration adds new graph data.
+    """
 
     state_cell_image_by_tier: dict[int, dict[StateCellId, StateCellId]] = field(
         default_factory=dict
@@ -54,7 +65,7 @@ class TowerMorphism:
 
 @dataclass(frozen=True, slots=True)
 class TowerUpdateResult:
-    """Result of one partition-tower initialization or update."""
+    """Result of one partition-tower initialization or incremental update."""
 
     changed: bool
     delta_state_ids: tuple[StateId, ...] = ()

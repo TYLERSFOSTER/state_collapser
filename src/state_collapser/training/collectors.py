@@ -46,9 +46,13 @@ class RuntimeLike(Protocol):
         *,
         seed: int | None = None,
         options: dict[str, object] | None = None,
-    ) -> Any: ...
+    ) -> Any:
+        """Reset the runtime and return an object with observation/info/snapshot."""
+        ...
 
-    def step(self, action: int) -> Any: ...
+    def step(self, action: int) -> Any:
+        """Advance one action and return an object with step and snapshot data."""
+        ...
 
 
 @dataclass(frozen=True, slots=True)

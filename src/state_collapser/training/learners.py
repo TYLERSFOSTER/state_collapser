@@ -59,6 +59,8 @@ class TabularQLearner:
     _rng: random.Random = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
+        """Initialize deterministic exploration state for epsilon-greedy actions."""
+
         self._rng = random.Random(self.seed)
 
     def act(

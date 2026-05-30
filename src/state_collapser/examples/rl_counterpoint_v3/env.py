@@ -57,6 +57,8 @@ class RlCounterpointGraphSpec:
     require_strict_voice_order: bool = True
 
     def __post_init__(self) -> None:
+        """Validate pitch, duration, interval, and rule-set invariants."""
+
         if self.pitch_min > self.pitch_max:
             raise ValueError("pitch_min must be <= pitch_max")
         if self.measure_size < 1:
@@ -84,6 +86,8 @@ class RlCounterpointGraphSpec:
 
     @property
     def allowed_root_pitch_classes(self) -> frozenset[int]:
+        """Return tonic-relative root pitch classes allowed by the spec."""
+
         return frozenset(
             (self.tonic_pitch_class + interval) % 12
             for interval in self.allowed_root_intervals_from_tonic_mod_12
@@ -640,6 +644,8 @@ class RlCounterpointEnv(gymnasium.Env[np.ndarray, int]):
         *,
         invalid_action_penalty: float = -1.0,
     ) -> None:
+        """Initialize counterpoint action/observation spaces and start state."""
+
         super().__init__()
         self.graph_spec = DEFAULT_GRAPH_SPEC if graph_spec is None else graph_spec
         self.invalid_action_penalty = invalid_action_penalty
@@ -682,22 +688,32 @@ class RlCounterpointEnv(gymnasium.Env[np.ndarray, int]):
 
     @property
     def state(self) -> RlCounterpointState:
+        """Return the current counterpoint state."""
+
         return self._state
 
     @property
     def step_index(self) -> int:
+        """Return the current episode step index."""
+
         return self._step_index
 
     @property
     def history(self) -> tuple[RlCounterpointState, ...]:
+        """Return the realized state history for reward diagnostics."""
+
         return self._history
 
     @property
     def step_deltas(self) -> tuple[StepDelta, ...]:
+        """Return the action-space step-delta vocabulary."""
+
         return self._action_space_values
 
     @property
     def action_count(self) -> int:
+        """Return the number of available nonzero step-delta actions."""
+
         return len(self._action_space_values)
 
     def _action_mask(self, state: RlCounterpointState) -> tuple[bool, ...]:
@@ -712,6 +728,8 @@ class RlCounterpointEnv(gymnasium.Env[np.ndarray, int]):
         seed: int | None = None,
         options: dict[str, object] | None = None,
     ) -> tuple[np.ndarray, dict[str, object]]:
+        """Reset to a curated valid start state and return action-mask info."""
+
         del options
         if seed is not None:
             self._rng.seed(seed)
@@ -724,6 +742,8 @@ class RlCounterpointEnv(gymnasium.Env[np.ndarray, int]):
         self,
         action: int,
     ) -> tuple[np.ndarray, float, bool, bool, dict[str, object]]:
+        """Apply one counterpoint action and return Gymnasium outputs."""
+
         if isinstance(action, bool) or not self.action_space.contains(action):
             raise ValueError(f"Unsupported action index: {action}")
 
