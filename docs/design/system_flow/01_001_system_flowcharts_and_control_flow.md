@@ -531,19 +531,26 @@ components.
 
 ```mermaid
 flowchart TD
-    Start["ExploitExploreTowerRuntime.step()"] --> Signal["Get TierSignalState for active tier"]
+    Start["ExploitExploreTowerRuntime.step()"] --> Normalize["Lift through empty-Out tiers<br/>until active tier is executable"]
+    Normalize --> NoAction{"Tier 0 also has empty Out?"}
+    NoAction -- yes --> NoAvailable["Return NO_AVAILABLE_ACTION<br/>without learner/executor call"]
+    NoAction -- no --> Signal["Get TierSignalState for active tier"]
     Signal --> Config["Read TierControlConfig"]
     Config --> Frozen["Read FrozenLowerContext"]
     Frozen --> Due["learner.should_train(event_index)"]
-    Due --> Decide["ActiveTierController.decide(...)"]
+    Due --> Decide["ActiveTierController.decide(..., tier_is_executable)"]
     Decide --> Action{"ControlAction"}
 
     Action -- LIFT --> MoveUp["move_up(active_tier_state)"]
     Action -- DESCEND --> MoveDown["move_down(active_tier_state)"]
     Action -- TRAIN --> Train["learner.train(frozen_context)"]
-    Action -- EXPLORE --> BehaviorExplore["learner.behavior_action(mode='explore')"]
-    Action -- EXPLOIT_EXECUTE --> BehaviorExploit["learner.behavior_action(mode='exploit')"]
+    Action -- EXPLORE --> GuardExplore{"active tier still executable?"}
+    Action -- EXPLOIT_EXECUTE --> GuardExploit{"active tier still executable?"}
 
+    GuardExplore -- no --> Normalize
+    GuardExploit -- no --> Normalize
+    GuardExplore -- yes --> BehaviorExplore["learner.behavior_action(mode='explore')"]
+    GuardExploit -- yes --> BehaviorExploit["learner.behavior_action(mode='exploit')"]
     BehaviorExplore --> Execute["LiftResolveExecutor.execute(...)"]
     BehaviorExploit --> Execute
     Execute --> Observe["learner.observe(transition, frozen_context)"]
@@ -553,6 +560,7 @@ flowchart TD
     MoveDown --> Metrics
     UpdateSignal --> Advance["advance active tier event/state"]
     Advance --> Metrics
+    NoAvailable --> Metrics
     Metrics --> Result["ExploitExploreStepResult"]
 ```
 
@@ -787,4 +795,3 @@ discovered graph
         -> runtime snapshots
             -> training, tensorization, benchmark, and downstream graph-dataflow surfaces
 ```
-

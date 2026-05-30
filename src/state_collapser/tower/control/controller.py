@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -25,6 +26,7 @@ class ControlAction(StrEnum):
     DESCEND = "descend"
     LIFT = "lift"
     EXPLOIT_EXECUTE = "exploit_execute"
+    NO_AVAILABLE_ACTION = "no_available_action"
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,6 +50,7 @@ class ActiveTierController:
         tier_configs: dict[int, TierControlConfig],
         frozen_context: FrozenLowerContext,
         training_due: bool,
+        tier_is_executable: Callable[[int], bool] | None = None,
     ) -> ControllerDecision:
         """Choose the next exploit/explore/train/lift/descend control action."""
 
@@ -62,6 +65,7 @@ class ActiveTierController:
             ),
             signals_by_tier,
             tier_configs,
+            tier_is_executable=tier_is_executable,
         )
         if active_tier_state.has_upstairs() and should_lift(
             active_tier_state.active_tier, lowest_unclosed_tier

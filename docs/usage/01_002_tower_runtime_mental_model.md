@@ -68,3 +68,22 @@ Important runtime queries include:
 `PathFiber` composes these local tower queries into a training-stage view: given
 a frozen coarse behavior, it identifies the fine actions that live over that
 behavior.
+
+## Executable Tiers And Empty Outgoing Cells
+
+Not every coarse tier is necessarily an executable action surface at every
+runtime state. A coarse state cell can validly swallow all currently outgoing
+edges into internal loops, leaving:
+
+```text
+outgoing_action_cells(tier, current_state_cell) == ()
+```
+
+That is not a partition-tower bug. It means the tier is an address,
+diagnostic, or pass-through level for the current decision rather than a place
+where a learner should choose an action.
+
+The exploit/explore active-tier runtime handles this by lifting through
+empty-`Out` tiers until it reaches the nearest finer tier with executable
+outgoing action cells. Only if tier `0` also has empty outgoing actions does
+the runtime return a no-action control result.

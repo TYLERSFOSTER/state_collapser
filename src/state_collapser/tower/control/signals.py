@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from state_collapser.tower.control.config import TierControlConfig
@@ -128,10 +129,14 @@ def select_lowest_unclosed_tier(
     deepest_known_tier: int,
     signals_by_tier: dict[int, TierSignalState],
     tier_configs: dict[int, TierControlConfig],
+    *,
+    tier_is_executable: Callable[[int], bool] | None = None,
 ) -> int | None:
-    """Return the lowest/highest-indexed productive unclosed tier, if any."""
+    """Return the lowest/highest-indexed productive executable tier, if any."""
 
     for tier_index in range(deepest_known_tier, -1, -1):
+        if tier_is_executable is not None and not tier_is_executable(tier_index):
+            continue
         signal = signals_by_tier.get(tier_index, TierSignalState())
         config = tier_configs[tier_index]
         if is_unclosed(signal, config):

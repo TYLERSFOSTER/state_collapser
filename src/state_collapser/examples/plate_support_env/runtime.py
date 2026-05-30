@@ -30,7 +30,9 @@ from state_collapser.tower.control import (
     TierLearner,
 )
 from state_collapser.tower.control.transition import ActiveTierTransition
+from state_collapser.tower.partition.ids import StateCellId
 from state_collapser.tower.partition.schema import ContractionSchema, DimensionwiseSchema
+from state_collapser.tower.partition.tower import PartitionTower
 from state_collapser.tower.runtime import ExploitExploreTowerRuntime, TowerRuntime
 from state_collapser.tower.snapshot import LiveRuntimeView
 
@@ -405,6 +407,7 @@ class PlateSupportExploitExploreRuntime:
             frozen_contexts=frozen_contexts,
             move_down=move_down,
             move_up=move_up,
+            tier_is_executable=self._tier_is_executable,
         )
         snapshot = self._with_control_fields(
             base_reset.runtime_snapshot,
@@ -506,6 +509,22 @@ class PlateSupportExploitExploreRuntime:
         for tier_index in range(deepest_known_tier + 1):
             configs[tier_index] = self._base_tier_configs.get(tier_index, template)
         return configs
+
+    def _tier_is_executable(self, tier: int) -> bool:
+        snapshot = self._last_runtime_snapshot
+        if snapshot is None:
+            return True
+        tower_view = snapshot.partition_tower_view
+        if tower_view is None:
+            return True
+        tower = cast(PartitionTower, tower_view)
+        positions = snapshot.current_position_at_every_tier
+        if tier < 0 or tier >= len(positions):
+            return False
+        state_cell = positions[tier]
+        if state_cell is None:
+            return False
+        return bool(tower.outgoing_action_cells(tier, cast(StateCellId, state_cell)))
 
     def _sync_control_runtime_with_snapshot(self, snapshot: LiveRuntimeView) -> None:
         if self._control_runtime is None:

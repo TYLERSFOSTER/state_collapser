@@ -510,6 +510,7 @@ class ExploitExploreTowerRuntime:
         frozen_contexts: dict[int, FrozenLowerContext],
         move_down: Callable[[ActiveTierState], ActiveTierState],
         move_up: Callable[[ActiveTierState], ActiveTierState],
+        tier_is_executable: Callable[[int], bool] | None = None,
     ) -> None:
         """Initialize the controller runtime and empty signal/metric state."""
 
@@ -521,6 +522,7 @@ class ExploitExploreTowerRuntime:
         self._frozen_contexts = frozen_contexts
         self._move_down = move_down
         self._move_up = move_up
+        self._tier_is_executable = tier_is_executable
         self._signals: dict[int, TierSignalState] = {}
         self._metrics = TierControlMetrics()
 
@@ -542,8 +544,38 @@ class ExploitExploreTowerRuntime:
         state = self._active_tier_state if active_tier_state is None else active_tier_state
         return self._signals.setdefault(state.active_tier, TierSignalState())
 
+    def _is_tier_executable(self, tier: int) -> bool:
+        if self._tier_is_executable is None:
+            return True
+        return self._tier_is_executable(tier)
+
+    def _lift_to_executable_tier(self) -> bool:
+        while not self._is_tier_executable(self._active_tier_state.active_tier):
+            if not self._active_tier_state.has_upstairs():
+                return False
+            self._active_tier_state = self._move_up(self._active_tier_state)
+        return True
+
+    def _no_available_action_result(self) -> ExploitExploreStepResult:
+        active_tier_state = self._active_tier_state
+        signal = self.signal_state(active_tier_state)
+        self._metrics.record(
+            active_tier=active_tier_state.active_tier,
+            action=ControlAction.NO_AVAILABLE_ACTION,
+        )
+        return ExploitExploreStepResult(
+            decision=ControlAction.NO_AVAILABLE_ACTION,
+            active_tier_state=active_tier_state,
+            signal_state=signal,
+            learner_summary=None,
+            transition=None,
+        )
+
     def step(self) -> ExploitExploreStepResult:
         """Run one controller decision and apply its tier/training effect."""
+
+        if not self._lift_to_executable_tier():
+            return self._no_available_action_result()
 
         active_tier_state = self._active_tier_state
         signal = self.signal_state(active_tier_state)
@@ -560,6 +592,7 @@ class ExploitExploreTowerRuntime:
             tier_configs=self._tier_configs,
             frozen_context=frozen_context,
             training_due=self._learner.should_train(active_tier_state.event_index),
+            tier_is_executable=self._is_tier_executable,
         )
 
         learner_summary: LearnerUpdateSummary | None = None
@@ -576,6 +609,14 @@ class ExploitExploreTowerRuntime:
                 signal.record_reward_residual(learner_summary.reward_residual)
             self._active_tier_state = active_tier_state.advance_event()
         else:
+            if not self._lift_to_executable_tier():
+                return self._no_available_action_result()
+            active_tier_state = self._active_tier_state
+            signal = self.signal_state(active_tier_state)
+            frozen_context = self._frozen_contexts.get(
+                active_tier_state.active_tier,
+                FrozenLowerContext(supporting_tier=None),
+            )
             mode = "explore" if decision.action is ControlAction.EXPLORE else "exploit"
             action = self._learner.behavior_action(active_tier_state.tier_state, mode=mode)
             transition = self._executor.execute(

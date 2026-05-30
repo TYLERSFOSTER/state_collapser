@@ -426,6 +426,15 @@ uv run pytest tests/benchmarks
 uv run python -m state_collapser.benchmarks.tower_runtime_bench --steps 10 --summary-only
 ```
 
+After active-tier exploit/explore control changes, run the focused controller
+and example validation:
+
+```bash
+uv run pytest tests/tower/control
+uv run pytest tests/tower/partition/test_degenerate_tier_queries.py tests/tower/partition/test_queries_and_lift.py
+uv run pytest tests/examples/test_plate_support_env_exploit_explore_runtime.py
+```
+
 After tensorization-adjacent changes, run the focused tensorization and
 downstream-compatibility tests:
 

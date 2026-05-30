@@ -74,6 +74,92 @@ def test_lowest_unclosed_selection_prefers_deepest_productive_tier() -> None:
     assert select_lowest_unclosed_tier(1, signals, configs) == 1
 
 
+def test_lowest_unclosed_selection_preserves_behavior_when_all_tiers_executable() -> None:
+    configs = {
+        0: TierControlConfig(epsilon=0.0, min_visit_count=1, success_threshold=0.5),
+        1: TierControlConfig(epsilon=0.0, min_visit_count=1, success_threshold=0.5),
+    }
+    signals = {
+        0: TierSignalState(visit_count=1, success_count=1, td_error_ema=0.0),
+        1: TierSignalState(),
+    }
+
+    assert (
+        select_lowest_unclosed_tier(
+            1,
+            signals,
+            configs,
+            tier_is_executable=lambda tier: True,
+        )
+        == 1
+    )
+
+
+def test_lowest_unclosed_selection_skips_non_executable_deepest_tier() -> None:
+    configs = {
+        0: TierControlConfig(epsilon=0.0, min_visit_count=1, success_threshold=0.5),
+        1: TierControlConfig(epsilon=0.0, min_visit_count=1, success_threshold=0.5),
+        2: TierControlConfig(epsilon=0.0, min_visit_count=1, success_threshold=0.5),
+    }
+    signals = {
+        0: TierSignalState(visit_count=1, success_count=1, td_error_ema=0.0),
+        1: TierSignalState(),
+        2: TierSignalState(),
+    }
+
+    assert (
+        select_lowest_unclosed_tier(
+            2,
+            signals,
+            configs,
+            tier_is_executable=lambda tier: tier != 2,
+        )
+        == 1
+    )
+
+
+def test_lowest_unclosed_selection_returns_none_when_no_unclosed_tier_is_executable() -> None:
+    configs = {
+        0: TierControlConfig(epsilon=0.0, min_visit_count=1, success_threshold=0.5),
+        1: TierControlConfig(epsilon=0.0, min_visit_count=1, success_threshold=0.5),
+    }
+    signals = {
+        0: TierSignalState(),
+        1: TierSignalState(),
+    }
+
+    assert (
+        select_lowest_unclosed_tier(
+            1,
+            signals,
+            configs,
+            tier_is_executable=lambda tier: False,
+        )
+        is None
+    )
+
+
+def test_lowest_unclosed_selection_ignores_closed_non_executable_tier() -> None:
+    configs = {
+        0: TierControlConfig(epsilon=0.0, min_visit_count=1, success_threshold=0.5),
+        1: TierControlConfig(epsilon=0.0, min_visit_count=1, success_threshold=0.5),
+    }
+    signals = {
+        0: TierSignalState(),
+        1: TierSignalState(visit_count=1, success_count=1, td_error_ema=0.0),
+    }
+
+    assert (
+        select_lowest_unclosed_tier(
+            1,
+            signals,
+            configs,
+            tier_is_executable=lambda tier: tier == 0,
+        )
+        == 0
+    )
+
+
 def test_should_descend_when_deeper_unclosed_tier_exists() -> None:
     assert should_descend(0, 1)
 

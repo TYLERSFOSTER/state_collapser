@@ -7,6 +7,12 @@ and this project aims to follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Added active-tier degenerate control handling so exploit/explore runtime
+  lifts through tiers whose current state-cell has no outgoing action cells
+  instead of asking learners to choose from an empty action surface.
+
 ## [0.7.0] - 2026-05-29
 
 ### Added
