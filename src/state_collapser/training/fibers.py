@@ -146,12 +146,27 @@ class PathFiber:
         return self.tower.current_state_cell(self.coarse_tier, total_state)
 
     def action_vocabulary(self, total_state: State) -> tuple[ActionCellId, ...]:
-        """Return the finite fine-stage action vocabulary at the current state."""
+        """Return quotient-level fine-stage actions at the current state."""
 
         fine_state_cell = self.current_fine_state_cell(total_state)
         if fine_state_cell is None:
             return ()
         return self.tower.outgoing_action_cells(self.fine_tier, fine_state_cell)
+
+    def executable_action_vocabulary(
+        self,
+        total_state: State,
+    ) -> tuple[ActionCellId, ...]:
+        """Return fine-stage actions executable from the current state."""
+
+        fine_state_cell = self.current_fine_state_cell(total_state)
+        if fine_state_cell is None:
+            return ()
+        return self.tower.executable_action_cells(
+            self.fine_tier,
+            fine_state_cell,
+            total_state,
+        )
 
     def admissible_action_cells(self, total_state: State) -> tuple[ActionCellId, ...]:
         """Return fine action cells compatible with the frozen coarse step."""
@@ -166,10 +181,15 @@ class PathFiber:
             return ()
 
         admissible: list[ActionCellId] = []
-        for fine_action_cell in self.action_vocabulary(total_state):
+        for fine_action_cell in self.executable_action_vocabulary(total_state):
+            executable_edges = self.tower.executable_lift_candidates(
+                self.fine_tier,
+                fine_action_cell,
+                total_state,
+            )
             if any(
                 self._edge_matches_frozen_step(edge, frozen_step)
-                for edge in self.tower.action_cell_members(self.fine_tier, fine_action_cell)
+                for edge in executable_edges
             ):
                 admissible.append(fine_action_cell)
         return tuple(admissible)
@@ -197,11 +217,15 @@ class PathFiber:
         total_state: State,
         action_cell: ActionCellId,
     ) -> tuple[BaseEdge, ...]:
-        """Return deterministic primitive representatives for a fiber action cell."""
+        """Return executable primitive edges for a fiber action cell."""
 
         if action_cell not in set(self.admissible_action_cells(total_state)):
             return ()
-        return self.tower.lift_candidates(self.fine_tier, action_cell, total_state)
+        return self.tower.executable_lift_candidates(
+            self.fine_tier,
+            action_cell,
+            total_state,
+        )
 
     def diagnose_departure(
         self,
@@ -225,6 +249,20 @@ class PathFiber:
                 attempted=action_cell,
             )
 
+        executable_candidates = self.tower.executable_lift_candidates(
+            self.fine_tier,
+            action_cell,
+            total_state,
+        )
+        if not executable_candidates:
+            return FiberDeparture(
+                reason=FiberDepartureReason.NO_LIFT_CANDIDATE,
+                stage_context=stage_context,
+                expected=self.admissible_action_cells(total_state),
+                attempted=action_cell,
+                diagnostics=self._lift_diagnostics(total_state, action_cell),
+            )
+
         admissible = self.admissible_action_cells(total_state)
         if action_cell not in admissible:
             reason = self._departure_reason_for_known_action_cell(action_cell)
@@ -245,9 +283,31 @@ class PathFiber:
                 stage_context=stage_context,
                 expected=admissible,
                 attempted=action_cell,
+                diagnostics=self._lift_diagnostics(total_state, action_cell),
             )
 
         return None
+
+    def _lift_diagnostics(
+        self,
+        total_state: State,
+        action_cell: ActionCellId,
+    ) -> dict[str, int]:
+        return {
+            "quotient_member_count": len(
+                self.tower.action_cell_members(self.fine_tier, action_cell)
+            ),
+            "representative_candidate_count": len(
+                self.tower.lift_candidates(self.fine_tier, action_cell, total_state)
+            ),
+            "executable_candidate_count": len(
+                self.tower.executable_lift_candidates(
+                    self.fine_tier,
+                    action_cell,
+                    total_state,
+                )
+            ),
+        }
 
     def _edge_matches_frozen_step(
         self,

@@ -180,3 +180,36 @@ def test_representative_edge_ids_are_deterministic() -> None:
     action_cell = action_layer.action_cells_for_collection(collection)[0]
 
     assert action_layer.representative_edge_ids(action_cell) == (registry.edge_id_by_edge[ab],)
+
+
+def test_action_layer_indexes_pointwise_source_support() -> None:
+    ab = edge("a", "b")
+    ac = edge("a", "c")
+    registry = registry_with_edges(ab, ac)
+    state_layer = StatePartitionLayer.singleton_layer(tier=0, state_ids=registry.state_ids)
+    action_layer = ActionPartitionLayer.from_state_layer_and_registry(
+        tier=0,
+        state_layer=state_layer,
+        registry=registry,
+    )
+
+    a_state_id = registry.state_id_by_state[ab.source]
+    a_cell = state_layer.cell_of(a_state_id)
+    collection = action_layer.outgoing_collection(a_cell)
+    action_cells = action_layer.action_cells_for_collection(collection)
+    ab_cell = action_layer.action_cell_for_edge_id(registry.edge_id_by_edge[ab])
+    ac_cell = action_layer.action_cell_for_edge_id(registry.edge_id_by_edge[ac])
+
+    assert ab_cell in action_cells
+    assert ac_cell in action_cells
+    assert ab_cell is not None
+    assert action_layer.source_child_cells(ab_cell) == (a_cell,)
+    assert action_layer.edge_ids_for_source_child(ab_cell, a_cell) == (
+        registry.edge_id_by_edge[ab],
+    )
+    assert action_layer.edge_ids_for_base_source(ab_cell, a_state_id) == (
+        registry.edge_id_by_edge[ab],
+    )
+    assert action_layer.base_source_ids(ab_cell) == (a_state_id,)
+    assert action_layer.active_child_cells(collection) == (a_cell,)
+    assert action_layer.base_active_source_ids(collection) == (a_state_id,)

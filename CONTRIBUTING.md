@@ -252,6 +252,13 @@ In particular, several design stacks now matter:
 - [docs/usage/01_010_tensorization_boundary.md](./docs/usage/01_010_tensorization_boundary.md)
 - [docs/api_notes/tensorization_boundary.md](./docs/api_notes/tensorization_boundary.md)
 
+### Pointwise liftability and source support
+
+- [docs/design/pointwise_liftability_source_support](./docs/design/pointwise_liftability_source_support)
+- [docs/usage/01_002_tower_runtime_mental_model.md](./docs/usage/01_002_tower_runtime_mental_model.md)
+- [docs/api_notes/partition_tower.md](./docs/api_notes/partition_tower.md)
+- [docs/api_notes/path_fiber.md](./docs/api_notes/path_fiber.md)
+
 ### First major implementation stack
 
 - [docs/design/final_initial/final_initial_blueprint.md](./docs/design/final_initial/final_initial_blueprint.md)
@@ -432,6 +439,17 @@ and example validation:
 ```bash
 uv run pytest tests/tower/control
 uv run pytest tests/tower/partition/test_degenerate_tier_queries.py tests/tower/partition/test_queries_and_lift.py
+uv run pytest tests/examples/test_plate_support_env_exploit_explore_runtime.py
+```
+
+After pointwise liftability, source-support, partition-tower query, or
+fiber-lift changes, run:
+
+```bash
+uv run pytest tests/tower/partition/test_pointwise_liftability.py
+uv run pytest tests/tower/partition/test_queries_and_lift.py
+uv run pytest tests/training/test_path_fiber.py
+uv run pytest tests/training/test_fiber_conditioned_stage.py
 uv run pytest tests/examples/test_plate_support_env_exploit_explore_runtime.py
 ```
 

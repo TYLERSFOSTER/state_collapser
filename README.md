@@ -359,6 +359,7 @@ Mathematical and design docs:
 - [`docs/design/RL_framework_maturity/01_001_rl_framework_maturity_and_tower_training_spine_discussion.md`](./docs/design/RL_framework_maturity/01_001_rl_framework_maturity_and_tower_training_spine_discussion.md)
 - [`docs/design/RL_framework_maturity/01_002_fiber_conditioned_training_spine_blueprint.md`](./docs/design/RL_framework_maturity/01_002_fiber_conditioned_training_spine_blueprint.md)
 - [`docs/design/Young_tableaux_refactor/01_001_young_tableaux_runtime_refactor_blueprint.md`](./docs/design/Young_tableaux_refactor/01_001_young_tableaux_runtime_refactor_blueprint.md)
+- [`docs/design/pointwise_liftability_source_support`](./docs/design/pointwise_liftability_source_support)
 - [`docs/design/tensorization`](./docs/design/tensorization)
 
 Major implementation docs:
@@ -375,6 +376,7 @@ Major implementation docs:
 - [`docs/design/tensorization/01_003_tensorization_implementation_gameplan.md`](./docs/design/tensorization/01_003_tensorization_implementation_gameplan.md)
 - [`docs/design/tensorization/01_004_tensorization_implementation_log.md`](./docs/design/tensorization/01_004_tensorization_implementation_log.md)
 - [`docs/design/tensorization/01_005_hgraphml_tensorization_followup_bridge.md`](./docs/design/tensorization/01_005_hgraphml_tensorization_followup_bridge.md)
+- [`docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_gameplan.md`](./docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_gameplan.md)
 
 Continuity / project history:
 

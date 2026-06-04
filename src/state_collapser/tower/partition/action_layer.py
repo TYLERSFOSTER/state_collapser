@@ -17,6 +17,7 @@ from state_collapser.tower.partition.ids import (
     ActionCollectionId,
     EdgeId,
     StateCellId,
+    StateId,
 )
 from state_collapser.tower.partition.loop_policy import (
     InternalEdgeRecord,
@@ -76,6 +77,33 @@ class ActionPartitionLayer:
         default_factory=dict
     )
     label_key_by_action_cell: dict[ActionCellId, object | None] = field(default_factory=dict)
+    source_child_cells_by_action_cell: dict[ActionCellId, tuple[StateCellId, ...]] = field(
+        default_factory=dict
+    )
+    edge_ids_by_action_cell_by_source_child: dict[
+        ActionCellId,
+        dict[StateCellId, tuple[EdgeId, ...]],
+    ] = field(default_factory=dict)
+    lower_action_cells_by_action_cell_by_source_child: dict[
+        ActionCellId,
+        dict[StateCellId, tuple[ActionCellId, ...]],
+    ] = field(default_factory=dict)
+    active_child_cells_by_collection: dict[
+        ActionCollectionId,
+        tuple[StateCellId, ...],
+    ] = field(default_factory=dict)
+    edge_ids_by_action_cell_by_base_source: dict[
+        ActionCellId,
+        dict[StateId, tuple[EdgeId, ...]],
+    ] = field(default_factory=dict)
+    base_source_ids_by_action_cell: dict[ActionCellId, tuple[StateId, ...]] = field(
+        default_factory=dict
+    )
+    base_active_source_ids_by_collection: dict[
+        ActionCollectionId,
+        tuple[StateId, ...],
+    ] = field(default_factory=dict)
+    action_cell_by_edge_id: dict[EdgeId, ActionCellId] = field(default_factory=dict)
     dirty_collection_ids: dict[ActionCollectionId, None] = field(default_factory=dict)
     _next_collection_ordinal: int = 0
     _next_action_cell_ordinal: int = 0
@@ -204,6 +232,8 @@ class ActionPartitionLayer:
         state_layer: StatePartitionLayer,
         registry: BaseGraphRegistry,
         loop_policy: LoopPolicy,
+        lower_state_layer: StatePartitionLayer | None = None,
+        lower_action_layer: ActionPartitionLayer | None = None,
     ) -> ActionCollectionMergeResult:
         """Merge outgoing collections and remove edges now internal to the cell.
 
@@ -246,12 +276,21 @@ class ActionPartitionLayer:
         )
 
         collection_id = self._new_collection_id()
+        for obsolete_collection_id in {left_collection_id, right_collection_id}:
+            self._clear_action_cells_for_collection(obsolete_collection_id)
+            self.dirty_collection_ids.pop(obsolete_collection_id, None)
         self.edge_ids_by_collection[collection_id] = live_edge_ids
         self.outgoing_collection_by_state_cell[merged_state_cell_id] = collection_id
         self.internal_edge_ids_by_state_cell[merged_state_cell_id] = internal_edge_ids
         self.internal_edge_records_by_state_cell[merged_state_cell_id] = internal_records
         self.dirty_collection_ids[collection_id] = None
-        self.rebuild_action_cells_for_collection(collection_id, state_layer, registry)
+        self.rebuild_action_cells_for_collection(
+            collection_id,
+            state_layer,
+            registry,
+            lower_state_layer=lower_state_layer,
+            lower_action_layer=lower_action_layer,
+        )
         self._mark_incoming_source_collections_dirty(
             merged_state_cell_id,
             state_layer,
@@ -268,6 +307,9 @@ class ActionPartitionLayer:
         collection_id: ActionCollectionId,
         state_layer: StatePartitionLayer,
         registry: BaseGraphRegistry,
+        *,
+        lower_state_layer: StatePartitionLayer | None = None,
+        lower_action_layer: ActionPartitionLayer | None = None,
     ) -> tuple[ActionCellId, ...]:
         """Rebuild decision-level action cells for one dirty collection.
 
@@ -276,11 +318,9 @@ class ActionPartitionLayer:
         abstract outgoing decision surface.
         """
 
-        for action_cell_id in self.action_cell_ids_by_collection.get(collection_id, ()):
-            self.edge_ids_by_action_cell.pop(action_cell_id, None)
-            self.source_cell_by_action_cell.pop(action_cell_id, None)
-            self.target_cell_by_action_cell.pop(action_cell_id, None)
-            self.label_key_by_action_cell.pop(action_cell_id, None)
+        self._clear_action_cells_for_collection(collection_id)
+        self.active_child_cells_by_collection.pop(collection_id, None)
+        self.base_active_source_ids_by_collection.pop(collection_id, None)
 
         grouped: dict[tuple[StateCellId, StateCellId, object], dict[EdgeId, None]] = {}
         for edge_id in self.edge_ids_for_collection(collection_id):
@@ -292,6 +332,8 @@ class ActionPartitionLayer:
             grouped.setdefault((source_cell, target_cell, label_key), {})[edge_id] = None
 
         action_cell_ids: list[ActionCellId] = []
+        active_child_cells: dict[StateCellId, None] = {}
+        base_active_source_ids: dict[StateId, None] = {}
         for (source_cell, target_cell, label_key), edge_ids in sorted(
             grouped.items(),
             key=lambda item: repr(item[0]),
@@ -302,7 +344,58 @@ class ActionPartitionLayer:
             self.source_cell_by_action_cell[action_cell_id] = source_cell
             self.target_cell_by_action_cell[action_cell_id] = target_cell
             self.label_key_by_action_cell[action_cell_id] = label_key
+            source_child_edge_ids: dict[StateCellId, dict[EdgeId, None]] = {}
+            lower_action_cells_by_source_child: dict[
+                StateCellId,
+                dict[ActionCellId, None],
+            ] = {}
+            base_source_edge_ids: dict[StateId, dict[EdgeId, None]] = {}
+            for edge_id in sorted(edge_ids):
+                source_state_id = registry.source_state_id(edge_id)
+                source_child = (
+                    lower_state_layer.cell_of(source_state_id)
+                    if lower_state_layer is not None
+                    else state_layer.cell_of(source_state_id)
+                )
+                source_child_edge_ids.setdefault(source_child, {})[edge_id] = None
+                active_child_cells[source_child] = None
+                base_source_edge_ids.setdefault(source_state_id, {})[edge_id] = None
+                base_active_source_ids[source_state_id] = None
+                self.action_cell_by_edge_id[edge_id] = action_cell_id
+                if lower_action_layer is not None:
+                    lower_action_cell = lower_action_layer.action_cell_for_edge_id(edge_id)
+                    if lower_action_cell is not None:
+                        lower_action_cells_by_source_child.setdefault(
+                            source_child,
+                            {},
+                        )[lower_action_cell] = None
+            self.source_child_cells_by_action_cell[action_cell_id] = tuple(
+                sorted(source_child_edge_ids)
+            )
+            self.edge_ids_by_action_cell_by_source_child[action_cell_id] = {
+                source_child: tuple(sorted(child_edge_ids))
+                for source_child, child_edge_ids in sorted(source_child_edge_ids.items())
+            }
+            self.lower_action_cells_by_action_cell_by_source_child[action_cell_id] = {
+                source_child: tuple(sorted(lower_action_cells))
+                for source_child, lower_action_cells in sorted(
+                    lower_action_cells_by_source_child.items()
+                )
+            }
+            self.edge_ids_by_action_cell_by_base_source[action_cell_id] = {
+                source_id: tuple(sorted(source_edge_ids))
+                for source_id, source_edge_ids in sorted(base_source_edge_ids.items())
+            }
+            self.base_source_ids_by_action_cell[action_cell_id] = tuple(
+                sorted(base_source_edge_ids)
+            )
         self.action_cell_ids_by_collection[collection_id] = tuple(action_cell_ids)
+        self.active_child_cells_by_collection[collection_id] = tuple(
+            sorted(active_child_cells)
+        )
+        self.base_active_source_ids_by_collection[collection_id] = tuple(
+            sorted(base_active_source_ids)
+        )
         self.dirty_collection_ids.pop(collection_id, None)
         return tuple(action_cell_ids)
 
@@ -323,6 +416,91 @@ class ActionPartitionLayer:
         """Return deterministic primitive representatives for an action cell."""
 
         return self.edge_ids_for_action_cell(action_cell_id)
+
+    def source_child_cells(self, action_cell_id: ActionCellId) -> tuple[StateCellId, ...]:
+        """Return adjacent lower-tier source cells supporting an action cell."""
+
+        return self.source_child_cells_by_action_cell.get(action_cell_id, ())
+
+    def edge_ids_for_source_child(
+        self,
+        action_cell_id: ActionCellId,
+        child_state_cell_id: StateCellId,
+    ) -> tuple[EdgeId, ...]:
+        """Return action-cell edge ids sourced in a lower-tier child cell."""
+
+        return self.edge_ids_by_action_cell_by_source_child.get(
+            action_cell_id,
+            {},
+        ).get(child_state_cell_id, ())
+
+    def lower_action_cells_for_source_child(
+        self,
+        action_cell_id: ActionCellId,
+        child_state_cell_id: StateCellId,
+    ) -> tuple[ActionCellId, ...]:
+        """Return lower action cells supporting an action through a child cell."""
+
+        return self.lower_action_cells_by_action_cell_by_source_child.get(
+            action_cell_id,
+            {},
+        ).get(child_state_cell_id, ())
+
+    def active_child_cells(
+        self,
+        collection_id: ActionCollectionId,
+    ) -> tuple[StateCellId, ...]:
+        """Return lower-tier child state cells supporting a collection."""
+
+        return self.active_child_cells_by_collection.get(collection_id, ())
+
+    def edge_ids_for_base_source(
+        self,
+        action_cell_id: ActionCellId,
+        source_state_id: StateId,
+    ) -> tuple[EdgeId, ...]:
+        """Return action-cell edge ids sourced at one base state."""
+
+        return self.edge_ids_by_action_cell_by_base_source.get(
+            action_cell_id,
+            {},
+        ).get(source_state_id, ())
+
+    def base_source_ids(self, action_cell_id: ActionCellId) -> tuple[StateId, ...]:
+        """Return base source ids that support an action cell."""
+
+        return self.base_source_ids_by_action_cell.get(action_cell_id, ())
+
+    def base_active_source_ids(
+        self,
+        collection_id: ActionCollectionId,
+    ) -> tuple[StateId, ...]:
+        """Return base source ids supporting some action in a collection."""
+
+        return self.base_active_source_ids_by_collection.get(collection_id, ())
+
+    def action_cell_for_edge_id(self, edge_id: EdgeId) -> ActionCellId | None:
+        """Return the current action cell containing an edge id, if any."""
+
+        return self.action_cell_by_edge_id.get(edge_id)
+
+    def _clear_action_cells_for_collection(
+        self,
+        collection_id: ActionCollectionId,
+    ) -> None:
+        for action_cell_id in self.action_cell_ids_by_collection.pop(collection_id, ()):
+            for edge_id in self.edge_ids_by_action_cell.get(action_cell_id, {}):
+                if self.action_cell_by_edge_id.get(edge_id) == action_cell_id:
+                    self.action_cell_by_edge_id.pop(edge_id, None)
+            self.edge_ids_by_action_cell.pop(action_cell_id, None)
+            self.source_cell_by_action_cell.pop(action_cell_id, None)
+            self.target_cell_by_action_cell.pop(action_cell_id, None)
+            self.label_key_by_action_cell.pop(action_cell_id, None)
+            self.source_child_cells_by_action_cell.pop(action_cell_id, None)
+            self.edge_ids_by_action_cell_by_source_child.pop(action_cell_id, None)
+            self.lower_action_cells_by_action_cell_by_source_child.pop(action_cell_id, None)
+            self.edge_ids_by_action_cell_by_base_source.pop(action_cell_id, None)
+            self.base_source_ids_by_action_cell.pop(action_cell_id, None)
 
     def _mark_incoming_source_collections_dirty(
         self,

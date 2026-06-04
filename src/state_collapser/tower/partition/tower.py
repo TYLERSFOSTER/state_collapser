@@ -136,7 +136,7 @@ class PartitionTower:
                     internal_edges=internal_edges,
                 )
 
-            self._rebuild_dirty_action_cells(current_state_layer, current_action_layer)
+            self._rebuild_dirty_action_cells(tier, current_state_layer, current_action_layer)
             self.state_layers.append(current_state_layer)
             self.action_layers.append(current_action_layer)
             affected_tiers.append(tier)
@@ -249,10 +249,7 @@ class PartitionTower:
         if edge_id is None:
             return None
         action_layer = self.action_layers[tier]
-        for action_cell_id in sorted(action_layer.edge_ids_by_action_cell):
-            if edge_id in action_layer.edge_ids_by_action_cell[action_cell_id]:
-                return action_cell_id
-        return None
+        return action_layer.action_cell_for_edge_id(edge_id)
 
     def representative_edges(
         self,
@@ -303,6 +300,110 @@ class PartitionTower:
             edge for edge in representatives if edge.source == current_base_state
         )
         return directly_executable if directly_executable else representatives
+
+    def executable_lift_candidates(
+        self,
+        tier: int,
+        action_cell_id: ActionCellId,
+        current_base_state: State,
+    ) -> tuple[BaseEdge, ...]:
+        """Return only action-cell edges sourced at the current base state."""
+
+        if tier < 0 or tier >= len(self.action_layers):
+            return ()
+        source_state_id = self.registry.state_id_by_state.get(current_base_state)
+        if source_state_id is None:
+            return ()
+        action_layer = self.action_layers[tier]
+        return tuple(
+            self.registry.edge_for_id(edge_id)
+            for edge_id in action_layer.edge_ids_for_base_source(
+                action_cell_id,
+                source_state_id,
+            )
+        )
+
+    def executable_action_cells(
+        self,
+        tier: int,
+        state_cell_id: StateCellId,
+        current_base_state: State,
+    ) -> tuple[ActionCellId, ...]:
+        """Return action cells with a concrete lift from the current state."""
+
+        if tier < 0 or tier >= len(self.action_layers):
+            return ()
+        action_layer = self.action_layers[tier]
+        if state_cell_id not in action_layer.outgoing_collection_by_state_cell:
+            return ()
+        return tuple(
+            action_cell_id
+            for action_cell_id in self.outgoing_action_cells(tier, state_cell_id)
+            if self.executable_lift_candidates(
+                tier,
+                action_cell_id,
+                current_base_state,
+            )
+        )
+
+    def tier_is_executable_from_state(
+        self,
+        tier: int,
+        current_base_state: State,
+    ) -> bool:
+        """Return whether a tier has any executable action from a base state."""
+
+        state_cell_id = self.current_state_cell(tier, current_base_state)
+        if state_cell_id is None:
+            return False
+        return bool(
+            self.executable_action_cells(
+                tier,
+                state_cell_id,
+                current_base_state,
+            )
+        )
+
+    def supported_child_state_cells(
+        self,
+        tier: int,
+        action_cell_id: ActionCellId,
+    ) -> tuple[StateCellId, ...]:
+        """Return adjacent lower-tier state cells supporting an action cell."""
+
+        if tier <= 0 or tier >= len(self.action_layers):
+            return ()
+        return self.action_layers[tier].source_child_cells(action_cell_id)
+
+    def active_child_state_cells(
+        self,
+        tier: int,
+        state_cell_id: StateCellId,
+    ) -> tuple[StateCellId, ...]:
+        """Return adjacent lower-tier state cells supporting a collection."""
+
+        if tier <= 0 or tier >= len(self.action_layers):
+            return ()
+        action_layer = self.action_layers[tier]
+        collection_id = action_layer.outgoing_collection_by_state_cell.get(state_cell_id)
+        if collection_id is None:
+            return ()
+        return action_layer.active_child_cells(collection_id)
+
+    def lower_action_cells_for_supported_child(
+        self,
+        tier: int,
+        action_cell_id: ActionCellId,
+        child_state_cell_id: StateCellId,
+    ) -> tuple[ActionCellId, ...]:
+        """Return lower action cells under a supported source child cell."""
+
+        if tier <= 0 or tier >= len(self.action_layers):
+            return ()
+        return self.action_layers[tier].lower_action_cells_for_source_child(
+            action_cell_id,
+            child_state_cell_id,
+        )
 
     def refinement_fiber(
         self,
@@ -380,6 +481,7 @@ class PartitionTower:
         for tier_index in tuple(affected_tiers):
             if 0 <= tier_index < len(self.action_layers):
                 self._rebuild_dirty_action_cells(
+                    tier_index,
                     self.state_layers[tier_index],
                     self.action_layers[tier_index],
                 )
@@ -669,7 +771,7 @@ class PartitionTower:
                 tier=new_tier,
                 loop_policy=self.loop_policy,
             )
-            self._rebuild_dirty_action_cells(state_layer, action_layer)
+            self._rebuild_dirty_action_cells(new_tier, state_layer, action_layer)
             self.state_layers.append(state_layer)
             self.action_layers.append(action_layer)
 
@@ -728,6 +830,8 @@ class PartitionTower:
             state_layer,
             self.registry,
             self.loop_policy,
+            lower_state_layer=self.state_layers[tier - 1] if tier > 0 else None,
+            lower_action_layer=self.action_layers[tier - 1] if tier > 0 else None,
         )
         state_merges.append(StateCellMergeRecord(tier=tier, result=state_merge))
         action_merges.append(ActionCollectionMergeRecord(tier=tier, result=action_merge))
@@ -735,14 +839,19 @@ class PartitionTower:
 
     def _rebuild_dirty_action_cells(
         self,
+        tier: int,
         state_layer: StatePartitionLayer,
         action_layer: ActionPartitionLayer,
     ) -> None:
+        lower_state_layer = self.state_layers[tier - 1] if tier > 0 else None
+        lower_action_layer = self.action_layers[tier - 1] if tier > 0 else None
         for collection_id in tuple(action_layer.dirty_collection_ids):
             action_layer.rebuild_action_cells_for_collection(
                 collection_id,
                 state_layer,
                 self.registry,
+                lower_state_layer=lower_state_layer,
+                lower_action_layer=lower_action_layer,
             )
 
 

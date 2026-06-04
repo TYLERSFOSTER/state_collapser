@@ -63,11 +63,68 @@ Important runtime queries include:
 - `action_cell_for_edge(tier, edge)`
 - `representative_edges(tier, action_cell_id)`
 - `lift_candidates(tier, action_cell_id, current_state)`
+- `executable_lift_candidates(tier, action_cell_id, current_state)`
+- `executable_action_cells(tier, state_cell_id, current_state)`
+- `tier_is_executable_from_state(tier, current_state)`
+- `supported_child_state_cells(tier, action_cell_id)`
+- `active_child_state_cells(tier, state_cell_id)`
+- `lower_action_cells_for_supported_child(tier, action_cell_id, child_state_cell_id)`
 - `refinement_fiber(tier, cell_id)`
 
 `PathFiber` composes these local tower queries into a training-stage view: given
 a frozen coarse behavior, it identifies the fine actions that live over that
 behavior.
+
+## Quotient Availability Versus Executable Liftability
+
+Do not use `outgoing_action_cells(...)` as a direct runtime executability
+predicate.
+
+After contraction, a state cell may pool outgoing action data from several
+concrete representatives. Therefore:
+
+```text
+outgoing_action_cells(tier, state_cell_id)
+```
+
+answers the quotient/readout question:
+
+```text
+Which abstract action cells hang over this state cell?
+```
+
+It does not answer:
+
+```text
+Which abstract action cells have a concrete edge sourced at the current base
+state?
+```
+
+For pointwise execution, use:
+
+```text
+executable_action_cells(tier, state_cell_id, current_state)
+executable_lift_candidates(tier, action_cell_id, current_state)
+tier_is_executable_from_state(tier, current_state)
+```
+
+The older `lift_candidates(...)` method remains representative/readout
+compatible: it prefers current-source edges but may fall back to deterministic
+representatives from elsewhere in the quotient cell. That is useful for
+quotient reasoning and inspection, but executable control and learner masks
+should use the strict executable APIs.
+
+The adjacent support APIs expose the Young-diagram structure directly:
+
+```text
+supported_child_state_cells(...)
+active_child_state_cells(...)
+lower_action_cells_for_supported_child(...)
+```
+
+These queries point from a tier-`i` action/state cell to tier-`i-1` child bins
+that actually support outgoing action data. Flattened current-state execution
+checks are a hot-path materialization of that recursive support structure.
 
 ## Executable Tiers And Empty Outgoing Cells
 
@@ -87,3 +144,9 @@ The exploit/explore active-tier runtime handles this by lifting through
 empty-`Out` tiers until it reaches the nearest finer tier with executable
 outgoing action cells. Only if tier `0` also has empty outgoing actions does
 the runtime return a no-action control result.
+
+This empty-`Out` guard is necessary but not sufficient for pointwise
+liftability. A tier can have nonempty quotient `Out` while no selected abstract
+action is executable from the current concrete representative. Runtime
+predicates should therefore check pointwise executable liftability, not merely
+nonempty quotient outgoing data.

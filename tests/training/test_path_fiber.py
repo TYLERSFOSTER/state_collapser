@@ -83,6 +83,46 @@ def build_path_fiber_fixture() -> tuple[
     return tower, start, left, right, goal, start_left, start_right, start_goal, path_fiber
 
 
+def build_pointwise_path_fiber_fixture() -> tuple[
+    PartitionTower,
+    State,
+    State,
+    State,
+    BaseEdge,
+    BaseEdge,
+    BaseEdge,
+    PathFiber,
+]:
+    zero = state("0")
+    one = state("1")
+    two = state("2")
+    contract = edge(zero, one, "contract")
+    zero_to_two = edge(zero, two, "to2")
+    one_to_two = edge(one, two, "to2")
+    one_only = edge(one, two, "one_only")
+    tower = PartitionTower(schema=DimensionwiseSchema(("contract", "unused")))
+    tower.initialize(
+        initial_states=(zero, one, two),
+        initial_edges=(contract, zero_to_two, one_to_two, one_only),
+        current_state=zero,
+    )
+    behavior = FrozenQuotientBehavior.from_step(
+        behavior_id="pointwise-frozen",
+        coarse_tier=2,
+        supported_fine_tier=1,
+        source_cell=tower.current_state_cell(2, zero),
+        target_cell=tower.current_state_cell(2, two),
+    )
+    path_fiber = PathFiber(
+        fiber_id="pointwise-fiber",
+        tower=tower,
+        fine_tier=1,
+        coarse_tier=2,
+        frozen_behavior=behavior,
+    )
+    return tower, zero, one, two, zero_to_two, one_to_two, one_only, path_fiber
+
+
 def test_path_fiber_validates_adjacent_tiers() -> None:
     tower, start, *_rest, path_fiber = build_path_fiber_fixture()
 
@@ -132,6 +172,57 @@ def test_lift_candidates_prefer_executable_representatives() -> None:
     assert tower.action_cell_members(0, admissible[0]) == (start_left,)
     assert path_fiber.lift_candidates(start, admissible[0]) == (start_left,)
     assert path_fiber.lift_candidates(start, admissible[1]) == (start_right,)
+
+
+def test_path_fiber_distinguishes_quotient_and_executable_vocabulary() -> None:
+    tower, zero, one, _two, zero_to_two, _one_to_two, one_only, path_fiber = (
+        build_pointwise_path_fiber_fixture()
+    )
+    quotient_vocabulary = path_fiber.action_vocabulary(zero)
+    one_only_cell = tower.action_cell_for_edge(1, one_only)
+    zero_to_two_cell = tower.action_cell_for_edge(1, zero_to_two)
+
+    assert one_only_cell is not None
+    assert zero_to_two_cell is not None
+    assert one_only_cell in quotient_vocabulary
+    assert one_only_cell not in path_fiber.executable_action_vocabulary(zero)
+    assert zero_to_two_cell in path_fiber.executable_action_vocabulary(zero)
+    assert one_only_cell in path_fiber.executable_action_vocabulary(one)
+
+
+def test_path_fiber_mask_and_admissibility_are_pointwise_strict() -> None:
+    tower, zero, _one, _two, zero_to_two, _one_to_two, one_only, path_fiber = (
+        build_pointwise_path_fiber_fixture()
+    )
+    vocabulary = path_fiber.action_vocabulary(zero)
+    action_mask = path_fiber.action_mask(zero, action_vocabulary=vocabulary)
+    assert action_mask is not None
+    mask_by_cell = dict(zip(vocabulary, action_mask, strict=True))
+    one_only_cell = tower.action_cell_for_edge(1, one_only)
+    zero_to_two_cell = tower.action_cell_for_edge(1, zero_to_two)
+
+    assert one_only_cell is not None
+    assert zero_to_two_cell is not None
+    assert mask_by_cell[one_only_cell] is False
+    assert mask_by_cell[zero_to_two_cell] is True
+    assert one_only_cell not in path_fiber.admissible_action_cells(zero)
+    assert path_fiber.lift_candidates(zero, one_only_cell) == ()
+
+
+def test_path_fiber_no_lift_diagnostic_reports_pointwise_failure() -> None:
+    tower, zero, _one, _two, _zero_to_two, _one_to_two, one_only, path_fiber = (
+        build_pointwise_path_fiber_fixture()
+    )
+    one_only_cell = tower.action_cell_for_edge(1, one_only)
+
+    assert one_only_cell is not None
+    departure = path_fiber.diagnose_departure(zero, one_only_cell)
+
+    assert isinstance(departure, FiberDeparture)
+    assert departure.reason is FiberDepartureReason.NO_LIFT_CANDIDATE
+    assert departure.diagnostics["quotient_member_count"] == 1
+    assert departure.diagnostics["representative_candidate_count"] == 1
+    assert departure.diagnostics["executable_candidate_count"] == 0
 
 
 def test_departure_diagnostics_are_explicit() -> None:

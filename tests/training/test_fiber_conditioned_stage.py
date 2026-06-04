@@ -208,6 +208,50 @@ def build_stage_fixture() -> tuple[
     return stage, runtime, tower, start, goal, start_goal
 
 
+def build_pointwise_stage_fixture() -> tuple[
+    FiberConditionedStage,
+    _TinyRuntime,
+    PartitionTower,
+    State,
+    BaseEdge,
+]:
+    zero = state("0")
+    one = state("1")
+    two = state("2")
+    contract = edge(zero, one, "contract")
+    zero_to_two = edge(zero, two, "to2")
+    one_to_two = edge(one, two, "to2")
+    one_only = edge(one, two, "one_only")
+    edges = (contract, zero_to_two, one_to_two, one_only)
+    tower = PartitionTower(schema=DimensionwiseSchema(("contract", "unused")))
+    tower.initialize(initial_states=(zero, one, two), initial_edges=edges, current_state=zero)
+    behavior = FrozenQuotientBehavior.from_step(
+        behavior_id="pointwise-frozen",
+        coarse_tier=2,
+        supported_fine_tier=1,
+        source_cell=tower.current_state_cell(2, zero),
+        target_cell=tower.current_state_cell(2, two),
+    )
+    path_fiber = PathFiber(
+        fiber_id="pointwise-fiber",
+        tower=tower,
+        fine_tier=1,
+        coarse_tier=2,
+        frozen_behavior=behavior,
+    )
+    runtime = _TinyRuntime(tower=tower, start=zero, goal=two, edges=edges)
+    stage = FiberConditionedStage(
+        stage_id="pointwise-stage",
+        runtime=runtime,
+        tower=tower,
+        fine_tier=1,
+        coarse_tier=2,
+        frozen_behavior=behavior,
+        path_fiber=path_fiber,
+    )
+    return stage, runtime, tower, zero, one_only
+
+
 def test_stage_reset_returns_context_and_fiber_mask() -> None:
     stage, _runtime, _tower, _start, _goal, _bad = build_stage_fixture()
 
@@ -258,6 +302,24 @@ def test_stage_step_diagnoses_inadmissible_action_without_stepping() -> None:
     assert transition.bootstrap_reason == "fiber_departure"
     assert runtime.step_count == 0
     assert runtime.state == start
+
+
+def test_stage_does_not_step_non_current_source_representative() -> None:
+    stage, runtime, tower, zero, one_only = build_pointwise_stage_fixture()
+    action_input = stage.reset(seed=0)
+    vocabulary = action_input.diagnostics["fiber_action_vocabulary"]
+    one_only_cell = tower.action_cell_for_edge(1, one_only)
+
+    assert one_only_cell is not None
+    assert isinstance(vocabulary, tuple)
+    chosen_index = vocabulary.index(one_only_cell)
+    transition = stage.step(ActionDecision(chosen_action=chosen_index))
+
+    assert transition.fiber_departure is not None
+    assert transition.fiber_departure.reason is FiberDepartureReason.NO_LIFT_CANDIDATE
+    assert transition.reward == 0.0
+    assert runtime.step_count == 0
+    assert runtime.state == zero
 
 
 def test_frozen_behavior_remains_unchanged_after_step() -> None:
