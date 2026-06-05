@@ -56,6 +56,14 @@ PyPI readiness later.
 - ***Fiber-conditioned training spine:*** After `FiberConditionedStage` is
   stable, revisit whether the proto exploit/explore `tower/control` stack should
   be refactored around it, preserved as a reference controller, or deprecated.
+  The stage now has an explicit `LiftSelector` hook; future changes should keep
+  concrete lift choice visible and testable rather than returning to hidden
+  representative selection.
+- ***Partition invariant checks:*** Partition towers now expose debug/test
+  invariant reports and assertions for source-support and executable-lift
+  indexes. Future source-support, action-cell, or liftability changes should
+  preserve both adjacent-tier Young-diagram support and flattened base-source
+  caches.
 - ***Terminology cleanup:*** Plan a deliberate compatibility/deprecation pass
   for old `base` and `lower` vocabulary after new `total_state`, `fine_tier`,
   `coarse_tier`, and `frozen_quotient_behavior` surfaces are established.
@@ -318,6 +326,8 @@ Current important testing areas include:
 - quotient projection and reward aggregation
 - tower runtime snapshots and control behavior
 - partition-tower state/action layer behavior
+- partition-tower invariant reporting for source-support and executable-lift
+  indexes
 - reusable training surfaces and fiber-conditioned stage behavior
 - tensorization boundary behavior, including linearization configs/reports,
   encoding registries, linearized records, and optional Torch batches
@@ -354,12 +364,15 @@ New evaluation environments should also be consistent with:
 
 ## Instrumentation And Evaluation Tooling
 
-The repository now has an explicit home for instrumentation work:
+The repository reserves an explicit home for future instrumentation work:
 
 - [src/state_collapser/instrumentation/pathspace_metrics](./src/state_collapser/instrumentation/pathspace_metrics)
 - [src/state_collapser/instrumentation/tower_metrics](./src/state_collapser/instrumentation/tower_metrics)
 
-Contributors adding metrics, path-space analysis, or training-run visualization should prefer these namespaces over scattering such code across examples or core runtime modules.
+Implemented instrumentation tooling is not yet part of the current package
+surface. Contributors adding metrics, path-space analysis, or training-run
+visualization should use these namespaces when that track becomes active rather
+than scattering such code across examples or core runtime modules.
 
 ## Compatibility Targets
 
@@ -446,6 +459,7 @@ After pointwise liftability, source-support, partition-tower query, or
 fiber-lift changes, run:
 
 ```bash
+uv run pytest tests/tower/partition/test_partition_invariants.py
 uv run pytest tests/tower/partition/test_pointwise_liftability.py
 uv run pytest tests/tower/partition/test_queries_and_lift.py
 uv run pytest tests/training/test_path_fiber.py
@@ -529,6 +543,8 @@ This repository now contains:
 - a first exploit/explore active-tier control implementation
 - a reusable internal `state_collapser.training` package
 - a first `FrozenQuotientBehavior -> PathFiber -> FiberConditionedStage` bridge
+- explicit lift-selection hooks for `FiberConditionedStage`
+- partition invariant reporting for source-support and executable-lift indexes
 - a first tensorization boundary with backend-independent linearized records,
   benchmark-mode reports, shared tower encodings, and optional Torch batches
 - lightweight benchmark smoke tooling for hot-path/readout comparisons

@@ -10,6 +10,7 @@ graphs from scratch.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from state_collapser.tower.partition.base_registry import BaseGraphRegistry
 from state_collapser.tower.partition.ids import (
@@ -25,6 +26,9 @@ from state_collapser.tower.partition.loop_policy import (
     record_internal_edge,
 )
 from state_collapser.tower.partition.state_layer import StatePartitionLayer
+
+if TYPE_CHECKING:
+    from state_collapser.tower.partition.invariants import PartitionInvariantReport
 
 
 @dataclass(frozen=True, slots=True)
@@ -483,6 +487,49 @@ class ActionPartitionLayer:
         """Return the current action cell containing an edge id, if any."""
 
         return self.action_cell_by_edge_id.get(edge_id)
+
+    def invariant_report(
+        self,
+        *,
+        state_layer: StatePartitionLayer,
+        registry: BaseGraphRegistry,
+        lower_state_layer: StatePartitionLayer | None = None,
+        lower_action_layer: ActionPartitionLayer | None = None,
+        allow_dirty: bool = False,
+    ) -> PartitionInvariantReport:
+        """Return structural consistency issues for this action layer."""
+
+        from state_collapser.tower.partition.invariants import (
+            action_layer_invariant_report,
+        )
+
+        return action_layer_invariant_report(
+            self,
+            state_layer=state_layer,
+            registry=registry,
+            lower_state_layer=lower_state_layer,
+            lower_action_layer=lower_action_layer,
+            allow_dirty=allow_dirty,
+        )
+
+    def assert_consistent(
+        self,
+        *,
+        state_layer: StatePartitionLayer,
+        registry: BaseGraphRegistry,
+        lower_state_layer: StatePartitionLayer | None = None,
+        lower_action_layer: ActionPartitionLayer | None = None,
+        allow_dirty: bool = False,
+    ) -> None:
+        """Raise if this action layer violates partition invariants."""
+
+        self.invariant_report(
+            state_layer=state_layer,
+            registry=registry,
+            lower_state_layer=lower_state_layer,
+            lower_action_layer=lower_action_layer,
+            allow_dirty=allow_dirty,
+        ).assert_ok()
 
     def _clear_action_cells_for_collection(
         self,

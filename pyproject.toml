@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "state-collapser"
-version = "0.7.1"
+version = "0.7.2"
 description = "Quotient-tower runtime and training surfaces for hierarchical structure in transition systems."
 readme = "README.md"
 license = "MIT"
@@ -33,10 +33,6 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
   "Typing :: Typed",
 ]
-dependencies = [
-    "pillow>=12.2.0",
-]
-
 [project.optional-dependencies]
 dev = [
   "build>=1.2.2",

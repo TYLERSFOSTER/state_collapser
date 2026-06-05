@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 from state_collapser.core.action import PrimitiveAction
 from state_collapser.core.edges import BaseEdge
 from state_collapser.core.rewards import PathRewardSummary
 from state_collapser.core.state import State
+from state_collapser.examples.plate_support_env import PlateSupportEnv
 from state_collapser.graph.explored_graph import ExploredGraph
 from state_collapser.graph.vista_graph import VistaGraph
 from state_collapser.tower.partition.schema import DimensionwiseSchema
@@ -166,6 +168,96 @@ def test_unsupported_observation_fails_strict_and_sidecars_non_strict() -> None:
 
     assert linearized.observation_features == ()
     assert "observation" in linearized.metadata
+
+
+def test_linearizes_numeric_numpy_observation_with_metadata() -> None:
+    """Flatten numeric NumPy observations without keeping NumPy in the record."""
+
+    tower, _start, _action_vocabulary, snapshot = _fixture()
+    registry = EncodingRegistry.from_tower(tower)
+    observation = np.array([[1, 2], [3, 4]], dtype=np.int64)
+    action_input = build_action_selection_input(
+        observation=observation,
+        runtime_snapshot=snapshot,
+        action_mask=(True,),
+    )
+
+    linearized = linearize_action_selection_input(
+        action_input,
+        config=_config(),
+        registry=registry,
+    )
+
+    assert linearized.observation_features == (1.0, 2.0, 3.0, 4.0)
+    assert linearized.metadata["observation"] == {
+        "kind": "numpy.ndarray",
+        "shape": [2, 2],
+        "dtype": "int64",
+    }
+
+
+def test_strict_numpy_object_observation_fails() -> None:
+    """Reject unsupported NumPy array dtypes in strict mode."""
+
+    tower, _start, _action_vocabulary, snapshot = _fixture()
+    registry = EncodingRegistry.from_tower(tower)
+    action_input = build_action_selection_input(
+        observation=np.array([{"not": "numeric"}], dtype=object),
+        runtime_snapshot=snapshot,
+        action_mask=(True,),
+    )
+
+    with pytest.raises(ValueError, match="Unsupported NumPy observation dtype"):
+        linearize_action_selection_input(action_input, config=_config(), registry=registry)
+
+
+def test_non_strict_numpy_object_observation_sidecars() -> None:
+    """Preserve unsupported NumPy metadata in non-strict mode."""
+
+    tower, _start, _action_vocabulary, snapshot = _fixture()
+    registry = EncodingRegistry.from_tower(tower)
+    action_input = build_action_selection_input(
+        observation=np.array([{"not": "numeric"}], dtype=object),
+        runtime_snapshot=snapshot,
+        action_mask=(True,),
+    )
+
+    linearized = linearize_action_selection_input(
+        action_input,
+        config=_config(strict=False),
+        registry=registry,
+    )
+
+    assert linearized.observation_features == ()
+    assert linearized.metadata["observation"]["kind"] == "numpy.ndarray"
+    assert linearized.metadata["observation"]["shape"] == [1]
+    assert linearized.metadata["observation"]["dtype"] == "object"
+    assert linearized.metadata["observation"]["unsupported_observation_repr"]
+
+
+def test_linearizes_real_plate_support_numpy_observation() -> None:
+    """Linearize the NumPy observation emitted by a packaged Gymnasium example."""
+
+    tower, _start, _action_vocabulary, snapshot = _fixture()
+    registry = EncodingRegistry.from_tower(tower)
+    env = PlateSupportEnv()
+    observation, _info = env.reset(seed=0)
+    action_input = build_action_selection_input(
+        observation=observation,
+        runtime_snapshot=snapshot,
+        action_mask=(True,),
+    )
+
+    linearized = linearize_action_selection_input(
+        action_input,
+        config=_config(),
+        registry=registry,
+    )
+
+    assert len(linearized.observation_features) == env.observation_space.shape[0]
+    assert linearized.metadata["observation"]["kind"] == "numpy.ndarray"
+    assert linearized.metadata["observation"]["shape"] == list(observation.shape)
+    assert linearized.metadata["observation"]["dtype"] == str(observation.dtype)
 
 
 def test_linearizes_training_transition_and_resolves_action_cell_index() -> None:

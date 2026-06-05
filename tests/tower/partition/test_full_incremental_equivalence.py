@@ -208,6 +208,9 @@ def assert_partition_towers_equivalent(fixture: EquivalenceFixture) -> None:
     )
     incremental_tower = build_incremental_tower(fixture)
 
+    full_tower.assert_consistent()
+    incremental_tower.assert_consistent()
+
     assert normalized_state_partitions(full_tower) == normalized_state_partitions(
         incremental_tower
     )

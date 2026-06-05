@@ -66,7 +66,7 @@ pip install -e .
 Install from a public GitHub tag once the repository is public:
 
 ```bash
-pip install "state-collapser @ git+https://github.com/TYLERSFOSTER/state_collapser.git@v0.7.0"
+pip install "state-collapser @ git+https://github.com/TYLERSFOSTER/state_collapser.git@v0.7.2"
 ```
 
 Install a local checkout with development tooling:
@@ -198,6 +198,8 @@ default smoke schemas; pass `NoContractionSchema()` in Python, or
 
 - Hidden, explored, and vista graph layers for RL state/action structure.
 - Persistent nested state/action partition towers with quotient-tier compatibility readouts.
+- Debug/test invariant checks for partition source-support and executable-lift
+  indexes.
 - Full-graph partition-tower construction usable by downstream graph-dataflow
   packages such as HGraphML.
 - Tower runtime snapshots and tower-aware training support.
@@ -239,6 +241,8 @@ The package currently contains real code for:
     fiber-conditioned training surfaces, backend-independent linearization,
     `EncodingRegistry`, `LinearizationConfig`, `LinearizationReport`, and
     optional Torch batch conversion under `state_collapser.training.torch`
+  - explicit `LiftSelector` support for concrete lift choice inside
+    `FiberConditionedStage`
 - `state_collapser.adapters`
   - `StateCollapserGymWrapper` hook surfaces and legacy/toy adapter examples
 - `state_collapser.benchmarks`
@@ -288,6 +292,8 @@ What is solid enough to rely on:
 - the existence of both old and new training paths for `PlateSupportEnv`
 - the first internal `state_collapser.training` component layer
 - the first `FrozenQuotientBehavior -> PathFiber -> FiberConditionedStage` bridge
+- explicit lift-selection hooks and partition invariant checks for hardening
+  fiber-conditioned/tower execution
 - the first tensorization boundary for linearized training records and optional
   Torch batches
 - the migrated `rl_counterpoint_v3` training path as a first training-surface reality check
@@ -319,7 +325,11 @@ src/state_collapser/
   instrumentation/
 ```
 
-The instrumentation area is intended to support future work on:
+The instrumentation namespace is reserved for future work. Implemented
+instrumentation tooling is not yet part of the current package surface; metrics
+and visualization work should land there when that track becomes active.
+
+The reserved area is intended to support future work on:
 
 - path-space metrics
 - tower-growth metrics

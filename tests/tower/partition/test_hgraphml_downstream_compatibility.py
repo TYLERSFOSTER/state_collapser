@@ -115,6 +115,8 @@ def test_hgraphml_style_full_graph_readout_recovers_node_and_edge_fibers() -> No
         schema=LabelBlockSchema.from_labels(("collapse",)),
     )
 
+    tower.assert_consistent()
+
     assert len(tower.state_layers) == 2
     assert _node_fibers_by_tier(tower, states) == (
         ((0,), (1,), (2,), (3,)),

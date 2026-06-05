@@ -23,6 +23,7 @@ from state_collapser.training import (
     TabularQLearner,
     TrainingTransition,
 )
+from state_collapser.training.stages import deterministic_first_lift_selector
 
 
 def state(name: str) -> State:
@@ -39,6 +40,25 @@ def edge(source: State, target: State, label: str) -> BaseEdge:
         ),
         target=target,
         labels=(label,),
+    )
+
+
+def duplicate_identity_edge(
+    source: State,
+    target: State,
+    *,
+    payload_suffix: str,
+    identity: str,
+) -> BaseEdge:
+    return BaseEdge(
+        source=source,
+        action=PrimitiveAction(
+            payload=("move", identity, payload_suffix),
+            identity=("move", identity),
+            labels=(identity,),
+        ),
+        target=target,
+        labels=(identity,),
     )
 
 
@@ -252,6 +272,64 @@ def build_pointwise_stage_fixture() -> tuple[
     return stage, runtime, tower, zero, one_only
 
 
+def build_multi_lift_stage_fixture() -> tuple[
+    FiberConditionedStage,
+    _TinyRuntime,
+    BaseEdge,
+    BaseEdge,
+]:
+    start = state("start")
+    goal = state("goal")
+    left = state("left")
+    right = state("right")
+    first_finish = duplicate_identity_edge(
+        start,
+        goal,
+        payload_suffix="first",
+        identity="finish",
+    )
+    second_finish = duplicate_identity_edge(
+        start,
+        goal,
+        payload_suffix="second",
+        identity="finish",
+    )
+    contract = edge(left, right, "contract")
+    edges = (first_finish, second_finish, contract)
+    tower = PartitionTower(schema=DimensionwiseSchema(("contract",)))
+    tower.initialize(
+        initial_states=(start, goal, left, right),
+        initial_edges=edges,
+        current_state=start,
+    )
+    behavior = FrozenQuotientBehavior.from_step(
+        behavior_id="multi-lift-frozen",
+        coarse_tier=1,
+        supported_fine_tier=0,
+        source_cell=tower.current_state_cell(1, start),
+        action_cell=tower.action_cell_for_edge(1, first_finish),
+        target_cell=tower.current_state_cell(1, goal),
+    )
+    path_fiber = PathFiber(
+        fiber_id="multi-lift-fiber",
+        tower=tower,
+        fine_tier=0,
+        coarse_tier=1,
+        frozen_behavior=behavior,
+    )
+    runtime = _TinyRuntime(tower=tower, start=start, goal=goal, edges=edges)
+    stage = FiberConditionedStage(
+        stage_id="multi-lift-stage",
+        runtime=runtime,
+        tower=tower,
+        fine_tier=0,
+        coarse_tier=1,
+        frozen_behavior=behavior,
+        path_fiber=path_fiber,
+    )
+    return stage, runtime, first_finish, second_finish
+
+
 def test_stage_reset_returns_context_and_fiber_mask() -> None:
     stage, _runtime, _tower, _start, _goal, _bad = build_stage_fixture()
 
@@ -320,6 +398,63 @@ def test_stage_does_not_step_non_current_source_representative() -> None:
     assert transition.reward == 0.0
     assert runtime.step_count == 0
     assert runtime.state == zero
+
+
+def test_default_lift_selector_chooses_first_candidate() -> None:
+    stage, _runtime, first_finish, _second_finish = build_multi_lift_stage_fixture()
+    stage.reset(seed=0)
+
+    transition = stage.step(ActionDecision(chosen_action=0))
+
+    assert transition.diagnostics["realized_edge"] == first_finish
+    assert transition.diagnostics["lift_candidate_count"] == 2
+    assert transition.diagnostics["selected_lift_index"] == 0
+    assert (
+        transition.diagnostics["lift_selector"]
+        == deterministic_first_lift_selector.__name__
+    )
+
+
+def test_custom_lift_selector_can_choose_non_first_candidate() -> None:
+    stage, _runtime, _first_finish, second_finish = build_multi_lift_stage_fixture()
+
+    def select_second(
+        lift_candidates: tuple[BaseEdge, ...],
+        _source_input: object,
+        _action_cell: object,
+    ) -> BaseEdge:
+        return lift_candidates[1]
+
+    stage.lift_selector = select_second
+    stage.reset(seed=0)
+
+    transition = stage.step(ActionDecision(chosen_action=0))
+
+    assert transition.diagnostics["realized_edge"] == second_finish
+    assert transition.diagnostics["selected_lift_index"] == 1
+    assert transition.diagnostics["lift_selector"] == "select_second"
+
+
+def test_invalid_lift_selector_output_fails() -> None:
+    stage, _runtime, _first_finish, _second_finish = build_multi_lift_stage_fixture()
+    outside_edge = edge(state("outside"), state("elsewhere"), "outside")
+
+    def select_outside(
+        _lift_candidates: tuple[BaseEdge, ...],
+        _source_input: object,
+        _action_cell: object,
+    ) -> BaseEdge:
+        return outside_edge
+
+    stage.lift_selector = select_outside
+    stage.reset(seed=0)
+
+    try:
+        stage.step(ActionDecision(chosen_action=0))
+    except ValueError as exc:
+        assert "outside the available lift candidates" in str(exc)
+    else:
+        raise AssertionError("expected invalid lift selector to fail")
 
 
 def test_frozen_behavior_remains_unchanged_after_step() -> None:

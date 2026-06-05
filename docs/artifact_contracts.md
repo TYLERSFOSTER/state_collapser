@@ -1,71 +1,152 @@
 # Artifact Contracts
 
-This document is the authoritative registry for shared file artifacts produced or consumed by project tooling.
+This document is the authoritative registry for shared artifacts produced,
+consumed, or treated as durable coordination surfaces by project tooling.
 
-## Current state
+## Current State
 
-The project is now entering the first implementation phase.
+The package is no longer in its first implementation phase. The current
+artifact posture is research-mode but concrete: runtime values, tower views,
+linearization reports, design documents, implementation logs, and continuity
+reports are real coordination surfaces. Serious benchmark result artifacts are
+still future work.
 
-The artifacts below are the first cross-tool runtime/documentation artifacts that should be treated as canonical for the initial implementation pass.
-
-## Artifact: Final Initial Blueprint
-
-- Owner: design / implementation planning
-- Canonical path: `docs/design/final_initial/final_initial_blueprint.md`
-- Lifecycle: maintained while the first implementation pass is active; updated only when implementation decisions materially change
-- Writers:
-  - Project Owner
-  - assistant, when explicitly directed
-- Readers:
-  - all implementation contributors
-  - future continuity reports
-  - future design-sync updates to root docs
-
-## Artifact: Final Initial Implementation Gameplan
-
-- Owner: implementation planning
-- Canonical path: `docs/design/final_initial/final_initial_implementation_gameplan.md`
-- Lifecycle: maintained while the first implementation pass is active; updated when implementation order, scope, or test plan changes
-- Writers:
-  - Project Owner
-  - assistant, when explicitly directed
-- Readers:
-  - all implementation contributors
-  - future continuity reports
-  - anyone executing the first code-scaffolding pass
-
-## Artifact: Runtime Snapshot Contract
+## Artifact: Live Runtime View
 
 - Owner: runtime layer
-- Canonical path: defined conceptually in `docs/design/implementation_contracts.md`; code-level canonical location expected to begin in `src/state_collapser/tower/snapshot.py`
-- Lifecycle: will become active when the first implementation of `RuntimeSnapshot` lands
+- Canonical code location: `src/state_collapser/tower/snapshot.py`
+- Primary type: `LiveRuntimeView`
+- Lifecycle: active runtime value, not a serialized artifact by default
 - Writers:
-  - runtime update engine
-  - test fixtures that intentionally construct snapshots
+  - package runtimes
+  - example runtimes
+  - tests constructing live runtime state
 - Readers:
   - training/control logic
-  - adapters such as `gymnasium`
-  - integration tests
-  - debugging and continuity tooling
+  - fiber-conditioned stages
+  - adapters and example integrations
 
-## Artifact: First Toy Environment
+## Artifact: Runtime Snapshot
 
-- Owner: examples / integration proving ground
-- Canonical path: expected to begin at `src/state_collapser/examples/robot_constraint_toy.py`
-- Lifecycle: active during the first honest vertical slice; should persist as the primary end-to-end example until a better proving ground supersedes it
+- Owner: runtime layer
+- Canonical code location: `src/state_collapser/tower/snapshot.py`
+- Primary type: `RuntimeSnapshot`
+- Lifecycle: serializable runtime-value artifact for tests, diagnostics, and
+  future benchmark/reporting surfaces
 - Writers:
-  - implementation contributors
+  - runtime snapshot helpers
+  - tests that intentionally construct serializable runtime records
 - Readers:
-  - unit and integration tests
-  - adapters
+  - diagnostics
   - documentation examples
+  - future benchmark artifact tooling
+
+## Artifact: Linearization Configuration
+
+- Owner: training / tensorization boundary
+- Canonical code location: `src/state_collapser/training/linearization.py`
+- Primary type: `LinearizationConfig`
+- Lifecycle: manifest-style configuration payload for numeric conversion
+- Writers:
+  - learner or benchmark setup code
+  - tests for tensorization and linearization surfaces
+- Readers:
+  - linearization helpers
+  - optional Torch conversion helpers
+  - future benchmark manifests
+
+## Artifact: Linearization Report
+
+- Owner: training / tensorization boundary
+- Canonical code location: `src/state_collapser/training/linearization.py`
+- Primary type: `LinearizationReport`
+- Lifecycle: lightweight manifest/report payload describing one conversion
+  boundary, not a replay log
+- Writers:
+  - `build_linearization_report(...)`
+  - benchmark or learner setup code
+- Readers:
+  - tests
+  - documentation
+  - future benchmark artifact tooling
+
+## Artifact: Design Blueprint
+
+- Owner: design / implementation planning
+- Canonical path pattern: `docs/design/<topic>/01_00N_<topic>_blueprint.md`
+- Lifecycle: durable design authority until superseded by a later blueprint or
+  explicit Project Owner decision
+- Writers:
+  - Project Owner
+  - Codex when explicitly directed
+- Readers:
+  - implementation gameplans
+  - continuity reports
+  - future repo audits
+
+## Artifact: Implementation Gameplan
+
+- Owner: implementation planning
+- Canonical path pattern:
+  `docs/design/<topic>/01_00N_<topic>_implementation_gameplan.md`
+- Lifecycle: execution authority after Project Owner approval
+- Writers:
+  - Codex when explicitly directed
+  - Project Owner through review/comments
+- Readers:
+  - implementation agents
+  - implementation logs
+  - continuity reports
+
+## Artifact: Implementation Log
+
+- Owner: implementation execution
+- Canonical path pattern:
+  `docs/design/<topic>/01_00N_<topic>_implementation_log.md`
+- Lifecycle: created during implementation and retained as traceability
+- Writers:
+  - implementation agents
+- Readers:
+  - Project Owner
+  - future audits
+  - engineer continuity reports
+
+## Artifact: Engineer Continuity Report
+
+- Owner: continuity / project memory
+- Canonical path pattern: `docs/engineer_continuity/YYYY/MM/DD/*.md`
+- Lifecycle: durable session and release memory
+- Writers:
+  - Codex when explicitly directed
+- Readers:
+  - future agents
+  - Project Owner
+  - downstream project handoffs
+
+## Deferred Artifact: Serious Benchmark Result Bundle
+
+- Owner: future benchmark track
+- Canonical path: not yet implemented
+- Lifecycle: future work
+- Expected future contents:
+  - benchmark manifest
+  - environment/schema/config metadata
+  - git/package version metadata
+  - timing and scaling result tables
+  - optional linearization reports
+  - regression thresholds
+- Current status:
+  - benchmark smoke commands exist
+  - serious artifact output is intentionally not claimed as implemented
 
 ## Registry Rule
 
-Whenever a new shared artifact becomes important to more than one subsystem, record:
+Whenever a new shared artifact becomes important to more than one subsystem,
+record:
 
 - Owner
-- Canonical path
+- Canonical path or code location
 - Lifecycle
 - Writers
 - Readers
+- Whether it is implemented now or future work

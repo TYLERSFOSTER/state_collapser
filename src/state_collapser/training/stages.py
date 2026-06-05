@@ -65,6 +65,22 @@ class StageRuntimeLike(Protocol):
         ...
 
 
+LiftSelector = Callable[
+    [tuple[BaseEdge, ...], ActionSelectionInput, ActionCellId],
+    BaseEdge,
+]
+
+
+def deterministic_first_lift_selector(
+    lift_candidates: tuple[BaseEdge, ...],
+    _source_input: ActionSelectionInput,
+    _action_cell: ActionCellId,
+) -> BaseEdge:
+    """Select the first concrete lift candidate deterministically."""
+
+    return lift_candidates[0]
+
+
 @dataclass(frozen=True, slots=True)
 class FiberStageStepResult:
     """Narrow structured result for one fiber-conditioned stage step."""
@@ -88,6 +104,7 @@ class FiberConditionedStage:
     frozen_behavior: FrozenQuotientBehavior
     path_fiber: PathFiber
     action_resolver: Callable[[BaseEdge], object] | None = None
+    lift_selector: LiftSelector = deterministic_first_lift_selector
     bootstrap_semantics: BootstrapSemantics = field(default_factory=BootstrapSemantics)
     metadata: Mapping[str, object] = field(default_factory=dict)
     _current_input: ActionSelectionInput | None = field(default=None, init=False, repr=False)
@@ -187,7 +204,13 @@ class FiberConditionedStage:
             self._current_input = transition.target_input
             return transition
 
-        realized_edge = lift_candidates[0]
+        realized_edge = self.lift_selector(lift_candidates, source_input, action_cell)
+        try:
+            selected_lift_index = lift_candidates.index(realized_edge)
+        except ValueError as exc:
+            raise ValueError(
+                "Lift selector returned an edge outside the available lift candidates."
+            ) from exc
         runtime_action = (
             realized_edge.action
             if self.action_resolver is None
@@ -203,6 +226,11 @@ class FiberConditionedStage:
         transition_diagnostics.update(decision.diagnostics)
         transition_diagnostics["fiber_action_cell"] = action_cell
         transition_diagnostics["realized_edge"] = realized_edge
+        transition_diagnostics["lift_candidate_count"] = len(lift_candidates)
+        transition_diagnostics["selected_lift_index"] = selected_lift_index
+        transition_diagnostics["lift_selector"] = _lift_selector_name(
+            self.lift_selector
+        )
         bootstrap_allowed = default_bootstrap_allowed(
             terminated=step_result.terminated,
             truncated=step_result.truncated,
@@ -337,10 +365,22 @@ class FiberConditionedStage:
         return current_state
 
 
+def _lift_selector_name(lift_selector: LiftSelector) -> str:
+    return str(
+        getattr(
+            lift_selector,
+            "__name__",
+            lift_selector.__class__.__name__,
+        )
+    )
+
+
 __all__ = [
     "FiberConditionedStage",
     "FiberStageStepResult",
+    "LiftSelector",
     "StageRuntimeLike",
     "StageRuntimeResetLike",
     "StageRuntimeStepLike",
+    "deterministic_first_lift_selector",
 ]

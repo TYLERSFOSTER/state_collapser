@@ -31,7 +31,11 @@ from .reference_loops import (
     run_reference_episode_loop,
     run_reference_online_loop,
 )
-from .stages import FiberConditionedStage
+from .stages import (
+    FiberConditionedStage,
+    LiftSelector,
+    deterministic_first_lift_selector,
+)
 from .transitions import RuntimeSnapshotSummary, TrainingTransition, summarize_runtime_snapshot
 
 __all__ = [
@@ -56,6 +60,7 @@ __all__ = [
     "LinearizationState",
     "LinearizedActionSelectionInput",
     "LinearizedTrainingTransition",
+    "LiftSelector",
     "MetricsHook",
     "NumericBackend",
     "PathFiber",
@@ -71,6 +76,7 @@ __all__ = [
     "build_linearization_report",
     "default_bootstrap_allowed",
     "default_bootstrap_reason",
+    "deterministic_first_lift_selector",
     "legal_actions",
     "linearize_action_selection_input",
     "linearize_training_transition",

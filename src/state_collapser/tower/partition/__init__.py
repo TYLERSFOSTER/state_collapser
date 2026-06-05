@@ -22,6 +22,11 @@ from state_collapser.tower.partition.internal_aggregation import (
     InternalEdgeAggregator,
     aggregate_internal_values,
 )
+from state_collapser.tower.partition.invariants import (
+    PartitionInvariantIssue,
+    PartitionInvariantReport,
+    action_layer_invariant_report,
+)
 from state_collapser.tower.partition.loop_policy import (
     InternalEdgeRecord,
     LoopPolicy,
@@ -68,6 +73,8 @@ __all__ = [
     "LoopPolicy",
     "LoopPolicyName",
     "NoContractionSchema",
+    "PartitionInvariantIssue",
+    "PartitionInvariantReport",
     "PartitionTower",
     "RewardAggregationName",
     "RewardAggregationResult",
@@ -83,6 +90,7 @@ __all__ = [
     "TowerMorphism",
     "TowerUpdateDiagnostics",
     "TowerUpdateResult",
+    "action_layer_invariant_report",
     "aggregate_internal_values",
     "aggregate_rewards",
     "build_partition_tower_full",

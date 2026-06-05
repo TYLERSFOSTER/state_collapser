@@ -7,6 +7,56 @@ and this project aims to follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-06-05
+
+### Added
+
+- Added backend-independent NumPy observation linearization for numeric
+  `np.ndarray` observations, including lazy NumPy import and observation
+  metadata for shape and dtype.
+- Added partition invariant reporting and assertion surfaces for source-support
+  and executable-lift indexes:
+  - `PartitionTower.invariant_report(...)`
+  - `PartitionTower.assert_consistent(...)`
+  - `ActionPartitionLayer.invariant_report(...)`
+  - `ActionPartitionLayer.assert_consistent(...)`
+- Added explicit `LiftSelector` support for `FiberConditionedStage`, preserving
+  deterministic first-candidate lift selection as the default while allowing
+  callers to choose among executable concrete lifts.
+- Added downstream handoff documentation for `big_boy_benchmarking` so the new
+  hardening surfaces can be consumed from a tagged release.
+
+### Changed
+
+- Removed unused mandatory `pillow` dependency from the base package
+  dependencies.
+- Refreshed root and artifact-contract documentation to describe current
+  runtime, tensorization, instrumentation, and benchmark-artifact posture.
+- Bumped package metadata and runtime version to `0.7.2`.
+
+### Fixed
+
+- Made packaged NumPy observations, including `PlateSupportEnv` observations,
+  compatible with strict linearization.
+- Made concrete lift choice in `FiberConditionedStage` visible in transition
+  diagnostics through `lift_candidate_count`, `selected_lift_index`, and
+  `lift_selector`.
+- Added invariant tests that catch stale action-cell reverse indexes,
+  source-child support maps, base-source caches, and dirty collections.
+
+### Validation
+
+- Static validation passed during release preparation:
+  - `uv run ruff check .`
+  - `uv run mypy src`
+- Regression validation passed during release preparation:
+  - `uv run pytest`
+  - focused linearization, partition invariant, pointwise liftability,
+    HGraphML compatibility, and fiber-conditioned stage tests
+- Package and benchmark smoke validation passed during release preparation:
+  - `uv run python -m build`
+  - `uv run python -m state_collapser.benchmarks.tower_runtime_bench --steps 10 --summary-only`
+
 ## [0.7.1] - 2026-05-30
 
 ### Fixed

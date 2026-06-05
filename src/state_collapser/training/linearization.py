@@ -975,6 +975,9 @@ def _linearize_observation(
     *,
     strict: bool,
 ) -> tuple[tuple[float, ...], JsonDict]:
+    numpy_observation = _try_linearize_numpy_observation(observation, strict=strict)
+    if numpy_observation is not None:
+        return numpy_observation
     if isinstance(observation, bool):
         return (1.0 if observation else 0.0,), {}
     if isinstance(observation, int | float):
@@ -994,6 +997,37 @@ def _linearize_observation(
     if strict:
         raise ValueError("Unsupported observation type for first-scope linearization.")
     return (), {"unsupported_observation_repr": repr(observation)}
+
+
+def _try_linearize_numpy_observation(
+    observation: object,
+    *,
+    strict: bool,
+) -> tuple[tuple[float, ...], JsonDict] | None:
+    if importlib.util.find_spec("numpy") is None:
+        return None
+    numpy_module = importlib.import_module("numpy")
+    ndarray_type = numpy_module.ndarray
+    if not isinstance(observation, ndarray_type):
+        return None
+
+    shape = [int(dimension) for dimension in observation.shape]
+    dtype = str(observation.dtype)
+    dtype_kind = str(observation.dtype.kind)
+    metadata: JsonDict = {
+        "kind": "numpy.ndarray",
+        "shape": shape,
+        "dtype": dtype,
+    }
+    if dtype_kind not in {"b", "i", "u", "f"}:
+        metadata["dtype_kind"] = dtype_kind
+        metadata["unsupported_observation_repr"] = repr(observation)
+        if strict:
+            raise ValueError(f"Unsupported NumPy observation dtype: {dtype}.")
+        return (), metadata
+
+    flattened = observation.reshape(-1).tolist()
+    return tuple(float(value) for value in flattened), metadata
 
 
 def _action_vocabulary_from_input(

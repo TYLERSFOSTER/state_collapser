@@ -43,6 +43,7 @@ from state_collapser.tower.partition.update import (
 
 if TYPE_CHECKING:
     from state_collapser.quotient.tier_view import QuotientTierView
+    from state_collapser.tower.partition.invariants import PartitionInvariantReport
 
 
 @dataclass(slots=True)
@@ -546,6 +547,34 @@ class PartitionTower:
         from state_collapser.tower.partition.readout import to_quotient_tier_views
 
         return to_quotient_tier_views(self)
+
+    def invariant_report(
+        self,
+        *,
+        allow_dirty: bool = False,
+    ) -> PartitionInvariantReport:
+        """Return structural consistency issues across all tower tiers."""
+
+        from state_collapser.tower.partition.invariants import (
+            PartitionInvariantReport,
+        )
+
+        reports = tuple(
+            action_layer.invariant_report(
+                state_layer=self.state_layers[tier],
+                registry=self.registry,
+                lower_state_layer=self.state_layers[tier - 1] if tier > 0 else None,
+                lower_action_layer=self.action_layers[tier - 1] if tier > 0 else None,
+                allow_dirty=allow_dirty,
+            )
+            for tier, action_layer in enumerate(self.action_layers)
+        )
+        return PartitionInvariantReport.combine(reports)
+
+    def assert_consistent(self, *, allow_dirty: bool = False) -> None:
+        """Raise if any tower tier violates partition invariants."""
+
+        self.invariant_report(allow_dirty=allow_dirty).assert_ok()
 
     def _effective_ordered_blocks(self) -> tuple[SchemaBlockId, ...]:
         ordered: dict[SchemaBlockId, None] = {}
