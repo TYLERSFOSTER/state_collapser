@@ -49,6 +49,14 @@ edge fibers.
 ***<ins>HOW</ins>**:*
 If the underlying mathematical model and its log speed-up theorems will best justify this `state_collapser` package for you, I'd start with [this companion research paper](./docs/design/logHRL.pdf) that explains why such a package should exist in the first place. If benchmarks demonstrating the speed-up in coordination-constrained RL problems will best justify this `state_collapser` package for you, I'd start with [this evaluation document](./EVALUATION.md).
 
+<p align="left">
+  <picture>
+    <source srcset="assets/images/logo/inaction_dark.gif" media="(prefers-color-scheme: dark)">
+    <source srcset="assets/images/logo/inaction_light.gif" media="(prefers-color-scheme: light)">
+    <img src="assets/images/logo/inaction_light.png" alt="pathfinder" width="">
+  </picture>
+</p>
+
 ## Installation
 
 Python `3.11` or `3.12` is required for the current release line.
