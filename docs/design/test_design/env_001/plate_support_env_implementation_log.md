@@ -4,8 +4,8 @@
 - Current branch: `codex/env-001-plate-support-env`
 - Authoritative documents:
   - [plate_support_env_spec.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_spec.md)
-  - [plate_support_env_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_implementation_gameplan.md)
-- Implementation statement: this gameplan is being followed exactly.
+  - [plate_support_env_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_implementation_workplan.md)
+- Implementation statement: this workplan is being followed exactly.
 
 ## Log entries
 
@@ -113,7 +113,7 @@
 
 - Status: completed
 - Owner clarification:
-  - the gameplan required checking whether the goal was one primitive action away from start using the actual transition rule
+  - the workplan required checking whether the goal was one primitive action away from start using the actual transition rule
   - because the formal transition phase had not yet occurred, the Project Owner explicitly authorized implementing the minimal primitive action proposal/transition helper early for this purpose
 - Files updated:
   - [plate_support_env.py]([state_collapser repository root]/src/state_collapser/examples/plate_support_env.py)
@@ -277,5 +277,5 @@
     - `PlateSupportEnv` is now ready to be used in later flat-vs-tower benchmark design work
 - Phase status:
   - Phase 10 complete
-- Gameplan status:
-  - implementation gameplan completed
+- Workplan status:
+  - implementation workplan completed

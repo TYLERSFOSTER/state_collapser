@@ -1,10 +1,10 @@
-# Post-Young-Diagram Evaluation Environment Repair Implementation Gameplan
+# Post-Young-Diagram Evaluation Environment Repair Implementation Workplan
 
 ## Status
 
 Date: 2026-05-24
 
-This document is the Phase.Stage.Action implementation gameplan for:
+This document is the Phase.Stage.Action implementation workplan for:
 
 - `docs/design/test_design/post_young_audit/01_002_post_young_diagram_evaluation_environment_repair_blueprint.md`
 
@@ -12,7 +12,7 @@ It is downstream of:
 
 - `docs/design/test_design/post_young_audit/01_001_post_young_diagram_evaluation_environment_audit.md`
 - `docs/design/Young_tableaux_refactor/01_001_young_tableaux_runtime_refactor_blueprint.md`
-- `docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_gameplan.md`
+- `docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_workplan.md`
 
 It is governed by:
 
@@ -20,17 +20,17 @@ It is governed by:
 - `docs/prime_directive/git_practices.md`
 - `docs/prime_directive/common_failure_mode_001.md`
 - `docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md`
-- `docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md`
+- `docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md`
 - `docs/prime_directive/consultant_tricks.md`
 
-This is an implementation gameplan.
+This is an implementation workplan.
 
 It is not an implementation.
 
 No source-code or test implementation should begin until the Project Owner
-explicitly approves execution of this gameplan.
+explicitly approves execution of this workplan.
 
-Once approved, this gameplan is law. If implementation reality conflicts with
+Once approved, this workplan is law. If implementation reality conflicts with
 any action below, the implementer must stop, identify the exact
 Phase.Stage.Action item that failed, and ask the Project Owner for guidance.
 Silent simplification, silent reordering, and silent reinterpretation are
@@ -62,7 +62,7 @@ The repair must not reintroduce the old explicit counterpoint rank tower.
 The repair must make schema-driven hierarchy observable, configurable, and tested
 across the evaluation environments.
 
-## Fixed Defaults For This Gameplan
+## Fixed Defaults For This Workplan
 
 Unless the Project Owner changes these before execution, implementation must use
 the following defaults.
@@ -129,10 +129,10 @@ the following defaults.
 Implementation must stop and ask the Project Owner if any of the following
 occur.
 
-- A named file or symbol in this gameplan no longer exists.
+- A named file or symbol in this workplan no longer exists.
 - A Phase.Stage.Action item cannot be implemented as written.
 - An action requires a schema choice not fixed by the blueprint or this
-  gameplan.
+  workplan.
 - An action would need a lighter substitute implementation.
 - A test encodes current depth-1 behavior as an intended invariant.
 - A migrated environment cannot reach nontrivial depth under the default schema
@@ -254,18 +254,18 @@ editing further.
 High-level purpose:
 
 Confirm that the Project Owner has explicitly approved execution of this
-gameplan.
+workplan.
 
 Ground truth:
 
 - `docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md`
-- this gameplan
+- this workplan
 
 Implementation:
 
 - Do not edit source or tests.
 - Confirm that the Project Owner has issued an execution request for this exact
-  gameplan.
+  workplan.
 
 Tests:
 
@@ -277,9 +277,9 @@ Completion condition:
 
 Failure hypotheses:
 
-- The Project Owner may want edits to the gameplan before execution.
+- The Project Owner may want edits to the workplan before execution.
 - The Project Owner may approve only a subset, which is not enough to execute the
-  whole gameplan as law.
+  whole workplan as law.
 - The Project Owner may want a different branch name.
 
 #### Action 0.1.2
@@ -327,7 +327,7 @@ Create the running implementation log before touching source files.
 Ground truth:
 
 - `docs/design/test_design/post_young_audit/`
-- `docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md`
+- `docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md`
 
 Implementation:
 
@@ -337,7 +337,7 @@ Implementation:
   docs/design/test_design/post_young_audit/01_004_post_young_diagram_evaluation_environment_repair_implementation_log.md
   ```
 
-- Include the gameplan path, branch, starting status, and validation command set.
+- Include the workplan path, branch, starting status, and validation command set.
 
 Tests:
 
@@ -1661,7 +1661,7 @@ Failure hypotheses:
   direction labels by design.
 - If direction labels should be primary, that is a design change requiring PO
   approval.
-- The smoke schema may over-collapse but is the fixed default for this gameplan.
+- The smoke schema may over-collapse but is the fixed default for this workplan.
 
 ### Stage 7.3: Wire Counterpoint Runtime Schema
 
@@ -2244,7 +2244,7 @@ Failure hypotheses:
 
 - Non-example tests may rely on old probe output formatting.
 - Full suite may include slow or environment-sensitive tests.
-- If failures are unrelated, do not repair them under this gameplan without
+- If failures are unrelated, do not repair them under this workplan without
   Project Owner approval.
 
 ### Stage 11.3: Run Final Probe Table
@@ -2300,12 +2300,12 @@ Failure hypotheses:
 
 High-level purpose:
 
-Verify that the implementation followed this gameplan and did not drift.
+Verify that the implementation followed this workplan and did not drift.
 
 Ground truth:
 
 - `git diff`
-- this gameplan
+- this workplan
 - implementation log
 
 Implementation:
@@ -2321,7 +2321,7 @@ Tests:
 
 Completion condition:
 
-- The implementation can be honestly reported as executing this gameplan.
+- The implementation can be honestly reported as executing this workplan.
 
 Failure hypotheses:
 
@@ -2374,7 +2374,7 @@ Failure hypotheses:
 
 ## Required Final Acceptance Criteria
 
-This gameplan is complete only when all of the following are true.
+This workplan is complete only when all of the following are true.
 
 - `plate_support_env` still has nontrivial default schema behavior.
 - `parallelogram_singularity_env` has labeled edges, schema helpers, schema
@@ -2409,16 +2409,16 @@ The work is not complete if any of the following remain true.
 - `rl_counterpoint_v3` remains depth `1` under default schema probing.
 - Tests only assert that `current_position_at_every_tier` is nonempty.
 - The explicit flat baseline cannot be tested.
-- The implementation skipped semantic labels entirely where this gameplan
+- The implementation skipped semantic labels entirely where this workplan
   required them.
 
 ## Final Note On Authority
 
-This gameplan intentionally fixes defaults that the blueprint left as
+This workplan intentionally fixes defaults that the blueprint left as
 recommendations. That is necessary so execution does not smuggle design choices
 into source files.
 
 If the Project Owner disagrees with any fixed default, the correct next step is
-to revise this gameplan before implementation begins.
+to revise this workplan before implementation begins.
 
-Once approved, the gameplan is law.
+Once approved, the workplan is law.

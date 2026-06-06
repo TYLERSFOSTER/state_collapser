@@ -75,7 +75,7 @@ records for the first tensorization boundary:
 
 - `01_001_tensorization_architecture_blueprint.md`
 - `01_002_tensorization_engineer_usage_blueprint.md`
-- `01_003_tensorization_implementation_gameplan.md`
+- `01_003_tensorization_implementation_workplan.md`
 - `01_004_tensorization_implementation_log.md`
 - `01_005_hgraphml_tensorization_followup_bridge.md`
 

@@ -13,18 +13,18 @@ Its purpose is to reduce:
 - branch-discipline drift
 - and execution-history ambiguity
 
-when implementation work is being carried out under blueprint/gameplan authority.
+when implementation work is being carried out under blueprint/workplan authority.
 
 ## Rule 1
 
-> **When a blueprint and an associated implementation gameplan have been written and approved, execution should begin on a dedicated implementation branch rather than directly on `main`.**
+> **When a blueprint and an associated implementation workplan have been written and approved, execution should begin on a dedicated implementation branch rather than directly on `main`.**
 
 ### Required workflow
 
 The required workflow is:
 
 1. a blueprint is written
-2. an associated implementation gameplan is written
+2. an associated implementation workplan is written
 3. the Project Owner approves execution
 4. before implementation begins, move to a dedicated implementation git branch
 5. execute implementation work there
@@ -38,7 +38,7 @@ This rule exists because implementation directly on `main` creates several avoid
 - it blurs the distinction between approved history and in-progress working-tree edits
 - it makes later merge discussion confusing or impossible
 - it weakens rollback clarity
-- it makes it harder to tell what work belongs to a particular blueprint/gameplan execution interval
+- it makes it harder to tell what work belongs to a particular blueprint/workplan execution interval
 - it increases the risk of mixing unrelated local modifications with the implementation interval
 
 ### What this rule is trying to preserve
@@ -61,7 +61,7 @@ This rule does **not** mean that every tiny edit in the repo requires a branch.
 It applies specifically when the work has the form:
 
 - blueprint
-- associated implementation gameplan
+- associated implementation workplan
 - explicit execution interval
 
 That is the level at which branch discipline becomes part of execution discipline.
@@ -76,5 +76,5 @@ Unless the Project Owner requests otherwise, the implementation branch should us
 
 The operational summary is:
 
-> **Approved blueprint + approved gameplan + execution request => create/switch to an implementation branch before touching implementation code.**
+> **Approved blueprint + approved workplan + execution request => create/switch to an implementation branch before touching implementation code.**
 

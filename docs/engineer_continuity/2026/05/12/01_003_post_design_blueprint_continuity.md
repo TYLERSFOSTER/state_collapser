@@ -11,7 +11,7 @@ This report covers all substantial work done after:
 
 - `docs/engineer_continuity/2026/05/07/01_002_design_and_modeling_continuity.md`
 
-This report is intentionally large and explicit because the project has moved through many design clarifications, several rounds of correction, multiple new design documents, a mathematical-model formalization pass, bibliography work, git-hygiene work, and finally the creation of the first consolidated implementation blueprint and implementation gameplan.
+This report is intentionally large and explicit because the project has moved through many design clarifications, several rounds of correction, multiple new design documents, a mathematical-model formalization pass, bibliography work, git-hygiene work, and finally the creation of the first consolidated implementation blueprint and implementation workplan.
 
 As with the previous report, attribution matters here.
 
@@ -25,7 +25,7 @@ Since the last continuity report, the project has advanced from:
 
 to:
 
-- a much more implementation-facing architecture with a dedicated contracts document, an explicit post-review implementation refinement, and a final consolidated blueprint plus phased implementation gameplan
+- a much more implementation-facing architecture with a dedicated contracts document, an explicit post-review implementation refinement, and a final consolidated blueprint plus phased implementation workplan
 
 The largest advances in this interval were:
 
@@ -38,7 +38,7 @@ The largest advances in this interval were:
    - full tower update immediately after each step
    - cumulative nested tier semantics
 5. the implementation contracts document was created and then refined through an owner–assistant review loop
-6. the first consolidated implementation blueprint and explicit phased implementation gameplan were produced under `docs/design/final_initial/`
+6. the first consolidated implementation blueprint and explicit phased implementation workplan were produced under `docs/design/final_initial/`
 
 This means the project is now much closer to real code scaffolding than it was at the end of the previous continuity report.
 
@@ -81,7 +81,7 @@ Most importantly, the Project Owner:
    - robot-arm-style opaque constraint navigation with partial local parameter reductions and label-based contraction only in some regions
 9. requested the final step of turning the distributed design docs into:
    - one implementation blueprint
-   - one Phase.Stage.Action implementation gameplan
+   - one Phase.Stage.Action implementation workplan
 
 The Project Owner also repeatedly enforced prime-directive discipline when the assistant drifted, overexplained, or analyzed instead of acting.
 
@@ -97,7 +97,7 @@ The assistant contributed primarily by:
 6. converting the clarified runtime model into explicit implementation contracts
 7. converting the now-mature design set into:
    - `docs/design/final_initial/final_initial_blueprint.md`
-   - `docs/design/final_initial/final_initial_implementation_gameplan.md`
+   - `docs/design/final_initial/final_initial_implementation_workplan.md`
 8. writing continuity records like this one
 
 The assistant’s role was often to translate clarified owner intent into durable specification language.
@@ -407,12 +407,12 @@ The assistant then:
 
 This task is unrelated to the project design itself, but should be recorded because it reflects a temporary context branch and a correction after misunderstanding the requested operation.
 
-## Phase 12: consolidated blueprint and implementation gameplan
+## Phase 12: consolidated blueprint and implementation workplan
 
 The final major phase in this interval was the owner’s request to stop treating the design docs as “meeting artifacts” and instead produce:
 
 1. a true blueprint
-2. a true implementation gameplan
+2. a true implementation workplan
 
 The assistant first clarified the terminology:
 
@@ -422,7 +422,7 @@ The assistant first clarified the terminology:
 Then the assistant created:
 
 - `docs/design/final_initial/final_initial_blueprint.md`
-- `docs/design/final_initial/final_initial_implementation_gameplan.md`
+- `docs/design/final_initial/final_initial_implementation_workplan.md`
 
 ### `final_initial_blueprint.md`
 
@@ -444,7 +444,7 @@ This document consolidates the design set into one authoritative blueprint cover
 - code-organization blueprint
 - test blueprint
 
-### `final_initial_implementation_gameplan.md`
+### `final_initial_implementation_workplan.md`
 
 This document provides a phased implementation sequence using **Phase.Stage.Action** structure as requested.
 
@@ -470,7 +470,7 @@ This was the strongest convergence point of the entire interval.
 It means the repository now contains not just distributed design reasoning, but:
 
 - one final initial blueprint
-- one initial implementation gameplan
+- one initial implementation workplan
 
 ## Files materially created or updated in this interval
 
@@ -480,7 +480,7 @@ This list is not a guaranteed exhaustive raw file-change log, but it captures th
 
 - `docs/design/implementation_contracts.md`
 - `docs/design/final_initial/final_initial_blueprint.md`
-- `docs/design/final_initial/final_initial_implementation_gameplan.md`
+- `docs/design/final_initial/final_initial_implementation_workplan.md`
 - `docs/design/mathematical_model.bib`
 - `docs/engineer_continuity/2026/05/12/01_003_post_design_blueprint_continuity.md`
 
@@ -526,7 +526,7 @@ Those have now been answered much more concretely than in the previous continuit
 The next session should begin from:
 
 - `docs/design/final_initial/final_initial_blueprint.md`
-- `docs/design/final_initial/final_initial_implementation_gameplan.md`
+- `docs/design/final_initial/final_initial_implementation_workplan.md`
 
 Those two documents should now function as the main launch point for code scaffolding.
 
@@ -537,7 +537,7 @@ If implementation begins, the first working phase should likely be:
 - explored graph
 - vista graph / annotation store
 
-with tests written immediately as described in the gameplan.
+with tests written immediately as described in the workplan.
 
 ## Final continuity conclusion
 
@@ -559,4 +559,4 @@ It was the sharpening of the runtime picture:
 - immediate full tower update at every discovered-state step
 - full runtime snapshot handoff
 
-That runtime picture now underlies the final-initial blueprint and gameplan, and should be treated as the central continuity fact for the next engineering session.
+That runtime picture now underlies the final-initial blueprint and workplan, and should be treated as the central continuity fact for the next engineering session.

@@ -16,7 +16,7 @@ Its purpose is to answer:
 - what parts are old infrastructure choices
 - what must change in order to rebuild the problem in the simpler, example-oriented, package surfaces of `state_collapser`
 
-This is a transformation report, not a blueprint and not a gameplan.
+This is a transformation report, not a blueprint and not a workplan.
 
 ## Executive Summary
 
@@ -460,7 +460,7 @@ These old surfaces should *not* be treated as direct package-port targets:
 
 ## What This Means For The Next Design Step
 
-The next document should not be an implementation gameplan yet.
+The next document should not be an implementation workplan yet.
 
 It should be a narrower design blueprint for:
 

@@ -1,8 +1,8 @@
-# Final Initial Implementation Gameplan
+# Final Initial Implementation Workplan
 
 ## Status
 
-This document is the first concrete implementation gameplan for the implementation blueprint in:
+This document is the first concrete implementation workplan for the implementation blueprint in:
 
 - `final_initial_blueprint.md`
 
@@ -20,21 +20,21 @@ Each action should be treated as atomic enough to review and validate.
 
 1. **Authoritative sources**
 - [final_initial_blueprint.md]([state_collapser repository root]/docs/design/final_initial/final_initial_blueprint.md)
-- [final_initial_implementation_gameplan.md]([state_collapser repository root]/docs/design/final_initial/final_initial_implementation_gameplan.md)
+- [final_initial_implementation_workplan.md]([state_collapser repository root]/docs/design/final_initial/final_initial_implementation_workplan.md)
 
 These are the implementation law.
-I should treat older design docs as background only unless the blueprint/gameplan explicitly points back to them.
+I should treat older design docs as background only unless the blueprint/workplan explicitly points back to them.
 
 2. **Execution unit**
 - The atomic unit of work is exactly one `Phase.Stage.Action`.
-- I do not merge actions, skip actions, reorder actions, or reinterpret actions unless the gameplan itself says to.
+- I do not merge actions, skip actions, reorder actions, or reinterpret actions unless the workplan itself says to.
 
 3. **Completion loop**
 For every `Phase.Stage.Action`, I must do this:
 - read the action text again before touching code
 - implement only that action
 - verify that action against its stated deliverable/tests
-- compare the result back to the blueprint/gameplan
+- compare the result back to the blueprint/workplan
 - log what changed, blockers, and surprises
 - only then move to the next action
 
@@ -50,15 +50,15 @@ If I think an action is too hard, unclear, or would require a simplification, I 
 5. **Consultation triggers**
 I must stop and consult you if:
 - an action is ambiguous
-- the blueprint and gameplan seem to conflict
-- the codebase reality conflicts with the gameplan
+- the blueprint and workplan seem to conflict
+- the codebase reality conflicts with the workplan
 - a required dependency/tooling change was not planned
 - a test expectation seems wrong
-- I believe the gameplan should be modified
+- I believe the workplan should be modified
 - I am tempted to generalize, simplify, postpone, or substitute
 
-6. **Gameplan modification rule**
-- I never modify the gameplan while implementing.
+6. **Workplan modification rule**
+- I never modify the workplan while implementing.
 - If I think it needs to change, I tell you:
   - exact `Phase.Stage.Action`
   - why it fails as written
@@ -68,7 +68,7 @@ I must stop and consult you if:
 Then I wait for your decision.
 
 7. **Status reporting format**
-While implementing, I should report in terms of the gameplan, e.g.:
+While implementing, I should report in terms of the workplan, e.g.:
 - `Phase 1.Stage 2.Action 3 in progress`
 - `Action complete; verified against X/Y/Z`
 - `Blocked at Phase ... because ...`
@@ -77,14 +77,14 @@ Not vague summaries like “I built the core scaffold.”
 
 8. **Testing rule**
 - Tests are part of the action, not optional cleanup after.
-- I should run exactly the tests implied by the current action, then broader regression tests when the gameplan says to.
+- I should run exactly the tests implied by the current action, then broader regression tests when the workplan says to.
 
 9. **Artifact/log rule**
 - Keep the running engineer log updated as implementation proceeds.
 - Record pivots, failures, surprises, and any place where I had to stop for your guidance.
 
 10. **Your standing instruction I should carry forward**
-- The gameplan is law.
+- The workplan is law.
 - Follow it to the letter.
 - Re-check it after every action.
 - Do not modify it without consulting you first.
@@ -792,6 +792,6 @@ The implementation should include, at minimum:
 - `tests/integration/test_vertical_slice.py`
 - `tests/adapters/test_gymnasium_adapter.py`
 
-## Final Gameplan Statement
+## Final Workplan Statement
 
 If this Phase.Stage.Action plan is followed in order, the project should reach a first honest implementation of the current blueprint without requiring major design reinterpretation during coding.

@@ -180,11 +180,11 @@ and this project aims to follow [Semantic Versioning](https://semver.org/).
 - Benchmark smoke tests under:
   - `tests/benchmarks/`
 - Post-Young-diagram evaluation-environment audit, repair blueprint,
-  implementation gameplan, and implementation log under:
+  implementation workplan, and implementation log under:
   - `docs/design/test_design/post_young_audit/`
 - Synthetic Blow review kit materials under:
   - `docs/code_review/synthetic_blow_review_kit/`
-- Young-tableaux refactor design, gameplan, and implementation log under:
+- Young-tableaux refactor design, workplan, and implementation log under:
   - `docs/design/Young_tableaux_refactor/`
 
 ### Changed
@@ -237,7 +237,7 @@ and this project aims to follow [Semantic Versioning](https://semver.org/).
 - Model/training-surface design and implementation records:
   - `docs/design/model_train_surfaces/01_001_model_and_training_surface_architecture.md`
   - `docs/design/model_train_surfaces/01_002_model_and_training_surface_blueprint.md`
-  - `docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_gameplan.md`
+  - `docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_workplan.md`
   - `docs/design/model_train_surfaces/01_004_model_and_training_surface_implementation_log.md`
 - Python-package-readiness scoping document:
   - `docs/design/PyPl_readiness/01_001_python_package_readiness_scoping.md`
@@ -286,10 +286,10 @@ and this project aims to follow [Semantic Versioning](https://semver.org/).
   - `docs/design/HRL_exploit-explore/01_018_tower_construction_ownership_misalignment_diagnosis.md`
   - `docs/design/HRL_exploit-explore/01_019_package_owned_tower_construction_correction.md`
   - `docs/design/HRL_exploit-explore/01_020_package_owned_dynamic_tower_construction_blueprint.md`
-  - `docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_gameplan.md`
+  - `docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_workplan.md`
   - `docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_log.md`
   - `docs/design/HRL_exploit-explore/01_022_tierwise_remaining_edge_contraction_blueprint.md`
-  - `docs/design/HRL_exploit-explore/01_023_tierwise_remaining_edge_contraction_implementation_gameplan.md`
+  - `docs/design/HRL_exploit-explore/01_023_tierwise_remaining_edge_contraction_implementation_workplan.md`
   - `docs/design/HRL_exploit-explore/01_023_tierwise_remaining_edge_contraction_implementation_log.md`
 
 ### Changed
@@ -342,7 +342,7 @@ and this project aims to follow [Semantic Versioning](https://semver.org/).
 - New exploit/explore correction documents:
   - `docs/design/HRL_exploit-explore/01_015_abc_find_unclosed_correction.md`
   - `docs/design/HRL_exploit-explore/01_016_find_lowest_unclosed_system_change_blueprint.md`
-  - `docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_gameplan.md`
+  - `docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_workplan.md`
   - `docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_log.md`
 
 ### Validation
@@ -429,12 +429,12 @@ and this project aims to follow [Semantic Versioning](https://semver.org/).
   - `run_tower_training(...)`
 - Initial design-to-implementation artifacts:
   - `docs/design/final_initial/final_initial_blueprint.md`
-  - `docs/design/final_initial/final_initial_implementation_gameplan.md`
+  - `docs/design/final_initial/final_initial_implementation_workplan.md`
   - `docs/design/final_initial/implementation_running_log.md`
   - `docs/design/test_design/env_001/plate_support_env_spec.md`
-  - `docs/design/test_design/env_001/plate_support_env_implementation_gameplan.md`
+  - `docs/design/test_design/env_001/plate_support_env_implementation_workplan.md`
   - `docs/design/test_design/env_001/plate_support_env_implementation_log.md`
-  - `docs/design/test_design/env_001/plate_support_env_tower_training_integration_gameplan.md`
+  - `docs/design/test_design/env_001/plate_support_env_tower_training_integration_workplan.md`
   - `docs/design/test_design/env_001/plate_support_env_tower_training_integration_log.md`
 
 ### Changed

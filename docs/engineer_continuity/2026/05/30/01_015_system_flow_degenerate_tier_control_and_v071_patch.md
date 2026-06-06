@@ -21,7 +21,7 @@ work:
 - a full repo crawl producing Mermaid system-flow and control-flow diagrams;
 - a downstream `big_boy_benchmarking` degenerate-tier failure diagnosis;
 - the PO's simplification of that diagnosis into the core empty-`Out` rule;
-- the design blueprint and Phase.Stage.Action implementation gameplan for
+- the design blueprint and Phase.Stage.Action implementation workplan for
   degenerate-tier control;
 - the implementation of the degenerate-tier runtime fix;
 - the handoff note for `big_boy_benchmarking`;
@@ -84,7 +84,7 @@ if Out is empty, hop up one tier; recurse.
 ```
 
 That PO correction is the conceptual center of this interval. Codex then
-grounded the rule in the repo, wrote the blueprint/gameplan, implemented the
+grounded the rule in the repo, wrote the blueprint/workplan, implemented the
 runtime/controller changes, and added focused tests. The result is deliberately
 small: no new learner abstraction, no tensorization changes, no replay-buffer
 changes, and no special counterpoint-only hack in `state_collapser`.
@@ -211,7 +211,7 @@ tests/tower/control/test_signals.py
 tests/tower/partition/test_degenerate_tier_queries.py
 tests/examples/test_plate_support_env_exploit_explore_runtime.py
 docs/design/degenerate_tier_control/01_001_degenerate_tier_control_blueprint.md
-docs/design/degenerate_tier_control/01_002_degenerate_tier_control_implementation_gameplan.md
+docs/design/degenerate_tier_control/01_002_degenerate_tier_control_implementation_workplan.md
 docs/design/degenerate_tier_control/01_003_big_boy_benchmarking_handoff_note.md
 docs/usage/01_002_tower_runtime_mental_model.md
 docs/design/logHRL.bib
@@ -332,7 +332,7 @@ already had enough structure:
 Therefore the fix should be a small executable-tier predicate, not a new
 training system.
 
-## Major Movement 3: Blueprint and Gameplan
+## Major Movement 3: Blueprint and Workplan
 
 After the PO's correction, Codex re-evaluated the current repo concretely and
 created:
@@ -361,10 +361,10 @@ rejected:
 Then Codex wrote:
 
 ```text
-docs/design/degenerate_tier_control/01_002_degenerate_tier_control_implementation_gameplan.md
+docs/design/degenerate_tier_control/01_002_degenerate_tier_control_implementation_workplan.md
 ```
 
-This gameplan followed the repo's Phase.Stage.Action pattern and specified:
+This workplan followed the repo's Phase.Stage.Action pattern and specified:
 
 - branch creation;
 - focused signal/controller tests;
@@ -375,7 +375,7 @@ This gameplan followed the repo's Phase.Stage.Action pattern and specified:
 - and regression validation commands.
 
 The PO asked for relevant published references to be added to the bibliography
-after the gameplan. Codex added references to:
+after the workplan. Codex added references to:
 
 - the CCH routing paper associated with arXiv `1402.0402`;
 - the 2025 CCH survey/preprint associated with arXiv `2502.10519`.
@@ -695,7 +695,7 @@ The PO also:
 - insisted that the fix be evaluated against the actual repo, not treated as
   an abstract conversation;
 - directed Codex to create the blueprint and then the Phase.Stage.Action
-  implementation gameplan;
+  implementation workplan;
 - asked for published bibliography entries for the two CCH-related references;
 - asked whether the handoff note was now the correct object to give to
   `big_boy_benchmarking`;
@@ -725,7 +725,7 @@ Codex:
 - re-evaluated the repo to locate the actual control/runtime integration
   points;
 - wrote the degenerate-tier blueprint;
-- wrote the Phase.Stage.Action gameplan;
+- wrote the Phase.Stage.Action workplan;
 - implemented the control/runtime fix;
 - added focused tests;
 - updated docs and changelog material;
@@ -814,7 +814,7 @@ Primary new design/docs:
 docs/design/system_flow/01_001_system_flowcharts_and_control_flow.md
 docs/design/degenerate_tier_control/error_diagnosis_conversation.md
 docs/design/degenerate_tier_control/01_001_degenerate_tier_control_blueprint.md
-docs/design/degenerate_tier_control/01_002_degenerate_tier_control_implementation_gameplan.md
+docs/design/degenerate_tier_control/01_002_degenerate_tier_control_implementation_workplan.md
 docs/design/degenerate_tier_control/01_003_big_boy_benchmarking_handoff_note.md
 ```
 

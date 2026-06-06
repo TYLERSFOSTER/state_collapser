@@ -24,7 +24,7 @@ It is not:
 
 - a release checklist
 - a PyPI upload procedure
-- an implementation gameplan
+- an implementation workplan
 - a benchmark report
 
 Its job is to define exactly what the repository must become in order to count as:
@@ -720,9 +720,9 @@ then this blueprint has not been fulfilled.
 
 The next document after this blueprint should be:
 
-- an implementation gameplan in `Phase.Stage.Action` form
+- an implementation workplan in `Phase.Stage.Action` form
 
-That gameplan should decide:
+That workplan should decide:
 
 - execution order
 - first concrete package-facing doc targets

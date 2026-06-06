@@ -1,14 +1,14 @@
-# Fiber-Conditioned Training Spine Implementation Gameplan
+# Fiber-Conditioned Training Spine Implementation Workplan
 
 ## Status
 
-This document is the Phase.Stage.Action implementation gameplan for:
+This document is the Phase.Stage.Action implementation workplan for:
 
 - `docs/design/RL_framework_maturity/01_002_fiber_conditioned_training_spine_blueprint.md`
 
 It is paired with:
 
-- `docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_gameplan.md`
+- `docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_workplan.md`
 
 It is downstream of:
 
@@ -20,23 +20,23 @@ It is governed by:
 - `docs/prime_directive/prime_directive.md`
 - `docs/prime_directive/git_practices.md`
 - `docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md`
-- `docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md`
+- `docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md`
 
-This is an implementation gameplan.
+This is an implementation workplan.
 
 It is not an implementation.
 
 No source-code execution should begin until the Project Owner explicitly
-approves execution of this gameplan.
+approves execution of this workplan.
 
-Once approved, this gameplan is law. If implementation reality conflicts with
+Once approved, this workplan is law. If implementation reality conflicts with
 any Phase.Stage.Action item below, the implementer must stop, identify the exact
 item that failed, and ask the Project Owner for guidance. Silent simplification,
 silent reordering, and silent reinterpretation are forbidden.
 
 ## Paired Reality Contract
 
-This code gameplan and the paired documentation gameplan must reflect the same
+This code workplan and the paired documentation workplan must reflect the same
 architecture.
 
 The shared reality is:
@@ -67,7 +67,7 @@ training loop mechanics.
 The Project Owner resolved the open questions in
 `01_002_fiber_conditioned_training_spine_blueprint.md`.
 
-These decisions are fixed for this gameplan.
+These decisions are fixed for this workplan.
 
 1. The frozen behavior object is named:
 
@@ -95,9 +95,9 @@ These decisions are fixed for this gameplan.
    - the long-term fate of `tower/control`
    - terminology cleanup for `base` / `lower` vocabulary
 
-The paired documentation gameplan carries the same decisions.
+The paired documentation workplan carries the same decisions.
 
-## Fixed Defaults For This Gameplan
+## Fixed Defaults For This Workplan
 
 Unless the Project Owner changes these before execution, implementation must use
 the following defaults.
@@ -182,7 +182,7 @@ the following defaults.
     stage_context
     ```
 
-15. Documentation updates are not optional. The paired documentation gameplan is
+15. Documentation updates are not optional. The paired documentation workplan is
     part of the same implementation reality.
 
 ## Required Branch Discipline
@@ -269,13 +269,13 @@ occur.
 
 - A Phase.Stage.Action item cannot be implemented as written.
 - A source file or symbol named here no longer exists.
-- Existing tests encode semantics that contradict this gameplan.
+- Existing tests encode semantics that contradict this workplan.
 - `PartitionTower` lacks a query needed by `PathFiber` and adding it would
   require broad tower rewrites.
 - Concrete frozen quotient steps cannot be represented without deciding the full
   policy-surface design.
 - Stage stepping requires choosing between incompatible public APIs not fixed by
-  this gameplan.
+  this workplan.
 - Maintaining backward compatibility with `ActionSelectionInput`,
   `TrainingTransition`, or `TabularQLearner` would require weakening the new
   stage/fiber semantics.
@@ -284,7 +284,7 @@ occur.
 - `tower/control` integration requires a broad rewrite.
 - A documentation example would require an import path that does not exist.
 - A validation command fails unexpectedly.
-- The working tree contains unrelated user changes in files this gameplan must
+- The working tree contains unrelated user changes in files this workplan must
   edit.
 - The implementation would need to revert user work.
 
@@ -294,7 +294,7 @@ occur.
 
 #### Action 0.1.1
 
-Confirm that the Project Owner explicitly approved execution of this gameplan.
+Confirm that the Project Owner explicitly approved execution of this workplan.
 
 Completion criteria:
 
@@ -328,15 +328,15 @@ Stop condition:
 
 #### Action 0.2.1
 
-Re-read the source blueprints and paired gameplans from disk.
+Re-read the source blueprints and paired workplans from disk.
 
 Required files:
 
 ```text
 docs/design/RL_framework_maturity/01_002_fiber_conditioned_training_spine_blueprint.md
 docs/design/RL_framework_maturity/01_003_fiber_conditioned_training_spine_engineer_documentation_blueprint.md
-docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_gameplan.md
-docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_gameplan.md
+docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_workplan.md
+docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_workplan.md
 ```
 
 Completion criteria:
@@ -415,7 +415,7 @@ Completion criteria:
 #### Action 1.1.2
 
 Update `src/state_collapser/training/__init__.py` to export only the new stable
-surface names introduced in this gameplan.
+surface names introduced in this workplan.
 
 Initial expected exports:
 
@@ -1241,12 +1241,12 @@ Completion criteria:
 
 ## Phase 8: Paired Documentation Handoff
 
-### Stage 8.1: Trigger Documentation Gameplan Milestones
+### Stage 8.1: Trigger Documentation Workplan Milestones
 
 #### Action 8.1.1
 
 Coordinate with
-`01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_gameplan.md`.
+`01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_workplan.md`.
 
 Completion criteria:
 
@@ -1366,7 +1366,7 @@ Completion criteria:
 
 #### Action 10.2.1
 
-Verify that the paired documentation gameplan's generated docs describe the
+Verify that the paired documentation workplan's generated docs describe the
 actual implemented surfaces.
 
 Completion criteria:

@@ -8,15 +8,15 @@
   - first-wave example-family implementation completed
 - Governing blueprint:
   - [example_family_blueprint_from_mathematical_model_list.md]([state_collapser repository root]/docs/design/test_design/example_family_blueprint_from_mathematical_model_list.md)
-- Governing gameplan:
-  - [example_family_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/example_family_implementation_gameplan.md)
+- Governing workplan:
+  - [example_family_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/example_family_implementation_workplan.md)
 - Supporting evaluation methodology:
   - [evaluation_strategy.md]([state_collapser repository root]/docs/design/test_design/evaluation_strategy.md)
 - Prime-directive sources:
   - [prime_directive.md]([state_collapser repository root]/docs/prime_directive/prime_directive.md)
   - [common_failure_mode_001.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_001.md)
   - [common_failure_mode_002_implementation_without_owner_approval.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md)
-  - [common_failure_mode_003_gameplan_rewrite_during_implementation.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md)
+  - [common_failure_mode_003_workplan_rewrite_during_implementation.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md)
 
 ## Bound Family Set
 
@@ -68,7 +68,7 @@
 
 - Status: completed
 - Result:
-  - wrote the env-specific spec, gameplan, and implementation log
+  - wrote the env-specific spec, workplan, and implementation log
   - implemented:
     - `src/state_collapser/examples/articulated_loop_env/__init__.py`
     - `src/state_collapser/examples/articulated_loop_env/env.py`
@@ -86,7 +86,7 @@
 
 - Status: completed
 - Result:
-  - wrote the env-specific spec, gameplan, and implementation log
+  - wrote the env-specific spec, workplan, and implementation log
   - implemented:
     - `src/state_collapser/examples/dual_arm_manipulation_env/__init__.py`
     - `src/state_collapser/examples/dual_arm_manipulation_env/env.py`
@@ -103,7 +103,7 @@
 
 - Status: completed
 - Result:
-  - wrote the env-specific spec, gameplan, and implementation log
+  - wrote the env-specific spec, workplan, and implementation log
   - implemented:
     - `src/state_collapser/examples/cable_parallel_env/__init__.py`
     - `src/state_collapser/examples/cable_parallel_env/env.py`
@@ -120,7 +120,7 @@
 
 - Status: completed
 - Result:
-  - wrote the env-specific spec, gameplan, and implementation log
+  - wrote the env-specific spec, workplan, and implementation log
   - implemented:
     - `src/state_collapser/examples/parallelogram_singularity_env/__init__.py`
     - `src/state_collapser/examples/parallelogram_singularity_env/env.py`

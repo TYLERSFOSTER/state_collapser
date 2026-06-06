@@ -10,7 +10,7 @@ into concrete `state_collapser` evaluation environments under:
 
 - `src/state_collapser/examples/`
 
-It is not an implementation gameplan.
+It is not an implementation workplan.
 
 It is not a bibliography note.
 
@@ -19,7 +19,7 @@ It is a decision document whose job is to:
 - decide which cited example families should become package examples now
 - decide which should be deferred
 - explain why
-- sketch each chosen environment in enough detail that a later implementation gameplan can be written cleanly
+- sketch each chosen environment in enough detail that a later implementation workplan can be written cleanly
 
 It sits downstream of:
 
@@ -621,7 +621,7 @@ And create matching design folders:
 Each env folder should eventually get at least:
 
 - a spec
-- an implementation gameplan
+- an implementation workplan
 - an implementation log
 
 ## Final Summary

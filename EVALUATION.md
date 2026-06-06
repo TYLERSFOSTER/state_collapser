@@ -494,7 +494,7 @@ Evaluation and example design docs:
 
 - [docs/design/test_design/evaluation_strategy.md](./docs/design/test_design/evaluation_strategy.md)
 - [docs/design/test_design/example_family_blueprint_from_mathematical_model_list.md](./docs/design/test_design/example_family_blueprint_from_mathematical_model_list.md)
-- [docs/design/test_design/example_family_implementation_gameplan.md](./docs/design/test_design/example_family_implementation_gameplan.md)
+- [docs/design/test_design/example_family_implementation_workplan.md](./docs/design/test_design/example_family_implementation_workplan.md)
 
 Current example-family implementation trail:
 

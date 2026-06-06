@@ -16,7 +16,7 @@ This is a design document.
 
 It is not:
 
-- an implementation gameplan
+- an implementation workplan
 - a partial port note
 - a scratchpad of possible scopes
 
@@ -651,9 +651,9 @@ then the blueprint has failed.
 
 The next document after this blueprint should be:
 
-- an implementation gameplan in `Phase.Stage.Action` form
+- an implementation workplan in `Phase.Stage.Action` form
 
-That gameplan should take as fixed:
+That workplan should take as fixed:
 
 - first scope is three voices
 - flat constrained RL problem

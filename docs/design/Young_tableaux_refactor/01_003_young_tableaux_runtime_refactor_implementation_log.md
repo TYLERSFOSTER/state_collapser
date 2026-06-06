@@ -4,7 +4,7 @@
 
 This is the running implementation log for:
 
-- `docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_gameplan.md`
+- `docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_workplan.md`
 
 Implementation branch:
 
@@ -20,7 +20,7 @@ Status: Completed.
 
 Evidence:
 
-- Project Owner instruction: "Alright I think we're ready to implement this gameplan: `docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_gameplan.md` Make new branch to do this, per `prime_directive`. Proceed in correct Phase.Stage.Action step by step, again per `prime_directive`. Proceed."
+- Project Owner instruction: "Alright I think we're ready to implement this workplan: `docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_workplan.md` Make new branch to do this, per `prime_directive`. Proceed in correct Phase.Stage.Action step by step, again per `prime_directive`. Proceed."
 
 #### Action 0.1.2
 
@@ -75,7 +75,7 @@ Current reality summary:
 - `tests/integration/test_vertical_slice.py` still validates snapshot coherence,
   vista growth, local-star policy annotation messages, and cumulative rewards.
 
-Gameplan mismatch assessment:
+Workplan mismatch assessment:
 
 - No blocking mismatch found.
 - Existing tests encode the legacy runtime behavior that later phases are

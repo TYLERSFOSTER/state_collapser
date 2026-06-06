@@ -1,8 +1,8 @@
-# `rl_counterpoint_v3` Implementation Gameplan
+# `rl_counterpoint_v3` Implementation Workplan
 
 ## Status
 
-This document is the implementation gameplan for:
+This document is the implementation workplan for:
 
 - [01_002_rl_counterpoint_v3_blueprint.md]([state_collapser repository root]/docs/design/test_design/rl_counterpoint_v3/01_002_rl_counterpoint_v3_blueprint.md)
 
@@ -13,7 +13,7 @@ It is written under the authority of:
 - [docs/prime_directive/prime_directive.md]([state_collapser repository root]/docs/prime_directive/prime_directive.md)
 - [docs/prime_directive/common_failure_mode_001.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_001.md)
 - [docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md)
-- [docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md)
+- [docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md)
 
 It is intentionally operational.
 
@@ -32,15 +32,15 @@ Its job is to define:
 - the stop conditions
 - the acceptance criteria
 
-This gameplan is organized in `Phase.Stage.Action` form.
+This workplan is organized in `Phase.Stage.Action` form.
 
 ## Execution Contract
 
-### Rule 1 - Gameplan Is Law
+### Rule 1 - Workplan Is Law
 
 When implementation begins:
 
-- this gameplan is law
+- this workplan is law
 - the three-voice blueprint is law
 - the transformation report is law
 - the prime-directive stack is law
@@ -121,7 +121,7 @@ The log must record:
 
 - `docs/design/test_design/rl_counterpoint_v3/01_001_rl_counterpoint_v3_transformation_report.md`
 - `docs/design/test_design/rl_counterpoint_v3/01_002_rl_counterpoint_v3_blueprint.md`
-- `docs/design/test_design/rl_counterpoint_v3/01_003_rl_counterpoint_v3_implementation_gameplan.md`
+- `docs/design/test_design/rl_counterpoint_v3/01_003_rl_counterpoint_v3_implementation_workplan.md`
 - `docs/design/test_design/rl_counterpoint_v3/01_004_rl_counterpoint_v3_implementation_log.md`
 
 ### Code package targets

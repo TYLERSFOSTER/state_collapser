@@ -137,7 +137,7 @@ The repo then went through:
 - diagnosis
 - design correction
 - blueprint
-- gameplan
+- workplan
 - implementation
 
 to re-center tower construction under package-owned runtime authority.
@@ -254,12 +254,12 @@ That led to a specific corrective design note:
 
 This note preserved the older blueprint history but recorded the semantic correction explicitly.
 
-### B.4 — Control-correction blueprint and gameplan were then written
+### B.4 — Control-correction blueprint and workplan were then written
 
 The design stack then advanced through:
 
 - [01_016_find_lowest_unclosed_system_change_blueprint.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_016_find_lowest_unclosed_system_change_blueprint.md)
-- [01_017_find_lowest_unclosed_implementation_gameplan.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_gameplan.md)
+- [01_017_find_lowest_unclosed_implementation_workplan.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_workplan.md)
 
 This was the first correction pass after the initial exploit/explore merge.
 
@@ -368,7 +368,7 @@ The next documents in the stack were:
 
 - [01_019_package_owned_tower_construction_correction.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_019_package_owned_tower_construction_correction.md)
 - [01_020_package_owned_dynamic_tower_construction_blueprint.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_020_package_owned_dynamic_tower_construction_blueprint.md)
-- [01_021_package_owned_dynamic_tower_construction_implementation_gameplan.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_gameplan.md)
+- [01_021_package_owned_dynamic_tower_construction_implementation_workplan.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_workplan.md)
 
 These documents re-established the intended law:
 
@@ -455,7 +455,7 @@ The corrected idea was:
 This produced:
 
 - [01_022_tierwise_remaining_edge_contraction_blueprint.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_022_tierwise_remaining_edge_contraction_blueprint.md)
-- [01_023_tierwise_remaining_edge_contraction_implementation_gameplan.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_023_tierwise_remaining_edge_contraction_implementation_gameplan.md)
+- [01_023_tierwise_remaining_edge_contraction_implementation_workplan.md]([state_collapser repository root]/docs/design/HRL_exploit-explore/01_023_tierwise_remaining_edge_contraction_implementation_workplan.md)
 
 ### G.2 — Implementation
 
@@ -676,15 +676,15 @@ toward:
 
 - `docs/design/HRL_exploit-explore/01_015_abc_find_unclosed_correction.md`
 - `docs/design/HRL_exploit-explore/01_016_find_lowest_unclosed_system_change_blueprint.md`
-- `docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_gameplan.md`
+- `docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_workplan.md`
 - `docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_log.md`
 - `docs/design/HRL_exploit-explore/01_018_tower_construction_ownership_misalignment_diagnosis.md`
 - `docs/design/HRL_exploit-explore/01_019_package_owned_tower_construction_correction.md`
 - `docs/design/HRL_exploit-explore/01_020_package_owned_dynamic_tower_construction_blueprint.md`
-- `docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_gameplan.md`
+- `docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_workplan.md`
 - `docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_log.md`
 - `docs/design/HRL_exploit-explore/01_022_tierwise_remaining_edge_contraction_blueprint.md`
-- `docs/design/HRL_exploit-explore/01_023_tierwise_remaining_edge_contraction_implementation_gameplan.md`
+- `docs/design/HRL_exploit-explore/01_023_tierwise_remaining_edge_contraction_implementation_workplan.md`
 - `docs/design/HRL_exploit-explore/01_023_tierwise_remaining_edge_contraction_implementation_log.md`
 
 ### Package/readiness scoping

@@ -1,8 +1,8 @@
-# Degenerate Tier Control Implementation Gameplan
+# Degenerate Tier Control Implementation Workplan
 
 Date: 2026-05-30
 
-Status: implementation gameplan, not yet executed
+Status: implementation workplan, not yet executed
 
 Source blueprint:
 

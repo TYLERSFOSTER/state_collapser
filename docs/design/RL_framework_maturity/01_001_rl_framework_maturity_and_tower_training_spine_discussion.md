@@ -9,7 +9,7 @@ Status: discussion capture, not an implementation blueprint
 This document captures the current discussion about what "RL framework
 maturity" should mean for `state_collapser`.
 
-It is intentionally not yet a blueprint or implementation gameplan.
+It is intentionally not yet a blueprint or implementation workplan.
 
 The immediate purpose is to preserve the conceptual correction that emerged in
 conversation:
@@ -1017,7 +1017,7 @@ without making any one of them the whole identity of the project.
 
 The current discussion suggests a staged implementation path.
 
-This is not yet a committed gameplan.
+This is not yet a committed workplan.
 
 ## Stage 1: Document And Stabilize Current Training Data Contracts
 
@@ -3722,7 +3722,7 @@ My recommendation is:
 
 ```text
 Blueprint first.
-Then Phase.Stage.Action implementation gameplan.
+Then Phase.Stage.Action implementation workplan.
 Then branch before execution.
 ```
 

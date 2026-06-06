@@ -24,7 +24,7 @@ This interval begins after that `v0.4.0` release/readiness turn and continues th
 
 - Python-package-readiness planning after `v0.4.0`
 - a split between the polished outsider-package route and the lighter research-mode package route
-- creation of a research-mode package implementation gameplan
+- creation of a research-mode package implementation workplan
 - a major consolidation of the `logHRL.tex` research paper
 - a long mathematical/design correction cycle around the quotient-tower algorithm
 - replacement of the earlier equivalence-relation framing with nested state/action partition tables
@@ -71,7 +71,7 @@ At the end of this interval, the repository has:
 
 - a polished-outsider-package blueprint
 - a lighter research-mode package blueprint
-- a Phase.Stage.Action implementation gameplan for the research-mode package route
+- a Phase.Stage.Action implementation workplan for the research-mode package route
 - a much more mature `logHRL.tex`
 - a first completed draft PDF of the `logHRL` research document
 - preserved earlier TeX drafts under `docs/design/drafts_research_doc/`
@@ -151,7 +151,7 @@ Then the Project Owner chose to explore the lighter route:
 
 That lighter route was then turned into:
 
-- [01_004_research_mode_package_implementation_gameplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_gameplan.md)
+- [01_004_research_mode_package_implementation_workplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_workplan.md)
 
 The important outcome is that the repo no longer has only a vague "make package usable" direction. It now has two distinct readiness standards.
 
@@ -381,7 +381,7 @@ Most importantly, the Project Owner:
 
 4. Accepted the research-mode route as the appropriate next package-readiness path.
 
-5. Requested the research-mode Phase.Stage.Action implementation gameplan.
+5. Requested the research-mode Phase.Stage.Action implementation workplan.
 
 6. Repeatedly framed the package as still research-mode rather than as a falsely polished outsider library.
 
@@ -498,8 +498,8 @@ The assistant contributed primarily by:
 3. Drafting the research-mode package blueprint:
    - [01_003_research_mode_package_blueprint.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_003_research_mode_package_blueprint.md)
 
-4. Drafting the research-mode package implementation gameplan:
-   - [01_004_research_mode_package_implementation_gameplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_gameplan.md)
+4. Drafting the research-mode package implementation workplan:
+   - [01_004_research_mode_package_implementation_workplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_workplan.md)
 
 5. Answering package-readiness questions about local path anonymization.
 
@@ -637,17 +637,17 @@ The research-mode blueprint targets:
 - clear entrypoints
 - explicit pre-alpha status
 
-The Project Owner approved this direction and requested an implementation gameplan.
+The Project Owner approved this direction and requested an implementation workplan.
 
 The assistant created:
 
-- [01_004_research_mode_package_implementation_gameplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_gameplan.md)
+- [01_004_research_mode_package_implementation_workplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_workplan.md)
 
-The gameplan is governed by branch discipline and explicitly references:
+The workplan is governed by branch discipline and explicitly references:
 
 - [docs/prime_directive/git_practices.md]([state_collapser repository root]/docs/prime_directive/git_practices.md)
 
-The gameplan's important execution laws include:
+The workplan's important execution laws include:
 
 - branch discipline is mandatory
 - research-mode honesty is mandatory
@@ -658,7 +658,7 @@ The gameplan's important execution laws include:
 - every change must improve newcomer legibility
 - stop conditions must be respected
 
-This package-readiness work is now ready for a future implementation branch, but this interval did not execute that implementation gameplan.
+This package-readiness work is now ready for a future implementation branch, but this interval did not execute that implementation workplan.
 
 ## Phase B - README and badge/package metadata cleanup
 
@@ -1169,7 +1169,7 @@ After this report is created, the working tree should show this new continuity r
 
 - [01_002_polished_outsider_package_blueprint.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_002_polished_outsider_package_blueprint.md)
 - [01_003_research_mode_package_blueprint.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_003_research_mode_package_blueprint.md)
-- [01_004_research_mode_package_implementation_gameplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_gameplan.md)
+- [01_004_research_mode_package_implementation_workplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_workplan.md)
 
 ### Research paper and bibliography
 
@@ -1248,7 +1248,7 @@ It is not yet an empirical result.
 
 ### Package-level risks
 
-- The research-mode package implementation gameplan has not yet been executed.
+- The research-mode package implementation workplan has not yet been executed.
 - There is not yet a `01_005_research_mode_package_implementation_log.md`.
 - The package still needs benchmark-grade evidence.
 - The README/package docs still need eventual alignment with whatever research-mode implementation actually does.
@@ -1287,9 +1287,9 @@ Before editing it:
 
 If continuing package-readiness work:
 
-- start from [01_004_research_mode_package_implementation_gameplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_gameplan.md)
+- start from [01_004_research_mode_package_implementation_workplan.md]([state_collapser repository root]/docs/design/PyPl_readiness/01_004_research_mode_package_implementation_workplan.md)
 - create a dedicated implementation branch before execution
-- create the implementation log specified by that gameplan
+- create the implementation log specified by that workplan
 - do not silently escalate into the polished-outsider-package route
 
 If continuing paper work:
@@ -1322,5 +1322,5 @@ The assistant's core contribution was to draft, transfer, organize, compile, and
 
 The project is now better positioned for the next two major pushes:
 
-- execute the research-mode package-readiness gameplan
+- execute the research-mode package-readiness workplan
 - finish and review the `logHRL.tex` paper against real benchmarks

@@ -14,10 +14,10 @@ Blueprint:
 docs/design/synthetic_blow_revisions_02/01_001_synthetic_blow_revisions_02_blueprint.md
 ```
 
-Gameplan:
+Workplan:
 
 ```text
-docs/design/synthetic_blow_revisions_02/01_002_synthetic_blow_revisions_02_implementation_gameplan.md
+docs/design/synthetic_blow_revisions_02/01_002_synthetic_blow_revisions_02_implementation_workplan.md
 ```
 
 Downstream handoff:
@@ -49,10 +49,10 @@ Completed directive re-read:
 ```text
 docs/prime_directive/git_practices.md
 docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md
-docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md
+docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md
 ```
 
-Project Owner explicitly requested execution of the gameplan and update of the
+Project Owner explicitly requested execution of the workplan and update of the
 downstream handoff document.
 
 Branch creation required escalated permission because the sandbox could not
@@ -369,7 +369,7 @@ Phase 5 changes:
   future work.
 - `docs/artifact_contracts.md` was refreshed to current artifact reality:
   `LiveRuntimeView`, `RuntimeSnapshot`, `LinearizationConfig`,
-  `LinearizationReport`, design blueprints, implementation gameplans,
+  `LinearizationReport`, design blueprints, implementation workplans,
   implementation logs, engineer continuity reports, and deferred serious
   benchmark bundles.
 
@@ -414,7 +414,7 @@ Struck-through items intentionally not implemented:
 - package-owned neural model family;
 - direct `big_boy_benchmarking` repo integration.
 
-Deviations from gameplan:
+Deviations from workplan:
 
 ```text
 None requiring Project Owner approval.

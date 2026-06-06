@@ -2,7 +2,7 @@
 
 Date: 2026-05-29
 
-Status: blueprint, not implementation gameplan
+Status: blueprint, not implementation workplan
 
 Source documents:
 
@@ -586,4 +586,4 @@ The architecture is ready for implementation when it can answer:
 - What is explicitly deferred?
 
 This blueprint answers those questions. It should be followed by the paired
-engineer-usage blueprint before implementation gameplanning.
+engineer-usage blueprint before implementation workplanning.

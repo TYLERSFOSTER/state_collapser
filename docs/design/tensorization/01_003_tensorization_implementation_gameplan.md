@@ -1,10 +1,10 @@
-# Tensorization Implementation Gameplan
+# Tensorization Implementation Workplan
 
 Date: 2026-05-29
 
-Status: implementation gameplan, not implementation
+Status: implementation workplan, not implementation
 
-This document is the Phase.Stage.Action implementation gameplan for:
+This document is the Phase.Stage.Action implementation workplan for:
 
 - `docs/design/tensorization/01_001_tensorization_architecture_blueprint.md`
 - `docs/design/tensorization/01_002_tensorization_engineer_usage_blueprint.md`
@@ -24,12 +24,12 @@ It is downstream of:
 - `docs/prime_directive/prime_directive.md`
 - `docs/prime_directive/git_practices.md`
 - `docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md`
-- `docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md`
+- `docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md`
 
 No source-code execution should begin until the Project Owner explicitly
-approves execution of this gameplan.
+approves execution of this workplan.
 
-Once approved, this gameplan is law. If repository reality conflicts with any
+Once approved, this workplan is law. If repository reality conflicts with any
 Phase.Stage.Action item below, the implementer must stop, identify the exact
 failed item, and ask the Project Owner for guidance. Silent simplification,
 silent reordering, and silent reinterpretation are forbidden.
@@ -131,7 +131,7 @@ execution.
 16. A tiny Torch smoke model is allowed only under tests/examples. It is not a
     package model family.
 
-## Fixed Defaults For This Gameplan
+## Fixed Defaults For This Workplan
 
 Unless the Project Owner changes these before execution, implementation uses the
 following defaults.
@@ -196,7 +196,7 @@ following defaults.
 
 ## Explicit Non-Goals
 
-This gameplan does not implement:
+This workplan does not implement:
 
 - PPO
 - DQN
@@ -238,7 +238,7 @@ occur.
   design.
 - A proposed "small helper" becomes an implicit learner framework.
 - A test encodes behavior that contradicts the blueprint.
-- Any file or symbol named in this gameplan no longer exists.
+- Any file or symbol named in this workplan no longer exists.
 
 ## Required Branch Discipline
 
@@ -282,7 +282,7 @@ The log must record:
 - authorized deviations
 - final validation status
 
-The log must not rewrite the gameplan during execution. If the gameplan is
+The log must not rewrite the workplan during execution. If the workplan is
 wrong, stop and ask the Project Owner.
 
 ## Validation Command Set
@@ -336,7 +336,7 @@ editing further.
 
 #### Action 0.1.1
 
-Confirm the Project Owner has explicitly approved execution of this gameplan.
+Confirm the Project Owner has explicitly approved execution of this workplan.
 
 Completion criteria:
 
@@ -364,7 +364,7 @@ Completion criteria:
 
 Stop condition:
 
-- If the working tree contains unrelated changes in files this gameplan must
+- If the working tree contains unrelated changes in files this workplan must
   edit, stop and ask the Project Owner how to proceed.
 
 ### Stage 0.2: Bind Current Repository Reality
@@ -419,7 +419,7 @@ Completion criteria:
 Stop condition:
 
 - If dependency posture has changed, stop and ask whether to revise this
-  gameplan.
+  workplan.
 
 ## Phase 1: Establish Backend-Independent Linearization Skeleton
 
@@ -1618,7 +1618,7 @@ Required content:
 - whether NumPy remained optional
 - whether Torch remained behind `ml`
 - HGraphML compatibility result
-- any deviations from this gameplan
+- any deviations from this workplan
 
 Completion criteria:
 

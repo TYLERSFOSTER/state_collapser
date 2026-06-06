@@ -1,8 +1,8 @@
-# Pointwise Liftability And Source-Support Implementation Gameplan
+# Pointwise Liftability And Source-Support Implementation Workplan
 
 Date: 2026-06-04
 
-Status: implementation gameplan, not yet executed
+Status: implementation workplan, not yet executed
 
 Authority:
 
@@ -11,12 +11,12 @@ docs/design/pointwise_liftability_source_support/01_001_pointwise_liftability_so
 docs/prime_directive/prime_directive.md
 docs/prime_directive/git_practices.md
 docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md
-docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md
+docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md
 ```
 
 ## Purpose
 
-This gameplan turns the pointwise liftability/source-support blueprint into an
+This workplan turns the pointwise liftability/source-support blueprint into an
 ordered implementation procedure.
 
 The implementation goal is to separate:
@@ -47,14 +47,14 @@ The implementation must add:
 
 ## Prime Directive Execution Rule
 
-This gameplan is not implementation approval by itself.
+This workplan is not implementation approval by itself.
 
 Execution requires explicit PO approval after this document exists.
 
 Once approved:
 
 ```text
-this gameplan is law
+this workplan is law
 ```
 
 Implementation must proceed in Phase.Stage.Action order unless the PO
@@ -79,7 +79,7 @@ Suggested branch:
 git switch -c codex/pointwise-liftability-source-support
 ```
 
-Do not implement this gameplan directly on `main`.
+Do not implement this workplan directly on `main`.
 
 ## Running Log Rule
 
@@ -124,10 +124,10 @@ Read:
 
 ```text
 docs/prime_directive/git_practices.md
-docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md
+docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md
 ```
 
-Confirm the branch rule and exact-gameplan rule before touching source code.
+Confirm the branch rule and exact-workplan rule before touching source code.
 
 #### Phase 0.Stage 1.Action 2
 
@@ -165,7 +165,7 @@ Include:
 - date;
 - branch name;
 - blueprint path;
-- gameplan path;
+- workplan path;
 - implementation status table;
 - validation section;
 - surprise/blocker section.
@@ -188,7 +188,7 @@ uv run pytest tests/tower/partition tests/training tests/tower/control tests/exa
 
 Record baseline results in the implementation log.
 
-If baseline fails for reasons unrelated to this gameplan, stop and ask the PO.
+If baseline fails for reasons unrelated to this workplan, stop and ask the PO.
 
 ## Phase 1: Test Fixtures For The Isolated Failure
 

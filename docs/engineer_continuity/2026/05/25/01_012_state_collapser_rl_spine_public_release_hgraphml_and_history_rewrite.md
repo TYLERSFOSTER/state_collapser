@@ -214,7 +214,7 @@ Specifically, the PO:
 Codex supplied:
 
 - synthesis of the RL framework comparison,
-- design documentation and implementation gameplans,
+- design documentation and implementation workplans,
 - code and documentation edits,
 - package-level validation,
 - release/security audit analysis,
@@ -307,8 +307,8 @@ This became the basis for the design series:
 - `docs/design/RL_framework_maturity/01_001_rl_framework_maturity_and_tower_training_spine_discussion.md`
 - `docs/design/RL_framework_maturity/01_002_fiber_conditioned_training_spine_blueprint.md`
 - `docs/design/RL_framework_maturity/01_003_fiber_conditioned_training_spine_engineer_documentation_blueprint.md`
-- `docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_gameplan.md`
-- `docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_gameplan.md`
+- `docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_workplan.md`
+- `docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_workplan.md`
 - `docs/design/RL_framework_maturity/01_006_fiber_conditioned_training_spine_paired_implementation_log.md`
 
 The corresponding implementation commit was private-history:

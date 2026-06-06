@@ -1,4 +1,4 @@
-# Parallelogram Singularity Env Implementation Gameplan
+# Parallelogram Singularity Env Implementation Workplan
 
 ## Status
 

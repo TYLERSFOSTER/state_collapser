@@ -1,8 +1,8 @@
-# Synthetic Blow Revisions 02 Implementation Gameplan
+# Synthetic Blow Revisions 02 Implementation Workplan
 
 Date: 2026-06-04
 
-Status: implementation gameplan, not yet executed
+Status: implementation workplan, not yet executed
 
 Source blueprint:
 
@@ -22,7 +22,7 @@ Prime directive authority:
 docs/prime_directive/prime_directive.md
 docs/prime_directive/git_practices.md
 docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md
-docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md
+docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md
 ```
 
 Downstream handoff:
@@ -33,7 +33,7 @@ big_boy_benchmarking_synthetic_blow_revisions_02_handoff.md
 
 ## Purpose
 
-This gameplan turns the second synthetic-Blow-review revision blueprint into an
+This workplan turns the second synthetic-Blow-review revision blueprint into an
 ordered implementation procedure.
 
 The implementation target is deliberately narrow:
@@ -48,14 +48,14 @@ The implementation must not reopen the Project Owner's struck-through items.
 
 ## Prime Directive Execution Rule
 
-This gameplan is not implementation approval by itself.
+This workplan is not implementation approval by itself.
 
 Execution requires explicit Project Owner approval after this document exists.
 
 Once approved:
 
 ```text
-this gameplan is law
+this workplan is law
 ```
 
 Implementation must proceed in Phase.Stage.Action order unless the Project Owner
@@ -81,7 +81,7 @@ Suggested branch:
 git switch -c codex/synthetic-blow-revisions-02
 ```
 
-Do not execute this gameplan directly on `main`.
+Do not execute this workplan directly on `main`.
 
 ## Running Log Rule
 
@@ -162,7 +162,7 @@ Read:
 ```text
 docs/prime_directive/git_practices.md
 docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md
-docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md
+docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md
 ```
 
 Confirm that execution has explicit Project Owner approval. If approval has not
@@ -205,7 +205,7 @@ Include:
 - date;
 - branch name;
 - blueprint path;
-- gameplan path;
+- workplan path;
 - status table for each phase;
 - validation section;
 - dependency/lockfile section;
@@ -1101,7 +1101,7 @@ The refreshed document must represent current artifact reality:
 - live runtime view surfaces such as `LiveRuntimeView`;
 - tensorization metadata such as `LinearizationConfig` and
   `LinearizationReport`;
-- design/gameplan/log/continuity artifacts;
+- design/workplan/log/continuity artifacts;
 - deferred benchmark artifacts as future work, not implemented outputs.
 
 #### Phase 5.Stage 2.Action 3
@@ -1324,7 +1324,7 @@ Run:
 git diff --stat
 ```
 
-Inspect whether changed files match this gameplan.
+Inspect whether changed files match this workplan.
 
 #### Phase 7.Stage 3.Action 3
 
@@ -1371,7 +1371,7 @@ The log must state:
 
 #### Phase 8.Stage 1.Action 2
 
-Record any deviations from the gameplan.
+Record any deviations from the workplan.
 
 If there were no deviations, say so explicitly.
 

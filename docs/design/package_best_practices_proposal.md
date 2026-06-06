@@ -19,7 +19,7 @@ The current code still treats most of these as provisional internal surfaces rat
 For current implementation authority, defer to:
 
 - `docs/design/final_initial/final_initial_blueprint.md`
-- `docs/design/final_initial/final_initial_implementation_gameplan.md`
+- `docs/design/final_initial/final_initial_implementation_workplan.md`
 
 ## Purpose
 

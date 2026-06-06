@@ -4,18 +4,18 @@
 
 This is the running implementation log for:
 
-- [01_003_rl_counterpoint_v3_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/rl_counterpoint_v3/01_003_rl_counterpoint_v3_implementation_gameplan.md)
+- [01_003_rl_counterpoint_v3_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/rl_counterpoint_v3/01_003_rl_counterpoint_v3_implementation_workplan.md)
 
 The implementation is governed by:
 
 - [01_001_rl_counterpoint_v3_transformation_report.md]([state_collapser repository root]/docs/design/test_design/rl_counterpoint_v3/01_001_rl_counterpoint_v3_transformation_report.md)
 - [01_002_rl_counterpoint_v3_blueprint.md]([state_collapser repository root]/docs/design/test_design/rl_counterpoint_v3/01_002_rl_counterpoint_v3_blueprint.md)
-- [01_003_rl_counterpoint_v3_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/rl_counterpoint_v3/01_003_rl_counterpoint_v3_implementation_gameplan.md)
+- [01_003_rl_counterpoint_v3_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/rl_counterpoint_v3/01_003_rl_counterpoint_v3_implementation_workplan.md)
 - [docs/design/test_design/evaluation_strategy.md]([state_collapser repository root]/docs/design/test_design/evaluation_strategy.md)
 - [docs/prime_directive/prime_directive.md]([state_collapser repository root]/docs/prime_directive/prime_directive.md)
 - [docs/prime_directive/common_failure_mode_001.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_001.md)
 - [docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md)
-- [docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md)
+- [docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md)
 
 ## Action-Completion Entries
 

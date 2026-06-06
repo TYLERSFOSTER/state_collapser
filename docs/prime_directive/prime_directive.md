@@ -918,7 +918,7 @@ Nothing in between is compliant.
 ---
 ---
 # Just a short addendum: Prime directive for turns...
-Each "trun response" from LLM should consist of these pieces, either at once or in sequence: -1. A brief, high level description of action, and how it fits into whatever larger, present gameplan the engineer is operating under, 0. request to see scripts (if orientation to ground truth is needed), 1. Machine executable instruction for me (such as changing a particular script, or doing something else through my local machine), 2. Unit tests to add, change, or run, 3. Failure hypotheses.
+Each "trun response" from LLM should consist of these pieces, either at once or in sequence: -1. A brief, high level description of action, and how it fits into whatever larger, present workplan the engineer is operating under, 0. request to see scripts (if orientation to ground truth is needed), 1. Machine executable instruction for me (such as changing a particular script, or doing something else through my local machine), 2. Unit tests to add, change, or run, 3. Failure hypotheses.
 
 All work is divided into "phases". A good first approx to what the Phases for this project might be are:
 

@@ -19,7 +19,7 @@ but it is intentionally broader than that one phrase.
 
 This document is not:
 
-- an implementation gameplan
+- an implementation workplan
 - a benchmark protocol
 - a specific learner blueprint
 - a neural-network selection recommendation

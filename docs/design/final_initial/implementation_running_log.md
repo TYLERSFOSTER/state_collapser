@@ -4,7 +4,7 @@
 
 ### Phase 1.Stage 1.Action 1.1.1
 
-- Re-read the blueprint and gameplan before touching code.
+- Re-read the blueprint and workplan before touching code.
 - Created the six required core modules:
   - `src/state_collapser/core/state.py`
   - `src/state_collapser/core/action.py`
@@ -26,7 +26,7 @@
 
 ### Phase 1.Stage 1.Action 1.1.2
 
-- Re-read the gameplan action before editing `State`.
+- Re-read the workplan action before editing `State`.
 - Implemented `State` in `src/state_collapser/core/state.py` as a frozen dataclass with:
   - stable hash/equality from frozen dataclass semantics
   - readable repr from dataclass repr
@@ -44,7 +44,7 @@
 
 ### Phase 1.Stage 1.Action 1.1.3
 
-- Re-read the gameplan action before editing `PrimitiveAction`.
+- Re-read the workplan action before editing `PrimitiveAction`.
 - Implemented `PrimitiveAction` in `src/state_collapser/core/action.py` as a frozen dataclass with:
   - `payload`
   - optional `identity`
@@ -60,7 +60,7 @@
 
 ### Phase 1.Stage 1.Action 1.1.4
 
-- Re-read the gameplan action before editing `BaseEdge`.
+- Re-read the workplan action before editing `BaseEdge`.
 - Implemented `BaseEdge` in `src/state_collapser/core/edges.py` as a frozen dataclass with:
   - `source`
   - `action`
@@ -74,7 +74,7 @@
 
 ### Phase 1.Stage 2.Action 1.2.1
 
-- Re-read the gameplan action before creating tests.
+- Re-read the workplan action before creating tests.
 - Added the three required test modules:
   - `tests/core/test_state.py`
   - `tests/core/test_action.py`
@@ -86,7 +86,7 @@
 
 ### Phase 1.Stage 2.Action 1.2.2
 
-- Re-read the gameplan action before writing `State` tests.
+- Re-read the workplan action before writing `State` tests.
 - Implemented the required `State` tests in `tests/core/test_state.py`:
   - equality of identical payloads
   - inequality of distinct payloads
@@ -99,11 +99,11 @@
   - `uv` was not available on shell `PATH`
   - `.venv/bin/uv` was not present
   - used the actual repo-local executable `.venv/bin/pytest` instead
-- No design ambiguity or gameplan conflict encountered in this action.
+- No design ambiguity or workplan conflict encountered in this action.
 
 ### Phase 1.Stage 2.Action 1.2.3
 
-- Re-read the gameplan action before writing `PrimitiveAction` tests.
+- Re-read the workplan action before writing `PrimitiveAction` tests.
 - Implemented the required `PrimitiveAction` tests in `tests/core/test_action.py`:
   - equality
   - inequality
@@ -117,7 +117,7 @@
 
 ### Phase 1.Stage 2.Action 1.2.4
 
-- Re-read the gameplan action before writing `BaseEdge` tests.
+- Re-read the workplan action before writing `BaseEdge` tests.
 - Implemented the required `BaseEdge` tests in `tests/core/test_edges.py`:
   - edge equality
   - edge hashing
@@ -130,7 +130,7 @@
 
 ### Phase 2.Stage 1.Action 2.1.1
 
-- Re-read the gameplan action before creating graph-contract files.
+- Re-read the workplan action before creating graph-contract files.
 - Added the two required files:
   - `src/state_collapser/graph/spec.py`
   - `src/state_collapser/graph/hidden_graph.py`
@@ -141,7 +141,7 @@
 
 ### Phase 2.Stage 1.Action 2.1.2
 
-- Re-read the gameplan action before editing `GraphSpec`.
+- Re-read the workplan action before editing `GraphSpec`.
 - Implemented `GraphSpec` in `src/state_collapser/graph/spec.py` as an immutable dataclass contract object with:
   - `name`
   - `rules`
@@ -155,7 +155,7 @@
 
 ### Phase 2.Stage 1.Action 2.1.3
 
-- Re-read the gameplan action before editing `HiddenGraph`.
+- Re-read the workplan action before editing `HiddenGraph`.
 - Implemented `HiddenGraph` in `src/state_collapser/graph/hidden_graph.py` as a protocol with the required methods:
   - `is_valid_state`
   - `is_valid_action`
@@ -171,7 +171,7 @@
 
 ### Phase 2.Stage 2.Action 2.2.1
 
-- Re-read the gameplan action before creating the hidden-graph contract tests.
+- Re-read the workplan action before creating the hidden-graph contract tests.
 - Added the required test module:
   - `tests/graph/test_hidden_graph_contract.py`
 - Verification:
@@ -181,7 +181,7 @@
 
 ### Phase 2.Stage 2.Action 2.2.2
 
-- Re-read the gameplan action before writing the hidden-graph contract tests.
+- Re-read the workplan action before writing the hidden-graph contract tests.
 - Implemented a tiny stub hidden graph in `tests/graph/test_hidden_graph_contract.py`.
 - Implemented the required tests:
   - `apply_action` agrees with `is_valid_edge`
@@ -194,7 +194,7 @@
 
 ### Phase 3.Stage 1.Action 3.1.1
 
-- Re-read the gameplan action before creating the explored-graph file.
+- Re-read the workplan action before creating the explored-graph file.
 - Added the required implementation file:
   - `src/state_collapser/graph/explored_graph.py`
 - Verification:
@@ -204,7 +204,7 @@
 
 ### Phase 3.Stage 1.Action 3.1.2
 
-- Re-read the gameplan action before implementing `ExploredGraph`.
+- Re-read the workplan action before implementing `ExploredGraph`.
 - Implemented `ExploredGraph` in `src/state_collapser/graph/explored_graph.py` with:
   - unique visited-state store
   - unique visited-edge store
@@ -227,7 +227,7 @@
 
 ### Phase 3.Stage 2.Action 3.2.1
 
-- Re-read the gameplan action before creating explored-graph tests.
+- Re-read the workplan action before creating explored-graph tests.
 - Added the required test module:
   - `tests/graph/test_explored_graph.py`
 - Verification:
@@ -237,7 +237,7 @@
 
 ### Phase 3.Stage 2.Action 3.2.2
 
-- Re-read the gameplan action before writing explored-graph tests.
+- Re-read the workplan action before writing explored-graph tests.
 - Implemented the required `ExploredGraph` tests in `tests/graph/test_explored_graph.py`:
   - adding a state once
   - adding multiple states
@@ -251,7 +251,7 @@
 
 ### Phase 4.Stage 1.Action 4.1.1
 
-- Re-read the gameplan action before implementing `NodeAnnotationStore`.
+- Re-read the workplan action before implementing `NodeAnnotationStore`.
 - Implemented `NodeAnnotationStore` in `src/state_collapser/core/annotations.py` with the required capabilities:
   - local labels
   - local notes
@@ -268,7 +268,7 @@
 
 ### Phase 4.Stage 1.Action 4.1.2
 
-- Re-read the gameplan action before adding tier-query methods.
+- Re-read the workplan action before adding tier-query methods.
 - Implemented the explicit `NodeAnnotationStore` query methods:
   - `outgoing_knowledge_exact(tier)`
   - `outgoing_knowledge_upto(tier)`
@@ -280,7 +280,7 @@
 
 ### Phase 4.Stage 2.Action 4.2.1
 
-- Re-read the gameplan action before implementing `VistaPayload`.
+- Re-read the workplan action before implementing `VistaPayload`.
 - Implemented `VistaPayload` in `src/state_collapser/core/annotations.py` as a frozen dataclass carrying:
   - outgoing edge set
   - reachable target states
@@ -295,7 +295,7 @@
 
 ### Phase 4.Stage 3.Action 4.3.1
 
-- Re-read the gameplan action before creating vista-layer files.
+- Re-read the workplan action before creating vista-layer files.
 - Added the two required implementation files:
   - `src/state_collapser/graph/vista_graph.py`
   - `src/state_collapser/graph/local_star.py`
@@ -306,7 +306,7 @@
 
 ### Phase 4.Stage 3.Action 4.3.2
 
-- Re-read the gameplan action before implementing `VistaGraph`.
+- Re-read the workplan action before implementing `VistaGraph`.
 - Implemented `VistaGraph` in `src/state_collapser/graph/vista_graph.py` with:
   - hidden-graph + explored-graph references
   - local `1`-hop neighborhood cache
@@ -328,7 +328,7 @@
 
 ### Phase 4.Stage 3.Action 4.3.3
 
-- Re-read the gameplan action before implementing `LocalStar`.
+- Re-read the workplan action before implementing `LocalStar`.
 - Implemented `LocalStar` in `src/state_collapser/graph/local_star.py` as a frozen dataclass carrying:
   - center state
   - outgoing edges
@@ -341,7 +341,7 @@
 
 ### Phase 4.Stage 4.Action 4.4.1
 
-- Re-read the gameplan action before creating vista-layer tests.
+- Re-read the workplan action before creating vista-layer tests.
 - Added the three required test modules:
   - `tests/graph/test_annotations.py`
   - `tests/graph/test_vista_graph.py`
@@ -353,7 +353,7 @@
 
 ### Phase 4.Stage 4.Action 4.4.2
 
-- Re-read the gameplan action before writing `NodeAnnotationStore` tests.
+- Re-read the workplan action before writing `NodeAnnotationStore` tests.
 - Implemented the required `NodeAnnotationStore` tests in `tests/graph/test_annotations.py`:
   - storing labels and notes
   - receiving push/pull payloads
@@ -366,7 +366,7 @@
 
 ### Phase 4.Stage 4.Action 4.4.3
 
-- Re-read the gameplan action before adding `VistaPayload` tests.
+- Re-read the workplan action before adding `VistaPayload` tests.
 - Implemented the required `VistaPayload` tests in `tests/graph/test_annotations.py`:
   - payload contents preserved
   - labels preserved
@@ -377,7 +377,7 @@
 
 ### Phase 4.Stage 4.Action 4.4.4
 
-- Re-read the gameplan action before writing `VistaGraph` tests.
+- Re-read the workplan action before writing `VistaGraph` tests.
 - Implemented the required `VistaGraph` tests in `tests/graph/test_vista_graph.py`:
   - `1`-hop refresh populates vista
   - push operation updates target-side annotation state
@@ -395,7 +395,7 @@
 
 ### Phase 4.Stage 4.Action 4.4.5
 
-- Re-read the gameplan action before writing `LocalStar` tests.
+- Re-read the workplan action before writing `LocalStar` tests.
 - Implemented the required `LocalStar` tests in `tests/graph/test_local_star.py`:
   - local star reflects current vista data
   - local labels and annotations are included
@@ -406,7 +406,7 @@
 
 ### Phase 5.Stage 1.Action 5.1.1
 
-- Re-read the gameplan action before creating contraction-policy contract files.
+- Re-read the workplan action before creating contraction-policy contract files.
 - Added the two required implementation files:
   - `src/state_collapser/contract/policy.py`
   - `src/state_collapser/contract/selection.py`
@@ -417,7 +417,7 @@
 
 ### Phase 5.Stage 1.Action 5.1.2
 
-- Re-read the gameplan action before defining the policy contracts.
+- Re-read the workplan action before defining the policy contracts.
 - Implemented:
   - `EdgeSelection` as a frozen dataclass of selected edges
   - `ContractionPolicy` as a protocol with `select(local_star) -> EdgeSelection`
@@ -429,7 +429,7 @@
 
 ### Phase 5.Stage 2.Action 5.2.1
 
-- Re-read the gameplan action before implementing the label-based policy.
+- Re-read the workplan action before implementing the label-based policy.
 - Implemented `LabelContractionPolicy` in `src/state_collapser/contract/policy.py`.
 - Scope correction:
   - initially drifted into seeded-random policy code while editing the policy module
@@ -443,7 +443,7 @@
 
 ### Phase 5.Stage 3.Action 5.3.1
 
-- Re-read the gameplan action before implementing the seeded-random policy.
+- Re-read the workplan action before implementing the seeded-random policy.
 - Implemented `SeededRandomContractionPolicy` in `src/state_collapser/contract/policy.py`.
 - Behavior implemented:
   - deterministic random subset selection from local-star outgoing edges
@@ -456,7 +456,7 @@
 
 ### Phase 5.Stage 4.Action 5.4.1
 
-- Re-read the gameplan action before creating contraction-policy tests.
+- Re-read the workplan action before creating contraction-policy tests.
 - Added the two required test modules:
   - `tests/contract/test_label_policy.py`
   - `tests/contract/test_random_policy.py`
@@ -467,7 +467,7 @@
 
 ### Phase 5.Stage 4.Action 5.4.2
 
-- Re-read the gameplan action before writing label-policy tests.
+- Re-read the workplan action before writing label-policy tests.
 - Implemented the required label-policy tests in `tests/contract/test_label_policy.py`:
   - correct edges selected by label
   - only requested labels selected
@@ -479,7 +479,7 @@
 
 ### Phase 5.Stage 4.Action 5.4.3
 
-- Re-read the gameplan action before writing seeded-random policy tests.
+- Re-read the workplan action before writing seeded-random policy tests.
 - Implemented the required seeded-random policy tests in `tests/contract/test_random_policy.py`:
   - deterministic output under fixed seed
   - output is subset of local star
@@ -491,7 +491,7 @@
 
 ### Phase 6.Stage 1.Action 6.1.1
 
-- Re-read the gameplan action before creating quotient-tier files.
+- Re-read the workplan action before creating quotient-tier files.
 - Added the three required implementation files:
   - `src/state_collapser/quotient/projection.py`
   - `src/state_collapser/quotient/cosets.py`
@@ -503,7 +503,7 @@
 
 ### Phase 6.Stage 1.Action 6.1.2
 
-- Re-read the gameplan action before implementing quotient projection/coset storage.
+- Re-read the workplan action before implementing quotient projection/coset storage.
 - Implemented explicit:
   - state-to-quotient-node projection map
   - edge-to-quotient-edge projection map
@@ -520,7 +520,7 @@
 
 ### Phase 6.Stage 1.Action 6.1.3
 
-- Re-read the gameplan action before adding cumulative quotient-tier knowledge behavior.
+- Re-read the workplan action before adding cumulative quotient-tier knowledge behavior.
 - Implemented cumulative tier knowledge on `QuotientTierView` with:
   - `add_outgoing_knowledge`
   - `outgoing_edge_knowledge_exact`
@@ -532,7 +532,7 @@
 
 ### Phase 6.Stage 2.Action 6.2.1
 
-- Re-read the gameplan action before creating quotient tests.
+- Re-read the workplan action before creating quotient tests.
 - Added the three required test modules:
   - `tests/quotient/test_projection.py`
   - `tests/quotient/test_cosets.py`
@@ -544,7 +544,7 @@
 
 ### Phase 6.Stage 2.Action 6.2.2
 
-- Re-read the gameplan action before writing quotient-layer tests.
+- Re-read the workplan action before writing quotient-layer tests.
 - While preparing the tests, identified a genuine missing prerequisite:
   - the action required testing current tier-position storage
   - the prior Phase 6 implementation actions had not yet created that storage
@@ -569,7 +569,7 @@
 
 ### Phase 7.Stage 1.Action 7.1.1
 
-- Re-read the gameplan action before replacing reward placeholders.
+- Re-read the workplan action before replacing reward placeholders.
 - Replaced the reward placeholders in `src/state_collapser/core/rewards.py` with the three concrete reward objects required by the action:
   - `StepReward`
   - `PathRewardSummary`
@@ -581,7 +581,7 @@
 
 ### Phase 7.Stage 2.Action 7.2.1
 
-- Re-read the gameplan action before implementing primitive step-reward support.
+- Re-read the workplan action before implementing primitive step-reward support.
 - Added `primitive_step_reward(...)` to `src/state_collapser/core/rewards.py`.
 - Verification:
   - constructed a primitive step reward with `.venv/bin/python`
@@ -590,7 +590,7 @@
 
 ### Phase 7.Stage 2.Action 7.2.2
 
-- Re-read the gameplan action before implementing cumulative base-path reward aggregation.
+- Re-read the workplan action before implementing cumulative base-path reward aggregation.
 - Added `summarize_path_rewards(...)` to `src/state_collapser/core/rewards.py`.
 - Behavior implemented:
   - weighted aggregation over primitive rewards using `value * weight`
@@ -601,7 +601,7 @@
 
 ### Phase 7.Stage 2.Action 7.2.3
 
-- Re-read the gameplan action before implementing quotient reward aggregation.
+- Re-read the workplan action before implementing quotient reward aggregation.
 - Added `summarize_quotient_rewards(...)` to `src/state_collapser/core/rewards.py`.
 - Behavior implemented:
   - quotient aggregation over the provided boundary-crossing contributors only
@@ -614,7 +614,7 @@
 
 ### Phase 7.Stage 3.Action 7.3.1
 
-- Re-read the gameplan action before creating reward tests.
+- Re-read the workplan action before creating reward tests.
 - Added the two required test modules:
   - `tests/core/test_rewards.py`
   - `tests/quotient/test_reward_aggregation.py`
@@ -625,7 +625,7 @@
 
 ### Phase 7.Stage 3.Action 7.3.2
 
-- Re-read the gameplan action before writing reward tests.
+- Re-read the workplan action before writing reward tests.
 - Implemented the required reward tests:
   - in `tests/core/test_rewards.py`
     - step reward construction
@@ -643,7 +643,7 @@
 
 ### Phase 8.Stage 1.Action 8.1.1
 
-- Re-read the gameplan action before creating the runtime snapshot file.
+- Re-read the workplan action before creating the runtime snapshot file.
 - Added the required implementation file:
   - `src/state_collapser/tower/snapshot.py`
 - Verification:
@@ -653,7 +653,7 @@
 
 ### Phase 8.Stage 1.Action 8.1.2
 
-- Re-read the gameplan action before implementing `RuntimeSnapshot`.
+- Re-read the workplan action before implementing `RuntimeSnapshot`.
 - Implemented `RuntimeSnapshot` in `src/state_collapser/tower/snapshot.py` with the required fields:
   - current base state
   - explored graph
@@ -670,7 +670,7 @@
 
 ### Phase 8.Stage 2.Action 8.2.1
 
-- Re-read the gameplan action before creating the runtime engine file.
+- Re-read the workplan action before creating the runtime engine file.
 - Added the required implementation file:
   - `src/state_collapser/tower/runtime.py`
 - Verification:
@@ -680,7 +680,7 @@
 
 ### Phase 8.Stage 2.Action 8.2.2
 
-- Re-read the gameplan action before implementing `TowerRuntime.reset(...)`.
+- Re-read the workplan action before implementing `TowerRuntime.reset(...)`.
 - Implemented `TowerRuntime` initialization plus `reset(...)` in `src/state_collapser/tower/runtime.py`.
 - Behavior implemented:
   - recreates explored and vista graph layers
@@ -696,7 +696,7 @@
 
 ### Phase 8.Stage 2.Action 8.2.3
 
-- Re-read the gameplan action before implementing `TowerRuntime.step(...)`.
+- Re-read the workplan action before implementing `TowerRuntime.step(...)`.
 - Implemented `step(...)` in `src/state_collapser/tower/runtime.py` with the base runtime update order available from completed earlier phases:
   - apply primitive action in the hidden graph
   - add the discovered edge to the explored graph
@@ -716,7 +716,7 @@
 
 ### Phase 8.Stage 2.Action 8.2.4
 
-- Re-read the gameplan action before implementing full immediate tower propagation.
+- Re-read the workplan action before implementing full immediate tower propagation.
 - Added explicit immediate propagation behavior to `TowerRuntime`:
   - after each discovered step, propagate the current base-state position through every quotient tier
   - propagate current outgoing-edge knowledge through every quotient tier
@@ -730,7 +730,7 @@
 
 ### Phase 8.Stage 3.Action 8.3.1
 
-- Re-read the gameplan action before creating the trustworthiness extension-point file.
+- Re-read the workplan action before creating the trustworthiness extension-point file.
 - Added the required implementation file:
   - `src/state_collapser/tower/trustworthiness.py`
 - Verification:
@@ -740,7 +740,7 @@
 
 ### Phase 8.Stage 3.Action 8.3.2
 
-- Re-read the gameplan action before defining the trustworthiness extension point.
+- Re-read the workplan action before defining the trustworthiness extension point.
 - Implemented `TrustworthinessPolicy` in `src/state_collapser/tower/trustworthiness.py` as a protocol with:
   - `is_trustworthy(snapshot, tier) -> bool`
 - Verification:
@@ -751,7 +751,7 @@
 
 ### Phase 8.Stage 4.Action 8.4.1
 
-- Re-read the gameplan action before creating tower tests.
+- Re-read the workplan action before creating tower tests.
 - Added the two required test modules:
   - `tests/tower/test_snapshot.py`
   - `tests/tower/test_runtime.py`
@@ -762,7 +762,7 @@
 
 ### Phase 8.Stage 4.Action 8.4.2
 
-- Re-read the gameplan action before writing tower-runtime tests.
+- Re-read the workplan action before writing tower-runtime tests.
 - Implemented the required tests:
   - in `tests/tower/test_snapshot.py`
     - runtime snapshot completeness
@@ -780,7 +780,7 @@
 
 ### Phase 9.Stage 1.Action 9.1.1
 
-- Re-read the gameplan action before creating the toy-environment file.
+- Re-read the workplan action before creating the toy-environment file.
 - Added the required implementation file:
   - `src/state_collapser/examples/robot_constraint_toy.py`
 - Verification:
@@ -790,7 +790,7 @@
 
 ### Phase 9.Stage 1.Action 9.1.2
 
-- Re-read the gameplan action before designing the toy environment.
+- Re-read the workplan action before designing the toy environment.
 - Implemented `RobotConstraintToy` in `src/state_collapser/examples/robot_constraint_toy.py` as a small discretized constrained environment with:
   - opaque global parameterization through hidden blocked cells and region metadata
   - inspectable local states encoded as grid-position `State` objects
@@ -806,7 +806,7 @@
 
 ### Phase 9.Stage 2.Action 9.2.1
 
-- Re-read the gameplan action before binding the toy environment to the graph contracts.
+- Re-read the workplan action before binding the toy environment to the graph contracts.
 - Implemented in `src/state_collapser/examples/robot_constraint_toy.py`:
   - `RobotConstraintToy.graph_spec()`
   - `RobotConstraintHiddenGraph`
@@ -827,7 +827,7 @@
 
 ### Phase 9.Stage 3.Action 9.3.1
 
-- Re-read the gameplan action before creating the toy-environment tests.
+- Re-read the workplan action before creating the toy-environment tests.
 - Added the required test module:
   - `tests/examples/test_robot_constraint_toy.py`
 - Verification:
@@ -837,7 +837,7 @@
 
 ### Phase 9.Stage 3.Action 9.3.2
 
-- Re-read the gameplan action before writing toy-environment tests.
+- Re-read the workplan action before writing toy-environment tests.
 - Implemented the required tests in `tests/examples/test_robot_constraint_toy.py`:
   - valid state generation
   - valid action generation
@@ -851,7 +851,7 @@
 
 ### Phase 10.Stage 1.Action 10.1.1
 
-- Re-read the gameplan action before wiring the end-to-end vertical slice.
+- Re-read the workplan action before wiring the end-to-end vertical slice.
 - Implemented `run_robot_constraint_vertical_slice(...)` in `src/state_collapser/examples/robot_constraint_toy.py`.
 - Behavior implemented:
   - initializes the toy environment
@@ -873,7 +873,7 @@
 
 ### Phase 10.Stage 2.Action 10.2.1
 
-- Re-read the gameplan action before creating the vertical-slice integration test file.
+- Re-read the workplan action before creating the vertical-slice integration test file.
 - Added the required integration test module:
   - `tests/integration/test_vertical_slice.py`
 - Verification:
@@ -883,7 +883,7 @@
 
 ### Phase 10.Stage 2.Action 10.2.2
 
-- Re-read the gameplan action before writing the vertical-slice integration tests.
+- Re-read the workplan action before writing the vertical-slice integration tests.
 - Implemented the required integration tests in `tests/integration/test_vertical_slice.py`:
   - discovered graph grows over time
   - vista graph grows over time
@@ -907,7 +907,7 @@
 
 ### Phase 11.Stage 1.Action 11.1.1
 
-- Re-read the gameplan action before creating the Gymnasium adapter file.
+- Re-read the workplan action before creating the Gymnasium adapter file.
 - Added the required implementation file:
   - `src/state_collapser/adapters/gymnasium.py`
 - Verification:
@@ -917,7 +917,7 @@
 
 ### Phase 11.Stage 1.Action 11.1.2
 
-- Re-read the gameplan action before implementing the Gymnasium-style adapter.
+- Re-read the workplan action before implementing the Gymnasium-style adapter.
 - Implemented `GymnasiumAdapter` in `src/state_collapser/adapters/gymnasium.py`.
 - Behavior implemented:
   - wraps the toy environment and hidden-graph binding
@@ -934,7 +934,7 @@
 
 ### Phase 11.Stage 2.Action 11.2.1
 
-- Re-read the gameplan action before creating the adapter tests.
+- Re-read the workplan action before creating the adapter tests.
 - Added the required test module:
   - `tests/adapters/test_gymnasium_adapter.py`
 - Verification:
@@ -944,7 +944,7 @@
 
 ### Phase 11.Stage 2.Action 11.2.2
 
-- Re-read the gameplan action before writing adapter tests.
+- Re-read the workplan action before writing adapter tests.
 - Implemented the required adapter tests in `tests/adapters/test_gymnasium_adapter.py`:
   - Gymnasium-style reset output
   - Gymnasium-style step output
@@ -956,7 +956,7 @@
 
 ### Phase 12.Stage 1.Action 12.1.1
 
-- Re-read the gameplan action before syncing the public/package docs.
+- Re-read the workplan action before syncing the public/package docs.
 - Updated the required minimum targets:
   - `README.md`
   - `docs/package_usage.md`
@@ -972,7 +972,7 @@
 
 ### Phase 12.Stage 2.Action 12.2.1
 
-- Re-read the gameplan action before syncing the design docs.
+- Re-read the workplan action before syncing the design docs.
 - Updated the required design-doc targets:
   - `docs/design/module_design_desiderata.md`
   - `docs/design/package_best_practices_proposal.md`
@@ -980,20 +980,20 @@
 - Sync work performed:
   - added implementation-status notes
   - recorded that a first vertical slice now exists in code
-  - pointed implementation authority back to the final blueprint and final gameplan
+  - pointed implementation authority back to the final blueprint and final workplan
 - Verification:
   - confirmed the inserted implementation-status notes by direct file inspection and `grep`
 - No blocker or ambiguity encountered in this action.
 
 ### Phase 12.Stage 3.Action 12.3.1
 
-- Re-read the gameplan action before running the validation checklist.
+- Re-read the workplan action before running the validation checklist.
 - Ran the full unit/integration suite:
   - `.venv/bin/pytest tests`
   - result: `69 passed`
 - Checklist verification:
   - all core contracts are instantiated in code
-  - all tests described in the gameplan now exist
+  - all tests described in the workplan now exist
   - the toy environment exercises both contraction styles through integration coverage
   - the tower updates immediately at every discovered-state step
   - cumulative tier query semantics are covered in quotient and annotation tests

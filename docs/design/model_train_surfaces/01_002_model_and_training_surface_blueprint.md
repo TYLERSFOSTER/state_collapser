@@ -18,7 +18,7 @@ This is a blueprint.
 
 It is not:
 
-- an implementation gameplan
+- an implementation workplan
 - a benchmark harness note
 - a backend-specific ML plan
 - a promise to solve every professional hardening concern in one pass
@@ -638,18 +638,18 @@ then the blueprint has failed.
 
 The next document after this blueprint should be:
 
-- an implementation gameplan in `Phase.Stage.Action` form
+- an implementation workplan in `Phase.Stage.Action` form
 
-That gameplan should take as fixed:
+That workplan should take as fixed:
 
 - the first package shape under `src/state_collapser/training/`
 - the first reusable surface set
 - the decision not to build one rigid master trainer
 - the deferral of next-stage hardening topics
 
-## Remaining Questions Before The Implementation Gameplan
+## Remaining Questions Before The Implementation Workplan
 
-The blueprint is now strong enough to support a gameplan, but there are still a few implementation-binding questions that should be answered explicitly before the gameplan is written.
+The blueprint is now strong enough to support a workplan, but there are still a few implementation-binding questions that should be answered explicitly before the workplan is written.
 
 These are not broad architecture questions anymore.
 
@@ -870,7 +870,7 @@ I support your recommendation.
 
 ### Question 5
 
-For first scope, should the gameplan require refactoring at least one existing example loop such as:
+For first scope, should the workplan require refactoring at least one existing example loop such as:
 
 - `plate_support_env`
 

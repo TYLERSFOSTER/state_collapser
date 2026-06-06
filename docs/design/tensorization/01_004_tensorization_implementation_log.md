@@ -2,15 +2,15 @@
 
 Date: 2026-05-29
 
-Gameplan:
+Workplan:
 
-- `docs/design/tensorization/01_003_tensorization_implementation_gameplan.md`
+- `docs/design/tensorization/01_003_tensorization_implementation_workplan.md`
 
 ## Execution Authority
 
 The Project Owner explicitly requested execution:
 
-> execute `docs/design/tensorization/01_003_tensorization_implementation_gameplan.md` following `prime_directive`. Use step-by-step procedural rule. Make new branch for work
+> execute `docs/design/tensorization/01_003_tensorization_implementation_workplan.md` following `prime_directive`. Use step-by-step procedural rule. Make new branch for work
 
 ## Starting State
 
@@ -36,7 +36,7 @@ A  docs/design/tensorization/README.md
 AM docs/design/tensorization/design_conversation.md
 ?? docs/design/tensorization/01_001_tensorization_architecture_blueprint.md
 ?? docs/design/tensorization/01_002_tensorization_engineer_usage_blueprint.md
-?? docs/design/tensorization/01_003_tensorization_implementation_gameplan.md
+?? docs/design/tensorization/01_003_tensorization_implementation_workplan.md
 ```
 
 Notes:
@@ -44,7 +44,7 @@ Notes:
 - The `docs/design/logHRL*` changes were already present before this
   implementation interval and are not part of this work.
 - The tensorization design documents were already present before implementation
-  and are treated as the approved design/gameplan context for this work.
+  and are treated as the approved design/workplan context for this work.
 
 ## Phase.Stage.Action Log
 
@@ -70,7 +70,7 @@ codex/tensorization-boundary
 
 Status: complete.
 
-Repository reality is being rebound against the files named in the gameplan.
+Repository reality is being rebound against the files named in the workplan.
 
 Confirmed existing symbols:
 
@@ -482,7 +482,7 @@ AM docs/design/tensorization/design_conversation.md
  M src/state_collapser/training/__init__.py
 ?? docs/design/tensorization/01_001_tensorization_architecture_blueprint.md
 ?? docs/design/tensorization/01_002_tensorization_engineer_usage_blueprint.md
-?? docs/design/tensorization/01_003_tensorization_implementation_gameplan.md
+?? docs/design/tensorization/01_003_tensorization_implementation_workplan.md
 ?? docs/design/tensorization/01_004_tensorization_implementation_log.md
 ?? docs/usage/01_010_tensorization_boundary.md
 ?? src/state_collapser/training/linearization.py
@@ -539,7 +539,7 @@ Final outcomes:
 - Training/example compatibility: `75 passed, 3 skipped`
 - Torch-marker validation: `3 skipped, 71 deselected`
 - Full suite: `477 passed, 4 skipped`
-- Exact focused gameplan command: `5 passed, 3 skipped, 66 deselected`
+- Exact focused workplan command: `5 passed, 3 skipped, 66 deselected`
 - Whitespace diff check: passed
 
 ## Known Residual Risks
@@ -556,6 +556,6 @@ Final outcomes:
 
 The tensorization boundary implementation is ready for Project Owner review.
 
-It satisfies the gameplan's first-scope goals without making the runtime
+It satisfies the workplan's first-scope goals without making the runtime
 tensor-first, without importing Torch through `state_collapser.training`, and
 without forcing HGraphML through RL-specific training objects.

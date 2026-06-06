@@ -1,8 +1,8 @@
-# PlateSupportEnv Tower-Training Integration Gameplan
+# PlateSupportEnv Tower-Training Integration Workplan
 
 ## Status
 
-This document is the exact implementation gameplan for the missing layer between:
+This document is the exact implementation workplan for the missing layer between:
 
 - the already-implemented `PlateSupportEnv`
 - the existing `state_collapser` runtime/core machinery
@@ -11,7 +11,7 @@ and:
 
 - a **runnable tower-assisted training workflow** on `PlateSupportEnv`
 
-This gameplan exists because the env itself is complete, but the package-facing training/integration surface needed to actually run tower training on it does not yet exist as a usable workflow.
+This workplan exists because the env itself is complete, but the package-facing training/integration surface needed to actually run tower training on it does not yet exist as a usable workflow.
 
 This document belongs in:
 
@@ -21,10 +21,10 @@ because it is tightly coupled to the first package-evaluation env and is the imm
 
 ## Relationship to existing docs
 
-This gameplan builds on:
+This workplan builds on:
 
 - [plate_support_env_spec.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_spec.md)
-- [plate_support_env_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_implementation_gameplan.md)
+- [plate_support_env_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_implementation_workplan.md)
 - [plate_support_env_implementation_log.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_implementation_log.md)
 - [training_integration_surface_proposal.md]([state_collapser repository root]/docs/design/training_integration_surface_proposal.md)
 
@@ -37,14 +37,14 @@ It does **not** cover:
 
 Those belong to later benchmark-design work.
 
-This gameplan covers only the missing layer needed to make the following statement true:
+This workplan covers only the missing layer needed to make the following statement true:
 
 > “We can now run tower training on `PlateSupportEnv`.”
 
-## Execution Contract For This Gameplan
+## Execution Contract For This Workplan
 
 1. **Authoritative sources**
-- This gameplan and the documents listed above are the implementation law for the tower-training integration layer for `env_001`.
+- This workplan and the documents listed above are the implementation law for the tower-training integration layer for `env_001`.
 - Older documents are rationale only unless explicitly referenced by these.
 
 2. **Execution unit**
@@ -55,7 +55,7 @@ This gameplan covers only the missing layer needed to make the following stateme
 - Re-read the current action before coding.
 - Implement only that action.
 - Run only the tests/checks implied by that action.
-- Compare the result back to this gameplan.
+- Compare the result back to this workplan.
 - Update the running integration log.
 - Only then move on.
 
@@ -89,7 +89,7 @@ This gameplan covers only the missing layer needed to make the following stateme
 
 ## Implementation target
 
-At the end of this gameplan, the repo should contain:
+At the end of this workplan, the repo should contain:
 
 1. a package-facing adapter/runtime entry point that can expose `PlateSupportEnv` to `state_collapser`
 2. a minimal but real tower-training runner for `PlateSupportEnv`
@@ -142,7 +142,7 @@ with:
 - implementation date
 - current branch
 - authoritative documents
-- statement that this gameplan is being followed exactly
+- statement that this workplan is being followed exactly
 
 ### Action 1.1.2
 
@@ -575,7 +575,7 @@ Update the integration log with:
 
 ### Action 7.1.1
 
-Run all env-specific runtime/training integration tests created by this gameplan.
+Run all env-specific runtime/training integration tests created by this workplan.
 
 This includes at minimum:
 
@@ -628,7 +628,7 @@ Prepare a concise completion summary tied explicitly to:
 
 # Completion criteria
 
-This gameplan is complete when all of the following are true:
+This workplan is complete when all of the following are true:
 
 1. `PlateSupportEnv` can be exposed to a package-facing runtime adapter.
 2. That adapter updates tower/runtime state during env rollouts.

@@ -14,10 +14,10 @@ Blueprint:
 docs/design/pointwise_liftability_source_support/01_001_pointwise_liftability_source_support_blueprint.md
 ```
 
-Gameplan:
+Workplan:
 
 ```text
-docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_gameplan.md
+docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_workplan.md
 ```
 
 ## Status Table
@@ -39,7 +39,7 @@ docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_so
 
 ### Phase 0.Stage 1
 
-- Action 1 completed: reread Prime Directive branch/gameplan rules before
+- Action 1 completed: reread Prime Directive branch/workplan rules before
   implementation.
 - Action 2 completed: checked repository status before branch creation.
 - Action 3 completed: created implementation branch

@@ -270,15 +270,15 @@ In particular, several design stacks now matter:
 ### First major implementation stack
 
 - [docs/design/final_initial/final_initial_blueprint.md](./docs/design/final_initial/final_initial_blueprint.md)
-- [docs/design/final_initial/final_initial_implementation_gameplan.md](./docs/design/final_initial/final_initial_implementation_gameplan.md)
+- [docs/design/final_initial/final_initial_implementation_workplan.md](./docs/design/final_initial/final_initial_implementation_workplan.md)
 
 ### Exploit / explore control stack
 
 - [docs/design/HRL_exploit-explore/01_013_exploit_explore_algorithm_blueprint.md](./docs/design/HRL_exploit-explore/01_013_exploit_explore_algorithm_blueprint.md)
-- [docs/design/HRL_exploit-explore/01_014_exploit_explore_algorithm_implementation_gameplan.md](./docs/design/HRL_exploit-explore/01_014_exploit_explore_algorithm_implementation_gameplan.md)
+- [docs/design/HRL_exploit-explore/01_014_exploit_explore_algorithm_implementation_workplan.md](./docs/design/HRL_exploit-explore/01_014_exploit_explore_algorithm_implementation_workplan.md)
 - [docs/design/HRL_exploit-explore/01_015_abc_find_unclosed_correction.md](./docs/design/HRL_exploit-explore/01_015_abc_find_unclosed_correction.md)
 - [docs/design/HRL_exploit-explore/01_016_find_lowest_unclosed_system_change_blueprint.md](./docs/design/HRL_exploit-explore/01_016_find_lowest_unclosed_system_change_blueprint.md)
-- [docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_gameplan.md](./docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_gameplan.md)
+- [docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_workplan.md](./docs/design/HRL_exploit-explore/01_017_find_lowest_unclosed_implementation_workplan.md)
 
 ### General package and mathematical context
 
@@ -506,7 +506,7 @@ At minimum, contributors should consider whether the change requires updates to:
 - [docs/package_usage.md](./docs/package_usage.md)
 - [docs/public_api.md](./docs/public_api.md)
 - env-specific design docs
-- relevant design blueprints or gameplans
+- relevant design blueprints or workplans
 
 ## Release And Versioning
 

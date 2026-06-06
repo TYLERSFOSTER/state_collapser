@@ -27,10 +27,10 @@ continues through:
 - the Project Owner's discussion and corrections on what kind of equivalence
   mattered between paper and code
 - the Young-tableaux / nested-partition runtime refactor blueprint
-- the Phase.Stage.Action implementation gameplan for that runtime refactor
+- the Phase.Stage.Action implementation workplan for that runtime refactor
 - implementation of the partition-backed runtime refactor
 - a post-refactor audit of all evaluation environments
-- an evaluation-environment repair blueprint and gameplan
+- an evaluation-environment repair blueprint and workplan
 - implementation of schema-driven nontrivial towers across the evaluation
   environments
 - the `v0.5.0` version bump and CI typing repair
@@ -38,7 +38,7 @@ continues through:
 - a full synthetic Blow code review of the whole repository
 - multiple rounds of Project Owner comments and assistant replies inside that
   review
-- a blueprint and gameplan for implementing the review's accepted revisions
+- a blueprint and workplan for implementing the review's accepted revisions
 - implementation of those revisions
 - and a small outreach brief for an auxiliary GPT model to research possible
   outreach contacts
@@ -140,12 +140,12 @@ The visible git range after the last continuity report contains this sequence:
 - `9bbb733` - `paths.png` fix
 - `4bf8305` - mid code review
 - `e061c71` - first code review complete, begin prep for redesign/refactor
-- `7f342f8` - Young tableaux refactor blueprint and gameplan
-- `97c475d` - implementation of `01_002_young_tableaux_runtime_refactor_implementation_gameplan.md`
+- `7f342f8` - Young tableaux refactor blueprint and workplan
+- `97c475d` - implementation of `01_002_young_tableaux_runtime_refactor_implementation_workplan.md`
 - `17b8fad` - environment test fix planning
 - `4fd0074` - repair post-young evaluation environment schemas
 - `fea2ce5` - prepare `v0.5.0` release and fix CI typing
-- `529e462` - synthetic Blow revision blueprint and gameplan
+- `529e462` - synthetic Blow revision blueprint and workplan
 - `51f5bed` - synthetic Blow revision implemented
 
 The aggregate repository diff for this interval is large:
@@ -229,11 +229,11 @@ Codex supplied:
 After the code review discussion, Codex created:
 
 - [01_001_young_tableaux_runtime_refactor_blueprint.md]([state_collapser repository root]/docs/design/Young_tableaux_refactor/01_001_young_tableaux_runtime_refactor_blueprint.md)
-- [01_002_young_tableaux_runtime_refactor_implementation_gameplan.md]([state_collapser repository root]/docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_gameplan.md)
+- [01_002_young_tableaux_runtime_refactor_implementation_workplan.md]([state_collapser repository root]/docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_workplan.md)
 - [01_003_young_tableaux_runtime_refactor_implementation_log.md]([state_collapser repository root]/docs/design/Young_tableaux_refactor/01_003_young_tableaux_runtime_refactor_implementation_log.md)
 
 The Project Owner then instructed Codex to create a branch and implement the
-gameplan according to `prime_directive`.
+workplan according to `prime_directive`.
 
 The branch was:
 
@@ -307,7 +307,7 @@ The Project Owner supplied:
 
 Codex supplied:
 
-- the detailed blueprint and Phase.Stage.Action gameplan
+- the detailed blueprint and Phase.Stage.Action workplan
 - the partition package implementation
 - compatibility readout design
 - runtime integration
@@ -324,7 +324,7 @@ Codex produced:
 
 - [01_001_post_young_diagram_evaluation_environment_audit.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_001_post_young_diagram_evaluation_environment_audit.md)
 - [01_002_post_young_diagram_evaluation_environment_repair_blueprint.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_002_post_young_diagram_evaluation_environment_repair_blueprint.md)
-- [01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md)
+- [01_003_post_young_diagram_evaluation_environment_repair_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_workplan.md)
 - [01_004_post_young_diagram_evaluation_environment_repair_implementation_log.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_004_post_young_diagram_evaluation_environment_repair_implementation_log.md)
 
 The audit found that the examples were API/test healthy but mostly
@@ -399,7 +399,7 @@ The Project Owner supplied:
 
 - the concern that evaluation environments might be invalid after the
   Young-diagram refactor
-- the request for audit-first, blueprint-second, gameplan-third process
+- the request for audit-first, blueprint-second, workplan-third process
 - the instruction to implement only after the plan was ready
 - and the merge-flow direction
 
@@ -549,7 +549,7 @@ Codex supplied:
 After the review conversation stabilized, Codex created:
 
 - [01_001_synthetic_blow_review_revision_blueprint.md]([state_collapser repository root]/docs/design/synthetic_blow_revisions_01/01_001_synthetic_blow_review_revision_blueprint.md)
-- [01_002_synthetic_blow_review_revision_implementation_gameplan.md]([state_collapser repository root]/docs/design/synthetic_blow_revisions_01/01_002_synthetic_blow_review_revision_implementation_gameplan.md)
+- [01_002_synthetic_blow_review_revision_implementation_workplan.md]([state_collapser repository root]/docs/design/synthetic_blow_revisions_01/01_002_synthetic_blow_review_revision_implementation_workplan.md)
 - [01_003_synthetic_blow_review_revision_implementation_log.md]([state_collapser repository root]/docs/design/synthetic_blow_revisions_01/01_003_synthetic_blow_review_revision_implementation_log.md)
 
 The implementation branch was:
@@ -782,7 +782,7 @@ tower_runtime_bench mode=default steps=10 elapsed_seconds=0.005364 operations_pe
 
 The Project Owner supplied:
 
-- the instruction to implement the accepted review gameplan
+- the instruction to implement the accepted review workplan
 - the strict branch/process expectations from `prime_directive`
 - the accepted semantics for masks, continuation, lifts, Gymnasium hooks,
   loop aggregation, and runtime hot paths
@@ -939,15 +939,15 @@ Important new or heavily updated documents:
 
 - [01_001_loghrl_partition_tower_vs_src_review.md]([state_collapser repository root]/docs/code_review/01_001_loghrl_partition_tower_vs_src_review.md)
 - [01_001_young_tableaux_runtime_refactor_blueprint.md]([state_collapser repository root]/docs/design/Young_tableaux_refactor/01_001_young_tableaux_runtime_refactor_blueprint.md)
-- [01_002_young_tableaux_runtime_refactor_implementation_gameplan.md]([state_collapser repository root]/docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_gameplan.md)
+- [01_002_young_tableaux_runtime_refactor_implementation_workplan.md]([state_collapser repository root]/docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_workplan.md)
 - [01_003_young_tableaux_runtime_refactor_implementation_log.md]([state_collapser repository root]/docs/design/Young_tableaux_refactor/01_003_young_tableaux_runtime_refactor_implementation_log.md)
 - [01_001_post_young_diagram_evaluation_environment_audit.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_001_post_young_diagram_evaluation_environment_audit.md)
 - [01_002_post_young_diagram_evaluation_environment_repair_blueprint.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_002_post_young_diagram_evaluation_environment_repair_blueprint.md)
-- [01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md)
+- [01_003_post_young_diagram_evaluation_environment_repair_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_workplan.md)
 - [01_004_post_young_diagram_evaluation_environment_repair_implementation_log.md]([state_collapser repository root]/docs/design/test_design/post_young_audit/01_004_post_young_diagram_evaluation_environment_repair_implementation_log.md)
 - [02_001_synthetic_blow_full_repo_review.md]([state_collapser repository root]/docs/code_review/02_001_synthetic_blow_full_repo_review.md)
 - [01_001_synthetic_blow_review_revision_blueprint.md]([state_collapser repository root]/docs/design/synthetic_blow_revisions_01/01_001_synthetic_blow_review_revision_blueprint.md)
-- [01_002_synthetic_blow_review_revision_implementation_gameplan.md]([state_collapser repository root]/docs/design/synthetic_blow_revisions_01/01_002_synthetic_blow_review_revision_implementation_gameplan.md)
+- [01_002_synthetic_blow_review_revision_implementation_workplan.md]([state_collapser repository root]/docs/design/synthetic_blow_revisions_01/01_002_synthetic_blow_review_revision_implementation_workplan.md)
 - [01_003_synthetic_blow_review_revision_implementation_log.md]([state_collapser repository root]/docs/design/synthetic_blow_revisions_01/01_003_synthetic_blow_review_revision_implementation_log.md)
 
 ## Major source areas changed

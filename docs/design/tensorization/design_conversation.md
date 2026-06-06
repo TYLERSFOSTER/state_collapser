@@ -2,7 +2,7 @@
 
 Date: 2026-05-29
 
-Status: design conversation, not blueprint, not implementation gameplan
+Status: design conversation, not blueprint, not implementation workplan
 
 Primary trigger:
 

@@ -41,7 +41,7 @@ These may remain valid future work, but they are intentionally deferred here.
 This folder should next receive:
 
 1. `01_001_synthetic_blow_revisions_02_blueprint.md`
-2. `01_002_synthetic_blow_revisions_02_implementation_gameplan.md`
+2. `01_002_synthetic_blow_revisions_02_implementation_workplan.md`
 3. `01_003_synthetic_blow_revisions_02_implementation_log.md`
 
 The blueprint should ground truth each in-scope item against the current repo

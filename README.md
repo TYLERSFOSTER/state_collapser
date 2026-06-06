@@ -383,18 +383,18 @@ Mathematical and design docs:
 Major implementation docs:
 
 - [`docs/design/final_initial/final_initial_blueprint.md`](./docs/design/final_initial/final_initial_blueprint.md)
-- [`docs/design/final_initial/final_initial_implementation_gameplan.md`](./docs/design/final_initial/final_initial_implementation_gameplan.md)
+- [`docs/design/final_initial/final_initial_implementation_workplan.md`](./docs/design/final_initial/final_initial_implementation_workplan.md)
 - [`docs/design/HRL_exploit-explore/01_013_exploit_explore_algorithm_blueprint.md`](./docs/design/HRL_exploit-explore/01_013_exploit_explore_algorithm_blueprint.md)
-- [`docs/design/HRL_exploit-explore/01_014_exploit_explore_algorithm_implementation_gameplan.md`](./docs/design/HRL_exploit-explore/01_014_exploit_explore_algorithm_implementation_gameplan.md)
-- [`docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_gameplan.md`](./docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_gameplan.md)
-- [`docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_gameplan.md`](./docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_gameplan.md)
+- [`docs/design/HRL_exploit-explore/01_014_exploit_explore_algorithm_implementation_workplan.md`](./docs/design/HRL_exploit-explore/01_014_exploit_explore_algorithm_implementation_workplan.md)
+- [`docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_workplan.md`](./docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_workplan.md)
+- [`docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_workplan.md`](./docs/design/Young_tableaux_refactor/01_002_young_tableaux_runtime_refactor_implementation_workplan.md)
 - [`docs/design/Young_tableaux_refactor/01_003_young_tableaux_runtime_refactor_implementation_log.md`](./docs/design/Young_tableaux_refactor/01_003_young_tableaux_runtime_refactor_implementation_log.md)
-- [`docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md`](./docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md)
+- [`docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_workplan.md`](./docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_workplan.md)
 - [`docs/design/RL_framework_maturity/01_006_fiber_conditioned_training_spine_paired_implementation_log.md`](./docs/design/RL_framework_maturity/01_006_fiber_conditioned_training_spine_paired_implementation_log.md)
-- [`docs/design/tensorization/01_003_tensorization_implementation_gameplan.md`](./docs/design/tensorization/01_003_tensorization_implementation_gameplan.md)
+- [`docs/design/tensorization/01_003_tensorization_implementation_workplan.md`](./docs/design/tensorization/01_003_tensorization_implementation_workplan.md)
 - [`docs/design/tensorization/01_004_tensorization_implementation_log.md`](./docs/design/tensorization/01_004_tensorization_implementation_log.md)
 - [`docs/design/tensorization/01_005_hgraphml_tensorization_followup_bridge.md`](./docs/design/tensorization/01_005_hgraphml_tensorization_followup_bridge.md)
-- [`docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_gameplan.md`](./docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_gameplan.md)
+- [`docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_workplan.md`](./docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_workplan.md)
 
 Continuity / project history:
 

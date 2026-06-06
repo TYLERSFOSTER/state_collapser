@@ -4,7 +4,7 @@
 
 This log records execution of:
 
-- [01_003_model_and_training_surface_implementation_gameplan.md]([state_collapser repository root]/docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_gameplan.md)
+- [01_003_model_and_training_surface_implementation_workplan.md]([state_collapser repository root]/docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_workplan.md)
 
 ## Branch
 
@@ -115,4 +115,4 @@ This log records execution of:
 
 The implementation satisfies the first-scope completion standard set by:
 
-- [01_003_model_and_training_surface_implementation_gameplan.md]([state_collapser repository root]/docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_gameplan.md)
+- [01_003_model_and_training_surface_implementation_workplan.md]([state_collapser repository root]/docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_workplan.md)

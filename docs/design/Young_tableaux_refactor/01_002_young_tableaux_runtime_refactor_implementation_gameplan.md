@@ -1,8 +1,8 @@
-# Young Tableaux Runtime Refactor Implementation Gameplan
+# Young Tableaux Runtime Refactor Implementation Workplan
 
 ## Status
 
-This document is the Phase.Stage.Action implementation gameplan for:
+This document is the Phase.Stage.Action implementation workplan for:
 
 - `docs/design/Young_tableaux_refactor/01_001_young_tableaux_runtime_refactor_blueprint.md`
 
@@ -13,29 +13,29 @@ It is downstream of:
 - `docs/prime_directive/prime_directive.md`
 - `docs/prime_directive/git_practices.md`
 - `docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md`
-- `docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md`
+- `docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md`
 
-This is an implementation gameplan.
+This is an implementation workplan.
 
 It is not an implementation.
 
 No source-code execution should begin until the Project Owner explicitly approves
-execution of this gameplan.
+execution of this workplan.
 
-Once approved, this gameplan is law. If implementation reality conflicts with
+Once approved, this workplan is law. If implementation reality conflicts with
 any action below, the implementer must stop, identify the exact
 Phase.Stage.Action item that failed, and ask the Project Owner for guidance.
 Silent simplification is forbidden.
 
 ## Readiness Assessment
 
-The blueprint is complete enough to create an implementation gameplan.
+The blueprint is complete enough to create an implementation workplan.
 
 The remaining open questions are not conceptual blockers. They are implementation
-defaults and rollout choices. This gameplan fixes those defaults explicitly so
+defaults and rollout choices. This workplan fixes those defaults explicitly so
 the future execution phase does not encode hidden design decisions.
 
-## Fixed Defaults For This Gameplan
+## Fixed Defaults For This Workplan
 
 Unless the Project Owner changes these before execution, implementation should
 use the following defaults.
@@ -61,7 +61,7 @@ use the following defaults.
 
 5. The first integration uses a `tower_backend` option internally, but the
    implementation must switch the default runtime backend to the partition tower
-   before the gameplan is complete. The legacy builder may remain as a validator
+   before the workplan is complete. The legacy builder may remain as a validator
    and fallback, but not as the normal final runtime path.
 
 6. The canonical first schema example is a small synthetic tower test graph, not
@@ -96,9 +96,9 @@ occur.
 
 - A Phase.Stage.Action item cannot be implemented as written.
 - A proposed simplification would be needed.
-- A file or symbol named in this gameplan no longer exists.
+- A file or symbol named in this workplan no longer exists.
 - A current test encodes behavior that directly contradicts the blueprint.
-- A runtime error reveals a mismatch between this gameplan and repository
+- A runtime error reveals a mismatch between this workplan and repository
   reality.
 - The partition update algorithm would require global scans in the normal step
   path contrary to the blueprint.
@@ -177,7 +177,7 @@ editing further.
 
 #### Action 0.1.1
 
-Confirm the Project Owner has explicitly approved execution of this gameplan.
+Confirm the Project Owner has explicitly approved execution of this workplan.
 
 Completion criteria:
 
@@ -205,7 +205,7 @@ Completion criteria:
 
 Stop condition:
 
-- If the working tree contains unrelated changes in files this gameplan needs to
+- If the working tree contains unrelated changes in files this workplan needs to
   edit, stop and ask the Project Owner how to proceed.
 
 ### Stage 0.2: Bind Current Repository Reality
@@ -240,7 +240,7 @@ Completion criteria:
 
 Stop condition:
 
-- If any file has changed in a way that invalidates the gameplan, stop and ask.
+- If any file has changed in a way that invalidates the workplan, stop and ask.
 
 #### Action 0.2.2
 
@@ -2077,7 +2077,7 @@ git diff --check
 Completion criteria:
 
 - No whitespace errors.
-- Changed files are all related to this gameplan or explicitly authorized.
+- Changed files are all related to this workplan or explicitly authorized.
 
 ### Stage 21.2: Final Implementation Report
 
@@ -2100,7 +2100,7 @@ Completion criteria:
 
 ## Explicit Non-Goals
 
-This gameplan does not require:
+This workplan does not require:
 
 - vectorized tensor training surfaces
 - GPU/CUDA partition kernels
@@ -2115,7 +2115,7 @@ These may become later work.
 
 ## Final Execution Rule
 
-When the Project Owner says to execute this gameplan, the implementer must:
+When the Project Owner says to execute this workplan, the implementer must:
 
 1. create or switch to the implementation branch
 2. create the implementation log
@@ -2124,7 +2124,7 @@ When the Project Owner says to execute this gameplan, the implementer must:
 5. stop on ambiguity or mismatch
 6. never silently simplify the plan
 
-This gameplan is intentionally detailed because the refactor touches the core
+This workplan is intentionally detailed because the refactor touches the core
 runtime model. The point is not bureaucracy. The point is to make the runtime
 architecture precise enough that implementation can finally match the paper:
 persistent nested state/action partitions, first-class outgoing pointers,

@@ -195,8 +195,8 @@ TensorDeviceKind
 - accepted that HGraphML needs first-pass compatibility coverage but not first
   full tensorization,
 - requested the two tensorization blueprints and then the Phase.Stage.Action
-  implementation gameplan,
-- directed execution of that gameplan on a new branch under the prime-directive
+  implementation workplan,
+- directed execution of that workplan on a new branch under the prime-directive
   workflow,
 - caught the missing HGraphML downstream action after implementation,
 - and requested detailed downstream HGraphML instructions.
@@ -211,7 +211,7 @@ Codex supplied:
 - the tensorization design conversation document,
 - the tensorization architecture blueprint,
 - the tensorization engineer-usage blueprint,
-- the tensorization Phase.Stage.Action implementation gameplan,
+- the tensorization Phase.Stage.Action implementation workplan,
 - the tensorization implementation,
 - tensorization tests and docs,
 - validation,
@@ -429,7 +429,7 @@ explicit tensorization boundary appears only near learner/model/benchmark edges
 disabled mode validates/reports boundary availability without constructing tensors
 ```
 
-This became the "tiny hinge rule" in the design docs and gameplan.
+This became the "tiny hinge rule" in the design docs and workplan.
 
 Artifacts:
 
@@ -514,7 +514,7 @@ Artifacts:
 
 - `docs/design/tensorization/01_001_tensorization_architecture_blueprint.md`
 - `docs/design/tensorization/01_002_tensorization_engineer_usage_blueprint.md`
-- `docs/design/tensorization/01_003_tensorization_implementation_gameplan.md`
+- `docs/design/tensorization/01_003_tensorization_implementation_workplan.md`
 
 The two blueprints were intentionally paired. The architecture blueprint defined
 the package internals; the engineer-usage blueprint forced usability questions
@@ -526,7 +526,7 @@ surface.
 The PO then approved execution of:
 
 ```text
-docs/design/tensorization/01_003_tensorization_implementation_gameplan.md
+docs/design/tensorization/01_003_tensorization_implementation_workplan.md
 ```
 
 following `prime_directive`, with a new implementation branch.

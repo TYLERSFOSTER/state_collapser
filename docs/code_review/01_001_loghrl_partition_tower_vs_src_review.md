@@ -748,7 +748,7 @@ ___
 
         We should probably retain a slow full-build function for tests. The incremental tower can be checked against full rebuild on small deterministic graphs. That gives us confidence while allowing production/runtime paths to be incremental.
 
-   - **PO Reply:** I fully support all this. I want to blueprint, gameplan, and then implement this.
+   - **PO Reply:** I fully support all this. I want to blueprint, workplan, and then implement this.
 - **Issue 4:** The action-side partition / outgoing-action-cell story is not represented as the paper describes;
    - **PO Response:** High level, what happens instead?
    - **LLM Reply:** High level: the code builds quotient edges, not an action partition table.
@@ -785,7 +785,7 @@ ___
 
      The runtime win is especially strong for action queries. With current tuple-shaped quotient edges, "what can I do from this coset?" is not a first-class local lookup. With outgoing pointers, it is one map lookup plus iteration over that cell's outgoing collection.
 
-   - **PO Reply:** I fully support this. Include this in blueprint and then gameplan.
+   - **PO Reply:** I fully support this. Include this in blueprint and then workplan.
 - **Issue 5:** State-cell-to-action-cell outgoing pointers are not first-class data;
    - **PO Response:** Give me complete explanation of `first-class` from CS perspective.
    - **LLM Reply:** In CS, saying something is `first-class` means it exists as a real object in the program's model, not merely as an implicit consequence of other objects. A first-class thing usually has its own representation, can be named, stored, passed around, queried, tested, serialized, and protected by invariants.

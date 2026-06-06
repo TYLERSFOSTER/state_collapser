@@ -11,13 +11,13 @@ It is downstream of:
 - `docs/code_review/01_001_loghrl_partition_tower_vs_src_review.md`
 - `docs/design/logHRL.tex`
 - `docs/design/HRL_exploit-explore/01_020_package_owned_dynamic_tower_construction_blueprint.md`
-- `docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_gameplan.md`
+- `docs/design/HRL_exploit-explore/01_021_package_owned_dynamic_tower_construction_implementation_workplan.md`
 - `docs/design/model_train_surfaces/01_001_model_and_training_surface_architecture.md`
 - `docs/design/model_train_surfaces/01_002_model_and_training_surface_blueprint.md`
 - `docs/engineer_continuity/2026/05/23/01_010_package_readiness_and_loghrl_research_document_consolidation.md`
 - `docs/prime_directive/git_practices.md`
 
-This is a blueprint, not an implementation gameplan.
+This is a blueprint, not an implementation workplan.
 
 It defines what should be built, why it should be built this way, which existing
 surfaces it must preserve, and which older assumptions it supersedes.
@@ -359,7 +359,7 @@ QuotientTierView adapter:
 
 ## Proposed Package Shape
 
-The exact file split can be settled in the implementation gameplan, but the
+The exact file split can be settled in the implementation workplan, but the
 blueprint target should be close to:
 
 ```text
@@ -928,7 +928,7 @@ can become wrong.
 
 ## Coarsening Algorithm Sketch
 
-The implementation gameplan should refine this, but the intended update shape is:
+The implementation workplan should refine this, but the intended update shape is:
 
 ```text
 update_with_delta(delta_states, delta_edges, current_state):
@@ -1574,7 +1574,7 @@ The paper and code need a careful distinction between:
 
 Mitigation:
 
-- choose names deliberately in the implementation gameplan
+- choose names deliberately in the implementation workplan
 - document the distinction in module docstrings
 - test each surface independently
 
@@ -1640,7 +1640,7 @@ Mitigation:
 
 ## Rollout Shape
 
-This is not the implementation gameplan, but the implementation should likely
+This is not the implementation workplan, but the implementation should likely
 roll out in this order:
 
 1. Add ids, registry, schema objects, and unit tests.
@@ -1656,7 +1656,7 @@ roll out in this order:
 11. Make partition backend the default once tests prove compatibility.
 12. Keep legacy builder temporarily for validation, then demote or remove.
 
-The eventual gameplan should turn this into Phase.Stage.Action form.
+The eventual workplan should turn this into Phase.Stage.Action form.
 
 ## Acceptance Criteria
 
@@ -1700,10 +1700,10 @@ Performance criteria:
 - outgoing action query is local to current state cell
 - benchmark hooks exist for serious evaluation
 
-## Open Design Questions Before Gameplan
+## Open Design Questions Before Workplan
 
 These are not blockers for the blueprint, but they should be answered or fixed
-by the implementation gameplan.
+by the implementation workplan.
 
 1. Should the first implementation use integer ids with type aliases, or frozen
    slot dataclasses for ids?

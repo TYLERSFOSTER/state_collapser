@@ -1,14 +1,14 @@
-# Fiber-Conditioned Training Spine Engineer Documentation Implementation Gameplan
+# Fiber-Conditioned Training Spine Engineer Documentation Implementation Workplan
 
 ## Status
 
-This document is the Phase.Stage.Action implementation gameplan for:
+This document is the Phase.Stage.Action implementation workplan for:
 
 - `docs/design/RL_framework_maturity/01_003_fiber_conditioned_training_spine_engineer_documentation_blueprint.md`
 
 It is paired with:
 
-- `docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_gameplan.md`
+- `docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_workplan.md`
 
 It is downstream of:
 
@@ -20,26 +20,26 @@ It is governed by:
 - `docs/prime_directive/prime_directive.md`
 - `docs/prime_directive/git_practices.md`
 - `docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md`
-- `docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md`
+- `docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md`
 
-This is a documentation implementation gameplan.
+This is a documentation implementation workplan.
 
 It is not documentation implementation.
 
 No documentation execution should begin until the Project Owner explicitly
-approves execution of the paired code and documentation gameplans.
+approves execution of the paired code and documentation workplans.
 
-Once approved, this gameplan is law. If documentation reality conflicts with
+Once approved, this workplan is law. If documentation reality conflicts with
 any Phase.Stage.Action item below, the implementer must stop, identify the exact
 item that failed, and ask the Project Owner for guidance. Silent simplification,
 silent reordering, and silent reinterpretation are forbidden.
 
 ## Paired Reality Contract
 
-This documentation gameplan must remain synchronized with:
+This documentation workplan must remain synchronized with:
 
 ```text
-docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_gameplan.md
+docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_workplan.md
 ```
 
 The docs must explain the same architecture the code implements:
@@ -64,7 +64,7 @@ In particular, the docs must not imply that:
 - lift is an externally invented heuristic rather than the path fiber of the
   tower projection
 
-## Fixed Decisions Shared With Code Gameplan
+## Fixed Decisions Shared With Code Workplan
 
 The following decisions are fixed in both paired plans.
 
@@ -108,9 +108,9 @@ The following decisions are fixed in both paired plans.
 7. The first docs example must not require Torch, SB3, or RLlib.
 
 8. The first docs example must use real import paths that work after the code
-   gameplan is implemented.
+   workplan is implemented.
 
-## Fixed Defaults For This Documentation Gameplan
+## Fixed Defaults For This Documentation Workplan
 
 Unless the Project Owner changes these before execution, documentation must use
 the following defaults.
@@ -202,7 +202,7 @@ The log must record:
 Documentation implementation must stop and ask the Project Owner if any of the
 following occur.
 
-- The code gameplan is not approved for execution.
+- The code workplan is not approved for execution.
 - The code implementation has not yet created the API a usage doc must describe.
 - A planned import path does not exist.
 - A planned snippet cannot be made true without changing code semantics.
@@ -213,7 +213,7 @@ following occur.
 - A README change would re-clutter the README with design/TODO material.
 - A documentation example cannot be validated against code.
 - The working tree contains unrelated user changes in files this plan must edit.
-- Documentation would need to contradict the paired code gameplan.
+- Documentation would need to contradict the paired code workplan.
 
 ## Validation Command Set
 
@@ -255,7 +255,7 @@ editing further.
 #### Action 0.1.1
 
 Confirm that the Project Owner explicitly approved execution of the paired code
-and documentation gameplans.
+and documentation workplans.
 
 Completion criteria:
 
@@ -270,15 +270,15 @@ Stop condition:
 
 #### Action 0.2.1
 
-Re-read the paired source and gameplan files from disk.
+Re-read the paired source and workplan files from disk.
 
 Required files:
 
 ```text
 docs/design/RL_framework_maturity/01_002_fiber_conditioned_training_spine_blueprint.md
 docs/design/RL_framework_maturity/01_003_fiber_conditioned_training_spine_engineer_documentation_blueprint.md
-docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_gameplan.md
-docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_gameplan.md
+docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_workplan.md
+docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_workplan.md
 ```
 
 Completion criteria:
@@ -418,7 +418,7 @@ Required content:
 
 Completion criteria:
 
-- Direction vocabulary matches the code gameplan.
+- Direction vocabulary matches the code workplan.
 - No global "base graph" language is introduced.
 
 #### Action 2.2.3
@@ -520,7 +520,7 @@ Required content:
 
 Completion criteria:
 
-- Terms match code gameplan vocabulary.
+- Terms match code workplan vocabulary.
 
 #### Action 2.2.8
 
@@ -916,7 +916,7 @@ Completion criteria:
 
 - No usage doc describes a non-existent implemented API.
 - No API note omits a required public field.
-- No doc contradicts the code gameplan's deferred-work register.
+- No doc contradicts the code workplan's deferred-work register.
 
 ### Stage 8.3: Final Summary
 

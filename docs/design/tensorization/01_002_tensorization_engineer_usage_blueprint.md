@@ -75,7 +75,7 @@ from state_collapser.training.torch import TorchDecisionBatch
 from state_collapser.training.torch import TorchTransitionBatch
 ```
 
-The exact function names are implementation details for the future gameplan,
+The exact function names are implementation details for the future workplan,
 but the usage shape should remain close to this.
 
 ## Install Expectations
@@ -543,4 +543,4 @@ The usage story is acceptable when an engineer can answer:
 - How does this avoid reproducing RLlib or SB3?
 
 This blueprint answers those questions at design level. The implementation
-gameplan should later turn them into examples, API notes, and tests.
+workplan should later turn them into examples, API notes, and tests.

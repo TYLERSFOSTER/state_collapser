@@ -72,7 +72,7 @@ No implementation may occur merely because the next project stage has been named
 
 No implementation may occur merely because the Project Owner says "begin" if unresolved design decisions are still on the table.
 
-No implementation may occur when the requested next work item is a design discussion, gameplan, diagnosis, or approval checkpoint.
+No implementation may occur when the requested next work item is a design discussion, workplan, diagnosis, or approval checkpoint.
 
 Before any source-code or test modification, the LLM must have an explicit approval signal that binds:
 

@@ -1,11 +1,11 @@
 # Common Failure Mode 003
-## Gameplan Rewrite During Implementation
+## Workplan Rewrite During Implementation
 
 ## Status
 
 This document is a corrective amendment to the prime directive.
 
-It exists because an implementation session violated owner intent by silently converting an approved implementation gameplan into a lighter or more minimal implementation path during execution.
+It exists because an implementation session violated owner intent by silently converting an approved implementation workplan into a lighter or more minimal implementation path during execution.
 
 That behavior is unacceptable.
 
@@ -13,10 +13,10 @@ That behavior is unacceptable.
 
 The failure mode is:
 
-- the Project Owner approves a blueprint and a detailed gameplan
+- the Project Owner approves a blueprint and a detailed workplan
 - the LLM begins implementation
-- during implementation, the LLM silently simplifies, compresses, reorders, or reinterprets the approved gameplan
-- the LLM then presents the result as though it implemented the gameplan
+- during implementation, the LLM silently simplifies, compresses, reorders, or reinterprets the approved workplan
+- the LLM then presents the result as though it implemented the workplan
 
 This is a severe violation.
 
@@ -30,15 +30,15 @@ It is a direct breakdown of authority and execution discipline.
 
 ## The rule
 
-> **When implementing from an approved gameplan, the gameplan is law.**
+> **When implementing from an approved workplan, the workplan is law.**
 
-If the Project Owner has approved a gameplan organized as:
+If the Project Owner has approved a workplan organized as:
 
 - `Phase`
 - `Stage`
 - `Action`
 
-then implementation must proceed by executing that gameplan as written.
+then implementation must proceed by executing that workplan as written.
 
 The LLM must not:
 
@@ -47,9 +47,9 @@ The LLM must not:
 - silently collapse multiple actions into one lighter implementation
 - silently postpone harder actions
 - silently reinterpret a concrete action as “good enough” with a weaker substitute
-- silently decide that only the “spirit” of the gameplan matters
+- silently decide that only the “spirit” of the workplan matters
 
-The gameplan does not mean:
+The workplan does not mean:
 
 - “implement something roughly like this”
 
@@ -59,12 +59,12 @@ It means:
 
 ## Implementation protocol
 
-When an approved gameplan exists, the LLM must:
+When an approved workplan exists, the LLM must:
 
 1. treat every `Phase.Stage.Action` item as an implementation obligation
 2. work through those items in order unless the owner explicitly authorizes reordering
 3. implement the actual thing described, not a lighter stand-in
-4. verify progress against the gameplan item itself, not against the LLM’s own sense of sufficiency
+4. verify progress against the workplan item itself, not against the LLM’s own sense of sufficiency
 5. keep a running implementation log that records what was completed and any blockers or surprises
 
 ## Mandatory stop conditions
@@ -95,7 +95,7 @@ The following behavior is specifically forbidden:
 
 > “I implemented a real first-pass version of the blueprint, but it is still a deliberately simplified one relative to the full mathematical ambition.”
 
-If the approved blueprint/gameplan did not authorize a simplified first-pass substitute, then this statement is evidence of failure.
+If the approved blueprint/workplan did not authorize a simplified first-pass substitute, then this statement is evidence of failure.
 
 The correct behavior would have been:
 
@@ -117,7 +117,7 @@ then the LLM may implement a reduced version only if that is explicitly what the
 
 But if the Project Owner requests:
 
-- execute the gameplan
+- execute the workplan
 - complete all phases, stages, and actions
 - implement the blueprint
 
@@ -131,7 +131,7 @@ and not:
 
 ## Phase.Stage.Action execution discipline
 
-When a gameplan uses `Phase.Stage.Action`, the LLM must:
+When a workplan uses `Phase.Stage.Action`, the LLM must:
 
 1. read the current action text again before implementing it
 2. confirm internally that the code change satisfies that exact action
@@ -148,7 +148,7 @@ For example:
 
 ## Reporting discipline
 
-When reporting progress during gameplan execution, the LLM must distinguish clearly between:
+When reporting progress during workplan execution, the LLM must distinguish clearly between:
 
 - completed exactly as specified
 - blocked pending owner guidance
@@ -186,7 +186,7 @@ unless the owner specifically authorized that framing.
 
 The correct operational rule is:
 
-> **Blueprint approved + gameplan approved = implement exactly that plan, or stop and ask.**
+> **Blueprint approved + workplan approved = implement exactly that plan, or stop and ask.**
 
 Not:
 
@@ -194,9 +194,9 @@ Not:
 
 ## Final amendment
 
-From this point forward, when an approved implementation gameplan exists in this repository:
+From this point forward, when an approved implementation workplan exists in this repository:
 
-- the gameplan is law
+- the workplan is law
 - silent simplification is forbidden
 - silent reinterpretation is forbidden
 - silent scope reduction is forbidden

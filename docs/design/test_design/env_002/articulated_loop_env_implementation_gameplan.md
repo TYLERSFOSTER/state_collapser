@@ -1,4 +1,4 @@
-# Articulated Loop Env Implementation Gameplan
+# Articulated Loop Env Implementation Workplan
 
 ## Status
 

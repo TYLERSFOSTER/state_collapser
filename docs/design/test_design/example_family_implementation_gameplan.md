@@ -1,8 +1,8 @@
-# Example Family Implementation Gameplan
+# Example Family Implementation Workplan
 
 ## Status
 
-This document is the implementation gameplan for the evaluation-environment family defined in:
+This document is the implementation workplan for the evaluation-environment family defined in:
 
 - [example_family_blueprint_from_mathematical_model_list.md]([state_collapser repository root]/docs/design/test_design/example_family_blueprint_from_mathematical_model_list.md)
 
@@ -11,7 +11,7 @@ It is written under the authority of:
 - [docs/prime_directive/prime_directive.md]([state_collapser repository root]/docs/prime_directive/prime_directive.md)
 - [docs/prime_directive/common_failure_mode_001.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_001.md)
 - [docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md)
-- [docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md)
+- [docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md]([state_collapser repository root]/docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md)
 
 It is intentionally operational.
 
@@ -25,15 +25,15 @@ Its job is to define:
 - the validation sequence
 - the stop conditions
 
-This gameplan is organized in `Phase.Stage.Action` form.
+This workplan is organized in `Phase.Stage.Action` form.
 
 ## Execution Contract
 
-### Rule 1 — Gameplan Is Law
+### Rule 1 — Workplan Is Law
 
 When this implementation begins:
 
-- this gameplan is law
+- this workplan is law
 - the environment-family blueprint is law
 - the general evaluation strategy is law
 - I do not silently simplify
@@ -87,7 +87,7 @@ The log must record:
 
 - `docs/design/test_design/evaluation_strategy.md`
 - `docs/design/test_design/example_family_blueprint_from_mathematical_model_list.md`
-- `docs/design/test_design/example_family_implementation_gameplan.md`
+- `docs/design/test_design/example_family_implementation_workplan.md`
 - `docs/design/test_design/example_family_implementation_log.md`
 
 ### New env-specific design folders
@@ -100,7 +100,7 @@ The log must record:
 Each env folder should eventually contain at least:
 
 - a spec
-- an implementation gameplan
+- an implementation workplan
 - an implementation log
 
 ### Example package targets
@@ -286,13 +286,13 @@ Ensure the spec defines:
 - a closure rule that is neither too strict nor too decorative
 - enough feasible graph structure to make quotient behavior interesting
 
-### Stage 3.2 — Write The Env-Specific Implementation Gameplan
+### Stage 3.2 — Write The Env-Specific Implementation Workplan
 
 #### Action 3.2.1
 
 Write:
 
-- `docs/design/test_design/env_002/articulated_loop_env_implementation_gameplan.md`
+- `docs/design/test_design/env_002/articulated_loop_env_implementation_workplan.md`
 
 It should define:
 
@@ -363,15 +363,15 @@ The spec must make explicit:
 - validity rules for coordinated manipulation
 - why this example is central to the package’s motivating claim
 
-### Stage 4.2 — Write The Env-Specific Implementation Gameplan
+### Stage 4.2 — Write The Env-Specific Implementation Workplan
 
 #### Action 4.2.1
 
 Write:
 
-- `docs/design/test_design/env_005/dual_arm_manipulation_env_implementation_gameplan.md`
+- `docs/design/test_design/env_005/dual_arm_manipulation_env_implementation_workplan.md`
 
-This gameplan must define the implementation order and stop conditions for the env.
+This workplan must define the implementation order and stop conditions for the env.
 
 ### Stage 4.3 — Implement The Example Package
 
@@ -427,13 +427,13 @@ The spec must make explicit:
 - coupled cable/support feasibility
 - how this env differs structurally from `plate_support_env`
 
-### Stage 5.2 — Write The Env-Specific Implementation Gameplan
+### Stage 5.2 — Write The Env-Specific Implementation Workplan
 
 #### Action 5.2.1
 
 Write:
 
-- `docs/design/test_design/env_004/cable_parallel_env_implementation_gameplan.md`
+- `docs/design/test_design/env_004/cable_parallel_env_implementation_workplan.md`
 
 ### Stage 5.3 — Implement The Example Package
 
@@ -487,13 +487,13 @@ The spec must make explicit:
 - the singular or near-singular region
 - why that singular structure matters for evaluation
 
-### Stage 6.2 — Write The Env-Specific Implementation Gameplan
+### Stage 6.2 — Write The Env-Specific Implementation Workplan
 
 #### Action 6.2.1
 
 Write:
 
-- `docs/design/test_design/env_003/parallelogram_singularity_env_implementation_gameplan.md`
+- `docs/design/test_design/env_003/parallelogram_singularity_env_implementation_workplan.md`
 
 ### Stage 6.3 — Implement The Example Package
 
@@ -620,7 +620,7 @@ This implementation counts as complete only if:
 - each chosen first-wave family has:
   - a real env package
   - a real spec
-  - a real implementation gameplan
+  - a real implementation workplan
   - real tests
 - each env encodes the intended hidden constraint geometry honestly
 - the family supports the evaluation strategy rather than only increasing example count

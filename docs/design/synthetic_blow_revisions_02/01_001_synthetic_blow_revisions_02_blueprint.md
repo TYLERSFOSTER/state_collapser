@@ -13,7 +13,7 @@ Related design authority:
 - `docs/design/synthetic_blow_revisions_02/README.md`
 - `docs/design/pointwise_liftability_source_support/README.md`
 - `docs/design/pointwise_liftability_source_support/01_001_pointwise_liftability_source_support_blueprint.md`
-- `docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_gameplan.md`
+- `docs/design/pointwise_liftability_source_support/01_002_pointwise_liftability_source_support_implementation_workplan.md`
 
 ## Executive Summary
 
@@ -718,7 +718,7 @@ But that is out of scope for this pass unless a real caller appears.
 The main validation is packaging/tooling:
 
 - `uv sync --extra dev --extra rl`
-- `uv run python -m build` if the implementation gameplan includes build
+- `uv run python -m build` if the implementation workplan includes build
   validation;
 - full pytest.
 
@@ -848,9 +848,9 @@ Expected docs files:
 - `docs/artifact_contracts.md`
 - possibly `docs/package_usage.md` only if dependency wording requires it
 
-Expected design/log files after gameplan execution:
+Expected design/log files after workplan execution:
 
-- `docs/design/synthetic_blow_revisions_02/01_002_synthetic_blow_revisions_02_implementation_gameplan.md`
+- `docs/design/synthetic_blow_revisions_02/01_002_synthetic_blow_revisions_02_implementation_workplan.md`
 - `docs/design/synthetic_blow_revisions_02/01_003_synthetic_blow_revisions_02_implementation_log.md`
 
 ## Test Strategy
@@ -905,7 +905,7 @@ uv sync --extra dev --extra rl
 uv run python -m build
 ```
 
-The implementation gameplan should decide whether build validation is required
+The implementation workplan should decide whether build validation is required
 in the execution pass. Given that dependency metadata changes are in scope, build
 validation is recommended.
 
@@ -999,15 +999,15 @@ This blueprint is satisfied when:
     surfaces.
 12. Full local validation passes.
 
-## Blueprint-To-Gameplan Readiness
+## Blueprint-To-Workplan Readiness
 
 This blueprint is detailed enough to write a Phase.Stage.Action implementation
-gameplan.
+workplan.
 
-The gameplan should preserve the same scope boundaries:
+The workplan should preserve the same scope boundaries:
 
 - implement the five in-scope work packages;
 - do not implement struck-through review items;
-- create a dedicated implementation branch only after the gameplan is written
+- create a dedicated implementation branch only after the workplan is written
   and approved for execution, per `docs/prime_directive/git_practices.md`.
 

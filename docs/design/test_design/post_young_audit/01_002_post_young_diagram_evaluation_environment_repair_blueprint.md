@@ -13,7 +13,7 @@ codex/young-tableaux-runtime-refactor
 Design status:
 
 ```text
-Blueprint, not implementation gameplan
+Blueprint, not implementation workplan
 ```
 
 This blueprint turns
@@ -1140,7 +1140,7 @@ docs/design/test_design/post_young_audit/01_003_*.md
 
 ## Recommended Implementation Order
 
-This is not yet a Phase.Stage.Action gameplan, but the implementation should
+This is not yet a Phase.Stage.Action workplan, but the implementation should
 probably proceed in this order:
 
 1. fix `tower_depth_probe` no-env parser behavior;

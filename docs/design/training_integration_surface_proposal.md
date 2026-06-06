@@ -13,7 +13,7 @@ The main usage story we want is:
    - flat environment training
    - tower-assisted training
 
-This document is not yet a full implementation gameplan. It is the bridge from:
+This document is not yet a full implementation workplan. It is the bridge from:
 
 - current package core
 - current example environments

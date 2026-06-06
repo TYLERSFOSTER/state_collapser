@@ -210,7 +210,7 @@ Has state_collapser reached the tensor-capable architecture state needed to make
 the tensor-off versus tensor-on distinction meaningful?
 ```
 
-Only then should `big_boy_benchmarking` proceed to blueprint and gameplan for the
+Only then should `big_boy_benchmarking` proceed to blueprint and workplan for the
 first serious counterpoint evaluation.
 
 ## Status Addendum: 2026-05-29

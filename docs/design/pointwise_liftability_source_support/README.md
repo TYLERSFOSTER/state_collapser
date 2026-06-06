@@ -71,6 +71,6 @@ no_lift_candidate_from_current_state.
 ```
 
 Codex's role in this folder should be to turn that diagnosis into a careful
-repo-grounded blueprint and implementation gameplan without flattening away
+repo-grounded blueprint and implementation workplan without flattening away
 the recursive Young-diagram structure.
 

@@ -8,10 +8,10 @@ This document translates the end-state of
 `01_001_rl_framework_maturity_and_tower_training_spine_discussion.md` into a
 concrete architecture target.
 
-It is not an implementation gameplan.
+It is not an implementation workplan.
 
 It should be followed by an ultra-detailed Phase.Stage.Action implementation
-gameplan only after Project Owner review.
+workplan only after Project Owner review.
 
 ## Source Discussion
 
@@ -881,7 +881,7 @@ Existing tests for:
 
 should continue passing.
 
-If tests must change, the implementation gameplan should justify why.
+If tests must change, the implementation workplan should justify why.
 
 ## Acceptance Criteria
 

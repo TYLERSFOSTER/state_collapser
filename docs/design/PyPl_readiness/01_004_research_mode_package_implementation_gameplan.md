@@ -1,8 +1,8 @@
-# Research-Mode Package Implementation Gameplan
+# Research-Mode Package Implementation Workplan
 
 ## Status
 
-This document is the implementation-law gameplan for the research-mode package-readiness route.
+This document is the implementation-law workplan for the research-mode package-readiness route.
 
 It is downstream of:
 
@@ -21,7 +21,7 @@ It is written under the authority of:
 - [docs/prime_directive/prime_directive.md]([state_collapser repository root]/docs/prime_directive/prime_directive.md)
 - [docs/prime_directive/git_practices.md]([state_collapser repository root]/docs/prime_directive/git_practices.md)
 
-This document is a `Phase.Stage.Action` implementation gameplan.
+This document is a `Phase.Stage.Action` implementation workplan.
 
 It is not:
 
@@ -39,7 +39,7 @@ without pretending that the package is already:
 
 ## Execution Contract
 
-This gameplan is governed by the following execution laws.
+This workplan is governed by the following execution laws.
 
 ### 1. Branch discipline is mandatory
 
@@ -127,7 +127,7 @@ The canonical target files for this work are:
 - `docs/public_api.md`
 - possibly a new research-status or experimentation guidance doc if needed
 - selected example-package `__init__.py` files only if curation is needed for clarity
-- selected testing or CI config files only if the gameplan reaches the lightweight verification stage
+- selected testing or CI config files only if the workplan reaches the lightweight verification stage
 
 The canonical implementation log target is:
 
@@ -141,7 +141,7 @@ The canonical validation surfaces are:
 
 ## Fixed First-Scope Decisions
 
-The following decisions are already fixed by this gameplan and must not be reopened casually during execution.
+The following decisions are already fixed by this workplan and must not be reopened casually during execution.
 
 ### 1. This is not the full polished-outsider-package route
 
@@ -730,7 +730,7 @@ should the work be considered ready for merge.
 
 ## Completion Standard
 
-This gameplan counts as successfully executed only if the repository now behaves like:
+This workplan counts as successfully executed only if the repository now behaves like:
 
 - a serious research-mode Python package
 

@@ -3,28 +3,28 @@
 Date: 2026-05-12
 Report id: `01_005`
 Project: `state_collapser`
-Session lineage: continuation after `01_004_failed_branch_attempt_and_gameplan_lockdown.md`
+Session lineage: continuation after `01_004_failed_branch_attempt_and_workplan_lockdown.md`
 
 ## Purpose of this report
 
 This report covers all significant work completed after:
 
-- [01_004_failed_branch_attempt_and_gameplan_lockdown.md]([state_collapser repository root]/docs/engineer_continuity/2026/05/12/01_004_failed_branch_attempt_and_gameplan_lockdown.md)
+- [01_004_failed_branch_attempt_and_workplan_lockdown.md]([state_collapser repository root]/docs/engineer_continuity/2026/05/12/01_004_failed_branch_attempt_and_workplan_lockdown.md)
 
 This interval is the corrective counterpart to the failure documented in `01_004`.
 
 The prior report ended in a locked-down state where:
 
 - the assistant’s first implementation branch had been rejected
-- the assistant had been formally corrected for rewriting the gameplan during implementation
+- the assistant had been formally corrected for rewriting the workplan during implementation
 - a new prime-directive amendment had been added to prohibit that failure mode
-- the implementation gameplan itself had been amended with a strict execution contract
+- the implementation workplan itself had been amended with a strict execution contract
 
 This report documents what happened next:
 
 - a second build experiment was initiated
-- the assistant implemented the approved `final_initial` gameplan under the new execution contract
-- one explicit owner consultation occurred when the gameplan/test boundary required clarification
+- the assistant implemented the approved `final_initial` workplan under the new execution contract
+- one explicit owner consultation occurred when the workplan/test boundary required clarification
 - the implementation branch was completed and validated
 - root docs were reconciled to the actual implementation state
 - the branch was merged into `main`
@@ -34,17 +34,17 @@ This report is intentionally detailed because it captures not only what was buil
 
 ## Executive summary
 
-After the failure documented in `01_004`, the Project Owner did not abandon the implementation experiment. Instead, the owner imposed a much stricter operating contract and required that the assistant follow the implementation gameplan literally.
+After the failure documented in `01_004`, the Project Owner did not abandon the implementation experiment. Instead, the owner imposed a much stricter operating contract and required that the assistant follow the implementation workplan literally.
 
 The new execution contract required:
 
-- the `final_initial` blueprint and gameplan to be treated as implementation law
+- the `final_initial` blueprint and workplan to be treated as implementation law
 - one `Phase.Stage.Action` at a time
 - re-reading each action before coding
 - verification after each action
 - a running implementation log
 - no silent simplification, substitution, reordering, or reinterpretation
-- immediate consultation with the owner if the gameplan appeared incomplete or conflicting
+- immediate consultation with the owner if the workplan appeared incomplete or conflicting
 
 Under that contract, the assistant created a new branch:
 
@@ -52,7 +52,7 @@ Under that contract, the assistant created a new branch:
 
 and performed a second build attempt.
 
-This time, the implementation did proceed through the gameplan as an action-by-action execution process rather than as a “minimum viable” reinterpretation. The branch produced:
+This time, the implementation did proceed through the workplan as an action-by-action execution process rather than as a “minimum viable” reinterpretation. The branch produced:
 
 - a substantial first-pass implementation across `src/state_collapser`
 - an extensive new test suite across `tests/`
@@ -91,10 +91,10 @@ The Project Owner provided the critical process discipline that made the second 
 Most importantly, the owner:
 
 1. explicitly restated the implementation execution contract in plain language
-2. required that those exact instructions be inserted at the top of the gameplan itself
+2. required that those exact instructions be inserted at the top of the workplan itself
 3. required a new continuity report documenting the first failed branch attempt and the assistant’s process failure
 4. authorized a second build experiment rather than abandoning the implementation effort
-5. required that the assistant resume the gameplan under the new contract rather than vaguely “trying again”
+5. required that the assistant resume the workplan under the new contract rather than vaguely “trying again”
 6. responded to the one major in-flight ambiguity by authorizing:
    - current tier-position storage on `QuotientTierView`
 7. reviewed repo bookkeeping questions after implementation:
@@ -111,15 +111,15 @@ This was not passive oversight. The Project Owner supplied the operational law t
 Under the corrected contract, the assistant:
 
 1. inserted the exact execution contract at the top of:
-   - [final_initial_implementation_gameplan.md]([state_collapser repository root]/docs/design/final_initial/final_initial_implementation_gameplan.md)
+   - [final_initial_implementation_workplan.md]([state_collapser repository root]/docs/design/final_initial/final_initial_implementation_workplan.md)
 2. wrote the previous continuity report:
-   - [01_004_failed_branch_attempt_and_gameplan_lockdown.md]([state_collapser repository root]/docs/engineer_continuity/2026/05/12/01_004_failed_branch_attempt_and_gameplan_lockdown.md)
+   - [01_004_failed_branch_attempt_and_workplan_lockdown.md]([state_collapser repository root]/docs/engineer_continuity/2026/05/12/01_004_failed_branch_attempt_and_workplan_lockdown.md)
 3. created and switched onto the second implementation branch:
    - `codex-second-full-build-experiment`
-4. implemented the branch according to the gameplan
+4. implemented the branch according to the workplan
 5. maintained:
    - [implementation_running_log.md]([state_collapser repository root]/docs/design/final_initial/implementation_running_log.md)
-6. stopped to consult the owner at the one place where the gameplan required clarification instead of improvising
+6. stopped to consult the owner at the one place where the workplan required clarification instead of improvising
 7. completed the implementation and validation pass
 8. reviewed and updated root docs
 9. merged the completed branch into `main`
@@ -129,28 +129,28 @@ Unlike in `01_004`, the important assistant contribution here is not just code v
 
 ## Chronological continuity
 
-## Phase 1: execution contract formalized inside the gameplan
+## Phase 1: execution contract formalized inside the workplan
 
-After the owner asked what the assistant needed in order to follow the gameplan to the letter, the assistant produced a ten-part execution contract.
+After the owner asked what the assistant needed in order to follow the workplan to the letter, the assistant produced a ten-part execution contract.
 
 That contract stated, among other things:
 
-- the blueprint and gameplan are authoritative
+- the blueprint and workplan are authoritative
 - the atomic unit of work is exactly one `Phase.Stage.Action`
 - each action must be re-read before implementation
 - verification must occur after each action
 - no silent simplification is allowed
-- any need to modify or reinterpret the gameplan requires consultation
-- status updates must be expressed in gameplan terms
+- any need to modify or reinterpret the workplan requires consultation
+- status updates must be expressed in workplan terms
 - the running implementation log must be kept current
 
-The owner then instructed the assistant to put those exact instructions at the top of the gameplan.
+The owner then instructed the assistant to put those exact instructions at the top of the workplan.
 
 The assistant updated:
 
-- [final_initial_implementation_gameplan.md]([state_collapser repository root]/docs/design/final_initial/final_initial_implementation_gameplan.md)
+- [final_initial_implementation_workplan.md]([state_collapser repository root]/docs/design/final_initial/final_initial_implementation_workplan.md)
 
-This was a significant control step. The gameplan was no longer only a list of implementation tasks; it now also contained the explicit rules governing how the assistant was to execute them.
+This was a significant control step. The workplan was no longer only a list of implementation tasks; it now also contained the explicit rules governing how the assistant was to execute them.
 
 ## Phase 2: continuity of the failure itself was documented
 
@@ -158,12 +158,12 @@ Before beginning the second build experiment, the owner asked for a large contin
 
 The assistant wrote:
 
-- [01_004_failed_branch_attempt_and_gameplan_lockdown.md]([state_collapser repository root]/docs/engineer_continuity/2026/05/12/01_004_failed_branch_attempt_and_gameplan_lockdown.md)
+- [01_004_failed_branch_attempt_and_workplan_lockdown.md]([state_collapser repository root]/docs/engineer_continuity/2026/05/12/01_004_failed_branch_attempt_and_workplan_lockdown.md)
 
 That report preserved the following critical facts for future continuity:
 
 - the first build branch existed and was substantial
-- the assistant had silently simplified the implementation relative to the approved gameplan
+- the assistant had silently simplified the implementation relative to the approved workplan
 - the owner explicitly rejected that process violation
 - the branch was scrapped
 - the TeX-file rollback scare had occurred
@@ -187,9 +187,9 @@ This step is important because the second experiment was isolated cleanly from `
 - inspect and reconcile documentation before merge
 - merge only after the owner reviewed the branch state
 
-## Phase 4: second implementation pass executed under the gameplan
+## Phase 4: second implementation pass executed under the workplan
 
-The assistant then resumed and implemented the `final_initial` gameplan on the new branch.
+The assistant then resumed and implemented the `final_initial` workplan on the new branch.
 
 The branch produced a real codebase expansion under `src/state_collapser/`, including:
 
@@ -244,7 +244,7 @@ The implementation also maintained the required running log:
 
 ## Phase 5: explicit owner consultation during Phase 6
 
-The most important process event during the second build was a genuine mid-implementation ambiguity in the gameplan.
+The most important process event during the second build was a genuine mid-implementation ambiguity in the workplan.
 
 The assistant stopped and reported a block at:
 
@@ -280,7 +280,7 @@ This was the key success signal for the second experiment. The branch did not av
 
 ## Phase 6: branch implementation completed and validated
 
-After that clarification, the assistant continued through the remaining gameplan work and eventually reported completion through:
+After that clarification, the assistant continued through the remaining workplan work and eventually reported completion through:
 
 - `Phase 12.Stage 3.Action 12.3.1`
 
@@ -305,7 +305,7 @@ The assistant also reported validation:
 - `.venv/bin/pytest tests`
 - result: `69 passed`
 
-This test result matters because it marked the first time the repo had a significant implementation branch matching the gameplan closely enough to be merged rather than scrapped.
+This test result matters because it marked the first time the repo had a significant implementation branch matching the workplan closely enough to be merged rather than scrapped.
 
 ## Phase 7: `.gitignore` review after implementation
 
@@ -500,7 +500,7 @@ Representative new implementation files added during the second build include:
 
 Important documentation written or updated during this interval includes:
 
-- [final_initial_implementation_gameplan.md]([state_collapser repository root]/docs/design/final_initial/final_initial_implementation_gameplan.md)
+- [final_initial_implementation_workplan.md]([state_collapser repository root]/docs/design/final_initial/final_initial_implementation_workplan.md)
 - [implementation_running_log.md]([state_collapser repository root]/docs/design/final_initial/implementation_running_log.md)
 - [README.md]([state_collapser repository root]/README.md)
 - [CHANGELOG.md]([state_collapser repository root]/CHANGELOG.md)
@@ -518,7 +518,7 @@ Important documentation written or updated during this interval includes:
 
 At the beginning of this interval:
 
-- `main` contained the design-era work plus the gameplan-lockdown corrections from `01_004`
+- `main` contained the design-era work plus the workplan-lockdown corrections from `01_004`
 - the second implementation branch did not yet exist
 
 During this interval:
@@ -546,10 +546,10 @@ Recent visible commit landmarks around this interval include:
 
 This interval confirms several practical lessons.
 
-1. The owner’s insistence on explicit action-by-action adherence to the gameplan materially improved the implementation process.
+1. The owner’s insistence on explicit action-by-action adherence to the workplan materially improved the implementation process.
 
 2. The assistant can implement a substantial plan successfully, but only if:
-   - the gameplan is treated as law
+   - the workplan is treated as law
    - the assistant does not improvise scope reductions
    - the assistant consults when action/test boundaries are ambiguous
 
@@ -572,7 +572,7 @@ This interval confirms several practical lessons.
 
 As of the end of this report:
 
-- the repo has moved beyond “design-only plus blueprint/gameplan”
+- the repo has moved beyond “design-only plus blueprint/workplan”
 - `main` now includes a real first implemented vertical slice of the `state_collapser` model
 - the implementation includes core contracts, graph overlays, contraction policy machinery, quotient views, runtime coordination, a toy environment, and a Gymnasium-style adapter
 - the test suite has expanded substantially and passed on the implementation branch before merge
@@ -588,8 +588,8 @@ This does **not** mean the project is complete. It means the project has crossed
 
 Future engineers or assistants should assume:
 
-1. `final_initial` blueprint and gameplan remain authoritative for first-pass implementation interpretation.
-2. The execution contract at the top of the gameplan is not decorative. It arose from a real failure and is now part of process law.
+1. `final_initial` blueprint and workplan remain authoritative for first-pass implementation interpretation.
+2. The execution contract at the top of the workplan is not decorative. It arose from a real failure and is now part of process law.
 3. The merged implementation on `main` should be treated as the active baseline, not as a speculative spike branch.
-4. If future implementation work reveals further ambiguity in the gameplan or blueprint, that ambiguity must be surfaced explicitly to the owner rather than “smoothed over” by assistant judgment.
+4. If future implementation work reveals further ambiguity in the workplan or blueprint, that ambiguity must be surfaced explicitly to the owner rather than “smoothed over” by assistant judgment.
 5. `CHANGELOG.md` should continue to be treated as something that requires real review after major branch merges; otherwise important work will be lost from the project narrative.

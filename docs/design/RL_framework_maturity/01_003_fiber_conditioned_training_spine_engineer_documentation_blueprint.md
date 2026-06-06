@@ -10,7 +10,7 @@ This document is paired with
 It designs the engineer-facing documentation that should be written alongside
 the fiber-conditioned training spine.
 
-It is not an implementation gameplan.
+It is not an implementation workplan.
 
 ## Why This Document Exists
 
@@ -193,7 +193,7 @@ It should include:
 It should not include:
 
 - long construction TODOs
-- implementation gameplans
+- implementation workplans
 - full theory
 - full API details
 
@@ -217,7 +217,7 @@ This should include:
 - current roadmap
 - research-mode package posture
 - planned RL maturity phases
-- branch/gameplan expectations
+- branch/workplan expectations
 
 ### Layer 3: Engineer Guide
 
@@ -282,7 +282,7 @@ The existing design docs should remain the place for:
 
 - architectural arguments
 - blueprint history
-- implementation gameplans
+- implementation workplans
 - open questions
 - PO/Codex discussion record
 

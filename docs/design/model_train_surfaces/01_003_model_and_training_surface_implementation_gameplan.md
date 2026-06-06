@@ -1,8 +1,8 @@
-# Model And Training Surface Implementation Gameplan
+# Model And Training Surface Implementation Workplan
 
 ## Status
 
-This document is the implementation-law gameplan for the first model and training surface work in `state_collapser`.
+This document is the implementation-law workplan for the first model and training surface work in `state_collapser`.
 
 It is downstream of:
 
@@ -15,7 +15,7 @@ It is written under the authority of:
 - [docs/design/module_design_desiderata.md]([state_collapser repository root]/docs/design/module_design_desiderata.md)
 - [docs/prime_directive/git_practices.md]([state_collapser repository root]/docs/prime_directive/git_practices.md)
 
-This document is a `Phase.Stage.Action` implementation gameplan.
+This document is a `Phase.Stage.Action` implementation workplan.
 
 It is not:
 
@@ -28,11 +28,11 @@ Its job is to define exactly how the first reusable `state_collapser.training` s
 
 ## Execution Contract
 
-This gameplan is governed by the following execution laws.
+This workplan is governed by the following execution laws.
 
 ### 1. Branch discipline is mandatory
 
-Before any implementation work governed by this gameplan begins:
+Before any implementation work governed by this workplan begins:
 
 - create or switch to a dedicated implementation branch
 - perform the work there
@@ -58,7 +58,7 @@ not:
 
 ### 3. The package must not harden into a master trainer
 
-No step in this gameplan may produce:
+No step in this workplan may produce:
 
 - one opaque package-owned training engine
 
@@ -75,7 +75,7 @@ But the orchestration must remain engineer-authorable.
 
 ### 4. Runtime ownership boundaries are fixed
 
-Nothing in this gameplan may collapse or blur the already-fixed ownership split:
+Nothing in this workplan may collapse or blur the already-fixed ownership split:
 
 - env remains the problem shell
 - runtime remains package-owned structural machinery
@@ -95,7 +95,7 @@ but it is not yet:
 
 ### 6. First scope requires one real migration
 
-Completion under this gameplan does not mean only:
+Completion under this workplan does not mean only:
 
 - creating interfaces and helper objects
 
@@ -152,11 +152,11 @@ then execution must stop for design correction rather than silently improvising 
 
 ## MORE Execution Contract
 
-### Rule MORE 1 — Gameplan Is Law
+### Rule MORE 1 — Workplan Is Law
 
 When this implementation begins:
 
-- this gameplan is law
+- this workplan is law
 - the blueprint is law
 - I do not silently simplify
 - I do not silently reorder
@@ -229,7 +229,7 @@ The canonical implementation log target is:
 
 - `docs/design/model_train_surfaces/01_004_model_and_training_surface_implementation_log.md`
 
-## First Implementation Decisions Fixed By This Gameplan
+## First Implementation Decisions Fixed By This Workplan
 
 The following choices are now bound and must not be reopened during execution unless a true contradiction is found.
 
@@ -917,7 +917,7 @@ Confirm all blueprint acceptance conditions are satisfied.
 
 #### Action 9.3.2
 
-Confirm the additional gameplan-specific conditions are also satisfied:
+Confirm the additional workplan-specific conditions are also satisfied:
 
 - concrete collectors exist
 - one concrete reference learner exists
@@ -956,7 +956,7 @@ If merge happens, it must preserve the git-practice rule:
 
 ## Completion Standard
 
-This gameplan counts as successfully executed only if the repo now contains:
+This workplan counts as successfully executed only if the repo now contains:
 
 - a real `state_collapser.training` package
 - the first reusable training-facing data objects

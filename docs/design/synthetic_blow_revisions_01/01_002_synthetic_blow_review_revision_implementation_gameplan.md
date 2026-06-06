@@ -1,10 +1,10 @@
-# Synthetic Blow Review Revision Implementation Gameplan
+# Synthetic Blow Review Revision Implementation Workplan
 
 ## Status
 
 Date: 2026-05-24
 
-This document is the Phase.Stage.Action implementation gameplan for:
+This document is the Phase.Stage.Action implementation workplan for:
 
 - `docs/design/synthetic_blow_revisions_01/01_001_synthetic_blow_review_revision_blueprint.md`
 
@@ -17,16 +17,16 @@ It is governed by:
 - `docs/prime_directive/prime_directive.md`
 - `docs/prime_directive/git_practices.md`
 - `docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md`
-- `docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md`
+- `docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md`
 
-This is an implementation gameplan.
+This is an implementation workplan.
 
 It is not an implementation.
 
 No source-code or test implementation should begin until the Project Owner
-explicitly approves execution of this gameplan.
+explicitly approves execution of this workplan.
 
-Once approved, this gameplan is law. If implementation reality conflicts with
+Once approved, this workplan is law. If implementation reality conflicts with
 any action below, the implementer must stop, identify the exact
 Phase.Stage.Action item that failed, and ask the Project Owner for guidance.
 Silent simplification, silent reordering, and silent reinterpretation are
@@ -61,7 +61,7 @@ The implementation must not solve automatic observation-to-state inference.
 The implementation must not silently reduce any Phase.Stage.Action item to a
 weaker substitute.
 
-## Fixed Defaults For This Gameplan
+## Fixed Defaults For This Workplan
 
 Unless the Project Owner changes these before execution, implementation must use
 the following defaults.
@@ -190,12 +190,12 @@ the following defaults.
 Implementation must stop and ask the Project Owner if any of the following
 occur.
 
-- A named file or symbol in this gameplan no longer exists.
+- A named file or symbol in this workplan no longer exists.
 - A Phase.Stage.Action item cannot be implemented as written.
 - An action requires choosing between multiple incompatible public APIs not
-  fixed by this gameplan.
+  fixed by this workplan.
 - An action would require a lighter substitute implementation.
-- A current test encodes behavior that directly contradicts this gameplan.
+- A current test encodes behavior that directly contradicts this workplan.
 - A source edit would require rewriting unrelated systems outside the named
   scope of the current phase.
 - A rename of `RuntimeSnapshot` causes broad unexpected breakage that would
@@ -205,7 +205,7 @@ occur.
   unresolved observation/state question.
 - A benchmark action would require adding a heavyweight dependency.
 - A validation command fails unexpectedly.
-- The working tree contains unrelated user changes in a file this gameplan must
+- The working tree contains unrelated user changes in a file this workplan must
   edit.
 - The implementation would need to revert user work.
 
@@ -315,22 +315,22 @@ before editing further.
 High-level explanation:
 
 Confirm that the Project Owner has explicitly approved execution. This protects
-the design/gameplan boundary required by the prime directive.
+the design/workplan boundary required by the prime directive.
 
 Ground-truth files to inspect:
 
 ```text
 docs/design/synthetic_blow_revisions_01/01_001_synthetic_blow_review_revision_blueprint.md
-docs/design/synthetic_blow_revisions_01/01_002_synthetic_blow_review_revision_implementation_gameplan.md
+docs/design/synthetic_blow_revisions_01/01_002_synthetic_blow_review_revision_implementation_workplan.md
 docs/prime_directive/git_practices.md
 docs/prime_directive/common_failure_mode_002_implementation_without_owner_approval.md
-docs/prime_directive/common_failure_mode_003_gameplan_rewrite_during_implementation.md
+docs/prime_directive/common_failure_mode_003_workplan_rewrite_during_implementation.md
 ```
 
 Machine action:
 
 Do not edit source. Confirm the owner has explicitly requested execution of
-this gameplan.
+this workplan.
 
 Associated tests:
 
@@ -343,8 +343,8 @@ Completion criteria:
 
 Failure hypotheses:
 
-- The owner asked only for gameplan creation, not execution.
-- The owner wants to revise the gameplan before execution.
+- The owner asked only for workplan creation, not execution.
+- The owner wants to revise the workplan before execution.
 - The owner wants a different branch name or implementation order.
 
 #### Action 0.1.2
@@ -409,7 +409,7 @@ The initial log must include:
 - title
 - date
 - source blueprint
-- source gameplan
+- source workplan
 - active branch
 - starting commit
 - starting `git status --short --branch`
@@ -3496,7 +3496,7 @@ Failure hypotheses:
 
 ## Cross-Phase Traceability Matrix
 
-| Blueprint requirement | Gameplan coverage |
+| Blueprint requirement | Workplan coverage |
 |---|---|
 | strict env action boundaries | Phase 1 |
 | first-class action masks | Phase 2 |
@@ -3513,9 +3513,9 @@ Failure hypotheses:
 | full validation | Phase 11 |
 | implementation log | Phase 0 through Phase 12 |
 
-## Final Gameplan Verdict
+## Final Workplan Verdict
 
-This gameplan is ready for Project Owner review.
+This workplan is ready for Project Owner review.
 
 It is intentionally strict. The review identified correctness and runtime
 honesty problems, not cosmetic cleanup. The implementation therefore has to

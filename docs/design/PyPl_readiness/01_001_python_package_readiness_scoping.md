@@ -9,7 +9,7 @@ It is intentionally broad and strategic.
 It is not yet:
 
 - a blueprint
-- a gameplan
+- a workplan
 - a packaging checklist
 - or a PyPI release procedure
 

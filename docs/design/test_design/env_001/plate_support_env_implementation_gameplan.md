@@ -1,12 +1,12 @@
-# PlateSupportEnv Implementation Gameplan
+# PlateSupportEnv Implementation Workplan
 
 ## Status
 
-This document is the implementation gameplan for `env_001`, the first package-evaluation environment:
+This document is the implementation workplan for `env_001`, the first package-evaluation environment:
 
 - [plate_support_env_spec.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_spec.md)
 
-It is written in the same spirit as the implementation gameplan that successfully drove the second full build experiment in this repository.
+It is written in the same spirit as the implementation workplan that successfully drove the second full build experiment in this repository.
 
 This document is intended to be:
 
@@ -15,11 +15,11 @@ This document is intended to be:
 - test-driven
 - strict enough to follow without silent reinterpretation
 
-## Execution Contract For This Gameplan
+## Execution Contract For This Workplan
 
 1. **Authoritative source**
-- This gameplan and the env spec above are the implementation law for `env_001`.
-- Older design documents may provide rationale, but they do not override this gameplan during implementation unless the Project Owner explicitly says so.
+- This workplan and the env spec above are the implementation law for `env_001`.
+- Older design documents may provide rationale, but they do not override this workplan during implementation unless the Project Owner explicitly says so.
 
 2. **Execution unit**
 - The atomic unit of work is exactly one `Phase.Stage.Action`.
@@ -31,7 +31,7 @@ This document is intended to be:
 - Read the current action again before coding.
 - Implement only that action.
 - Run only the tests/checks implied by that action.
-- Compare the result back to this gameplan and the env spec.
+- Compare the result back to this workplan and the env spec.
 - Update the running env-implementation log.
 - Only then move to the next action.
 
@@ -47,7 +47,7 @@ This document is intended to be:
   - the validity rule yields a degenerate graph
   - Gymnasium integration requires an unplanned design choice
   - a required test expectation conflicts with the env spec
-  - implementation appears to require changing the env spec or this gameplan
+  - implementation appears to require changing the env spec or this workplan
 
 6. **Testing rule**
 - Tests are part of implementation, not cleanup afterward.
@@ -55,7 +55,7 @@ This document is intended to be:
 - Do not mark a phase complete until the listed tests for that phase pass.
 
 7. **Artifact/log rule**
-- Keep a running implementation log for this env in the same folder as this gameplan.
+- Keep a running implementation log for this env in the same folder as this workplan.
 - Record:
   - completed `Phase.Stage.Action` items
   - test results
@@ -71,7 +71,7 @@ The implementation target is:
 - conforming exactly to the env spec
 - with enough tests that both flat Gymnasium training and later `state_collapser`-assisted evaluation can treat it as a reliable benchmark object
 
-This gameplan does **not** include:
+This workplan does **not** include:
 
 - the flat-RL baseline training harness
 - the quotient-tower training harness
@@ -79,7 +79,7 @@ This gameplan does **not** include:
 
 Those belong to later test-design or benchmark-design stages.
 
-This gameplan covers only:
+This workplan covers only:
 
 - the environment itself
 - its correctness tests
@@ -129,7 +129,7 @@ The log should begin with:
 - implementation date
 - current branch
 - authoritative documents
-- a statement that this gameplan is being followed exactly
+- a statement that this workplan is being followed exactly
 
 ### Action 1.1.2
 
@@ -165,7 +165,7 @@ If a different target path is needed, stop and ask the Project Owner.
 
 ### Action 1.2.2
 
-Confirm the concrete test-file targets listed in this gameplan and log them.
+Confirm the concrete test-file targets listed in this workplan and log them.
 
 ### Action 1.2.3
 
@@ -785,13 +785,13 @@ Update the implementation log with:
 
 ### Action 9.1.1
 
-Review the env spec and this gameplan after implementation and update only if implementation revealed a real mismatch that was explicitly owner-approved.
+Review the env spec and this workplan after implementation and update only if implementation revealed a real mismatch that was explicitly owner-approved.
 
 Do not silently rewrite either document.
 
 ### Action 9.1.2
 
-If no owner-approved mismatch exists, leave the spec/gameplan unchanged and log that they were implementable as written.
+If no owner-approved mismatch exists, leave the spec/workplan unchanged and log that they were implementable as written.
 
 ## Stage 9.2 — Public/internal docs
 
@@ -885,7 +885,7 @@ Prepare a concise completion summary tied explicitly to:
 
 # Completion criteria
 
-This gameplan is complete when all of the following are true:
+This workplan is complete when all of the following are true:
 
 1. `PlateSupportEnv` exists as a functioning discrete `gymnasium.Env`.
 2. It matches the env spec exactly unless an owner-approved change says otherwise.

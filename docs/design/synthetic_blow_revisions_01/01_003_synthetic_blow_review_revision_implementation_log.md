@@ -6,9 +6,9 @@ Source blueprint:
 
 - `docs/design/synthetic_blow_revisions_01/01_001_synthetic_blow_review_revision_blueprint.md`
 
-Source gameplan:
+Source workplan:
 
-- `docs/design/synthetic_blow_revisions_01/01_002_synthetic_blow_review_revision_implementation_gameplan.md`
+- `docs/design/synthetic_blow_revisions_01/01_002_synthetic_blow_review_revision_implementation_workplan.md`
 
 ## Initial State
 
@@ -30,10 +30,10 @@ Source gameplan:
 - Action 0.1.1: completed. Execution approval is explicit.
 - Action 0.1.2: completed. Branch `codex/synthetic-blow-revisions-01` exists and is active.
 - Action 0.2.1: completed. This implementation log was created before source/test edits.
-- Action 0.3.1: completed. Training files still match the gameplan's current-state claims:
+- Action 0.3.1: completed. Training files still match the workplan's current-state claims:
   transitions lack continuation fields, collectors do not auto-extract masks, and
   `TabularQLearner.update(...)` still derives bootstrap from raw `terminated`/`truncated`.
-- Action 0.3.2: completed. Runtime/adapter/example files still match the gameplan's
+- Action 0.3.2: completed. Runtime/adapter/example files still match the workplan's
   current-state claims: snapshots are live object carriers, runtime eagerly rebuilds
   quotient readouts, partition updates always capture morphism domains, action-layer
   carry-forward hard-codes `LoopPolicy.drop_internal()`, the toy `GymnasiumAdapter`
@@ -118,7 +118,7 @@ Success: no issues found in 10 source files
   local Q-target formulas.
 - Action 4.2.5: completed. The ordinary `PlateSupportEnv` tower-training path
   now delegates to the shared helper. The experimental exploit/explore path
-  remains intentionally unmigrated and isolated, per gameplan.
+  remains intentionally unmigrated and isolated, per workplan.
 - Action 4.3.1: completed. Focused example training validation passed:
 
 ```text
@@ -334,9 +334,9 @@ tower_runtime_bench mode=default steps=10 elapsed_seconds=0.005364 operations_pe
   `GymnasiumAdapter`, `Serializable runtime handoff`, `terminated or truncated`,
   `to_quotient_tier_views()`, and `LoopPolicy.drop_internal()`.
 - Action 11.4.2: completed. Runtime/source consistency findings:
-  `GymnasiumAdapter` remains only in historical design/gameplan text; no
+  `GymnasiumAdapter` remains only in historical design/workplan text; no
   public source export keeps the misleading old name. `Serializable runtime
-  handoff` remains only as a search item in the implementation gameplan.
+  handoff` remains only as a search item in the implementation workplan.
   `terminated or truncated` remains only in an example Gymnasium episode-break
   test and historical design text, not as learner bootstrap policy.
   `to_quotient_tier_views()` remains in explicit readout methods/tests and

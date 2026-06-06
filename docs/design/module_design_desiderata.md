@@ -18,7 +18,7 @@ This document remains a design-rationale artifact.
 The implementation authority for current coding work remains:
 
 - `docs/design/final_initial/final_initial_blueprint.md`
-- `docs/design/final_initial/final_initial_implementation_gameplan.md`
+- `docs/design/final_initial/final_initial_implementation_workplan.md`
 
 ## What We Want It To Do
 

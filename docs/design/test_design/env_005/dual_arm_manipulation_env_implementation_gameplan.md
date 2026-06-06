@@ -1,4 +1,4 @@
-# Dual-Arm Manipulation Env Implementation Gameplan
+# Dual-Arm Manipulation Env Implementation Workplan
 
 ## Status
 

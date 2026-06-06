@@ -4,11 +4,11 @@
 - Current branch: `codex/env-001-next-phase`
 - Authoritative documents:
   - [plate_support_env_spec.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_spec.md)
-  - [plate_support_env_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_implementation_gameplan.md)
+  - [plate_support_env_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_implementation_workplan.md)
   - [plate_support_env_implementation_log.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_implementation_log.md)
   - [training_integration_surface_proposal.md]([state_collapser repository root]/docs/design/training_integration_surface_proposal.md)
-  - [plate_support_env_tower_training_integration_gameplan.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_tower_training_integration_gameplan.md)
-- Implementation statement: this gameplan is being followed exactly.
+  - [plate_support_env_tower_training_integration_workplan.md]([state_collapser repository root]/docs/design/test_design/env_001/plate_support_env_tower_training_integration_workplan.md)
+- Implementation statement: this workplan is being followed exactly.
 
 ## Log entries
 
@@ -174,8 +174,8 @@
   - `.venv/bin/pytest tests`
 - Broader regression result:
   - `131 passed`
-- Owner clarifications during this gameplan:
-  - none beyond the general prime-directive/gameplan execution rules
+- Owner clarifications during this workplan:
+  - none beyond the general prime-directive/workplan execution rules
 - Remaining open questions:
   - no blocker remains for runnable tower training itself
   - later benchmark-design work still remains for flat-vs-tower comparison methodology
@@ -202,5 +202,5 @@
     - the system is now ready for later flat-vs-tower benchmark comparison work
 - Phase status:
   - Phase 7 complete
-- Gameplan status:
-  - tower-training integration gameplan completed
+- Workplan status:
+  - tower-training integration workplan completed

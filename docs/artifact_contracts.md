@@ -80,15 +80,15 @@ still future work.
   - Project Owner
   - Codex when explicitly directed
 - Readers:
-  - implementation gameplans
+  - implementation workplans
   - continuity reports
   - future repo audits
 
-## Artifact: Implementation Gameplan
+## Artifact: Implementation Workplan
 
 - Owner: implementation planning
 - Canonical path pattern:
-  `docs/design/<topic>/01_00N_<topic>_implementation_gameplan.md`
+  `docs/design/<topic>/01_00N_<topic>_implementation_workplan.md`
 - Lifecycle: execution authority after Project Owner approval
 - Writers:
   - Codex when explicitly directed

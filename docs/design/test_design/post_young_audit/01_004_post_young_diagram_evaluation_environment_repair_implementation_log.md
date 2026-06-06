@@ -4,10 +4,10 @@
 
 Date: 2026-05-24
 
-Gameplan:
+Workplan:
 
 ```text
-docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md
+docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_workplan.md
 ```
 
 Branch:
@@ -30,9 +30,9 @@ Starting status:
 
 ## Execution Contract
 
-This log records execution of the Phase.Stage.Action gameplan.
+This log records execution of the Phase.Stage.Action workplan.
 
-If implementation reality conflicts with the gameplan, execution must stop and
+If implementation reality conflicts with the workplan, execution must stop and
 return to the Project Owner. Silent simplification, silent reordering, and
 silent reinterpretation are forbidden.
 
@@ -71,7 +71,7 @@ uv run python -m state_collapser.examples.tower_depth_probe --steps 20 --seed 7 
 Confirmed execution authority from Project Owner instruction:
 
 ```text
-Perfect. Implement this: docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_gameplan.md following prime_directive, in step-by-step Phase.Stage.Action form, makeing new branch first
+Perfect. Implement this: docs/design/test_design/post_young_audit/01_003_post_young_diagram_evaluation_environment_repair_implementation_workplan.md following prime_directive, in step-by-step Phase.Stage.Action form, makeing new branch first
 ```
 
 ### Phase 0.Stage 0.1.Action 0.1.2

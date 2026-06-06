@@ -10,14 +10,14 @@ Purpose:
 
 This document converts the completed synthetic-Blow-style full-repo review into
 a concrete revision blueprint. It is not yet a Phase.Stage.Action
-implementation gameplan. It is the design-level answer to the question:
+implementation workplan. It is the design-level answer to the question:
 
 > Have we made enough decisions to plan the code revisions?
 
 Answer:
 
 Yes. The review has converged enough to produce a hyper-detailed implementation
-gameplan. The major decisions are now settled. The only major topic intentionally
+workplan. The major decisions are now settled. The only major topic intentionally
 deferred is the deeper language/runtime question of whether the Python package
 should eventually grow a compiled partition-kernel core. That concern is real,
 but the PO explicitly decided to pause direct work on it. Many revisions in this
@@ -26,7 +26,7 @@ split.
 
 ## Readiness Verdict
 
-The review is ready to become an implementation gameplan because it no longer
+The review is ready to become an implementation workplan because it no longer
 contains only open-ended criticism. It now contains decisions about:
 
 - lift-aware continuation and bootstrap semantics
@@ -1244,7 +1244,7 @@ into implementation docs. This blueprint now serves as the design response.
 
 ## Test Strategy
 
-The implementation gameplan should be test-first where possible.
+The implementation workplan should be test-first where possible.
 
 ### New Test Groups
 
@@ -1354,7 +1354,7 @@ Mitigation:
 
 ## Implementation Order Recommendation
 
-This is not yet a gameplan, but the implementation order should probably be:
+This is not yet a workplan, but the implementation order should probably be:
 
 1. strict action boundaries in example envs
 2. action-mask utilities and collector propagation
@@ -1406,7 +1406,7 @@ This revision series is complete when:
 
 ## Final Blueprint Verdict
 
-The review has made enough decisions to proceed to an implementation gameplan.
+The review has made enough decisions to proceed to an implementation workplan.
 
 The most important architectural decision is that the package must stop letting
 rich Python convenience objects define core runtime semantics. The immediate

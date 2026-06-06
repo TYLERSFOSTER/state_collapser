@@ -553,9 +553,9 @@ then this blueprint has not been fulfilled.
 
 The next document after this blueprint should be:
 
-- an implementation gameplan in `Phase.Stage.Action` form
+- an implementation workplan in `Phase.Stage.Action` form
 
-That gameplan should focus on:
+That workplan should focus on:
 
 - the minimum high-value work needed to make the repo a strong research-mode package first
 

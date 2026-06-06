@@ -131,7 +131,7 @@ This interval turned that vague desire into:
 
 - a serious design architecture note
 - a blueprint
-- an implementation gameplan
+- an implementation workplan
 - and a first internal implementation
 
 ### 4. The package now has a reusable internal training component layer
@@ -250,12 +250,12 @@ Instead, the task was to construct:
 
 - small discrete evaluation environments inspired by those constrained geometric/control families
 
-### B.1 — Blueprint and gameplan work
+### B.1 — Blueprint and workplan work
 
 The repo went through proper design first:
 
 - [example_family_blueprint_from_mathematical_model_list.md]([state_collapser repository root]/docs/design/test_design/example_family_blueprint_from_mathematical_model_list.md)
-- [example_family_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/example_family_implementation_gameplan.md)
+- [example_family_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/example_family_implementation_workplan.md)
 
 This design work fixed several important questions:
 
@@ -379,11 +379,11 @@ was rewritten from scratch around the correct three-voice scope.
 
 This is worth recording because it was a textbook example of avoiding “sloppy salvage” of a wrong design document.
 
-### C.3 — Gameplan and implementation
+### C.3 — Workplan and implementation
 
 The repo then proceeded through:
 
-- [01_003_rl_counterpoint_v3_implementation_gameplan.md]([state_collapser repository root]/docs/design/test_design/rl_counterpoint_v3/01_003_rl_counterpoint_v3_implementation_gameplan.md)
+- [01_003_rl_counterpoint_v3_implementation_workplan.md]([state_collapser repository root]/docs/design/test_design/rl_counterpoint_v3/01_003_rl_counterpoint_v3_implementation_workplan.md)
 
 and then implementation, producing:
 
@@ -512,7 +512,7 @@ While this work was happening, the repo also got a new prime-directive note:
 
 Its first explicit rule is important:
 
-- once a blueprint and implementation gameplan are approved for execution, execution should happen on a dedicated implementation branch before merging back
+- once a blueprint and implementation workplan are approved for execution, execution should happen on a dedicated implementation branch before merging back
 
 This matters because the repository had already accumulated enough architectural complexity that “accidentally implement on `main` and sort it out later” was no longer a healthy normal state.
 
@@ -524,7 +524,7 @@ This is the single biggest engineering milestone in the interval.
 
 The training-surface blueprint was then converted into:
 
-- [01_003_model_and_training_surface_implementation_gameplan.md]([state_collapser repository root]/docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_gameplan.md)
+- [01_003_model_and_training_surface_implementation_workplan.md]([state_collapser repository root]/docs/design/model_train_surfaces/01_003_model_and_training_surface_implementation_workplan.md)
 
 and then implemented on a dedicated branch.
 
@@ -577,7 +577,7 @@ But they are real code, not a future-dream package stub.
 
 ### E.3 — The first migration target was `rl_counterpoint_v3`
 
-The implementation gameplan did not stop at “abstract surfaces exist.”
+The implementation workplan did not stop at “abstract surfaces exist.”
 
 It required:
 

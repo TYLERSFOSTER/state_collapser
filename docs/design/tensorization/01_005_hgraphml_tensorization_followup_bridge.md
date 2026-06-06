@@ -249,7 +249,7 @@ Current readiness:
 ```text
 conceptual readiness: high
 blueprint readiness: high
-implementation-gameplan readiness: medium
+implementation-workplan readiness: medium
 public implementation readiness: blocked on installable dependency surface
 ```
 

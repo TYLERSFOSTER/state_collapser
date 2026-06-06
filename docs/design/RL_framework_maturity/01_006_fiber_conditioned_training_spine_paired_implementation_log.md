@@ -4,8 +4,8 @@
 
 This is the running implementation log for the paired execution of:
 
-- `docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_gameplan.md`
-- `docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_gameplan.md`
+- `docs/design/RL_framework_maturity/01_004_fiber_conditioned_training_spine_implementation_workplan.md`
+- `docs/design/RL_framework_maturity/01_005_fiber_conditioned_training_spine_engineer_documentation_implementation_workplan.md`
 
 The implementation branch is:
 
@@ -30,7 +30,7 @@ Ok. Implement both, following `prime_directive`. Make new git branch first forst
 ```
 
 This approval covers the paired code and engineer-documentation implementation
-gameplans.
+workplans.
 
 ## Phase 0: Execution Setup And Reality Binding
 
@@ -38,7 +38,7 @@ gameplans.
 
 - Action 0.1.1 completed: Project Owner execution approval confirmed and recorded.
 - Action 0.1.2 completed: dedicated branch created and active.
-- Action 0.2.1 completed: source blueprints and paired gameplans were re-read from disk.
+- Action 0.2.1 completed: source blueprints and paired workplans were re-read from disk.
 - Action 0.2.2 completed: required current source files were re-read from disk.
 
 Observed repository reality:
@@ -59,7 +59,7 @@ Observed repository reality:
 ### Documentation Plan
 
 - Documentation Action 0.1.1 completed: paired execution approval confirmed and recorded.
-- Documentation Action 0.2.1 completed: paired source and gameplan files were re-read.
+- Documentation Action 0.2.1 completed: paired source and workplan files were re-read.
 - Documentation Action 0.2.2 completed: planned code-surface files checked before
   user-facing docs were created.
 
@@ -132,7 +132,7 @@ Observed repository reality:
 - Action 2.3.2 deferred: no compatibility adapter was added because mapping the
   proto `FrozenLowerContext.supporting_tier` semantics into the new
   `FrozenQuotientBehavior` semantics would require deciding broader
-  `tower/control` fate that this gameplan explicitly defers.
+  `tower/control` fate that this workplan explicitly defers.
 - Action 2.4.1 completed: added frozen step tests in
   `tests/training/test_frozen_quotient_behavior.py`.
 - Action 2.4.2 completed: added frozen behavior tests in
@@ -219,7 +219,7 @@ Observed repository reality:
 ## Documentation Phase 0: Setup And Synchronization
 
 - Documentation Action 0.1.1 completed: approval recorded.
-- Documentation Action 0.2.1 completed: paired source and gameplan files were
+- Documentation Action 0.2.1 completed: paired source and workplan files were
   re-read.
 - Documentation Action 0.2.2 completed: code surfaces were checked before
   user-facing docs were written.
