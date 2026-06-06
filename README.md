@@ -49,13 +49,25 @@ edge fibers.
 ***<ins>HOW</ins>**:*
 If the underlying mathematical model and its log speed-up theorems will best justify this `state_collapser` package for you, I'd start with [this companion research paper](./docs/design/logHRL.pdf) that explains why such a package should exist in the first place. If benchmarks demonstrating the speed-up in coordination-constrained RL problems will best justify this `state_collapser` package for you, I'd start with [this evaluation document](./EVALUATION.md).
 
-<p align="left">
+<div align="center">
   <picture>
     <source srcset="assets/images/logo/inaction_dark.gif" media="(prefers-color-scheme: dark)">
     <source srcset="assets/images/logo/inaction_light.gif" media="(prefers-color-scheme: light)">
     <img src="assets/images/logo/inaction_light.png" alt="pathfinder" width="">
   </picture>
-</p>
+</div>
+
+<table align="center" width="85%">
+  <tr>
+    <td align="center">
+      <em>
+        <strong>Path construction via quotient tower.</strong>
+        <strong>(Left)</strong> Cosets corresponding to a sequence of graph quotients, depicted as colored edge sets contracted for each corresponding quotient node at right.
+        <strong>(Right)</strong> Sequence of graph quotients and logarithmically constructed path.
+      </em>
+    </td>
+  </tr>
+</table>
 
 ## Installation
 
