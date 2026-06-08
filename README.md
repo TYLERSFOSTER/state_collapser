@@ -47,7 +47,7 @@ it, runs message passing on a coarse tier, and lifts messages back over node and
 edge fibers.
 
 ***<ins>HOW</ins>**:*
-If the underlying mathematical model and its log speed-up theorems will best justify this `state_collapser` package for you, I'd start with [this companion research paper](./docs/design/logHRL.pdf) that explains why such a package should exist in the first place. If benchmarks demonstrating the speed-up in coordination-constrained RL problems will best justify this `state_collapser` package for you, I'd start with [this smoke evaluation document](./EVALUATION.md) for the present repo, and after that, the [more serious calibration and benchmarking repo](https://github.com/TYLERSFOSTER/big_boy_benchmarking) for `state_collapser`.
+If the underlying mathematical model and its log speed-up theorems will best justify this `state_collapser` package for you, I'd start with [this companion research paper](./docs/design/logHRL.pdf) that explains why such a package should exist in the first place. If benchmarks demonstrating the speed-up in coordination-constrained RL problems will best justify this `state_collapser` package for you, I'd start with [this smoke evaluation document](./EVALUATION.md) for the present repo, and after that, [the more serious calibration and benchmarking repo](https://github.com/TYLERSFOSTER/big_boy_benchmarking) for `state_collapser`.
 
 <div align="center">
   <picture>
